@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <radialGradient id="appleGrad" cx="38%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="50%" stop-color="#e02424"/>
+      <stop offset="90%" stop-color="#991b1b"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </radialGradient>
+    <linearGradient id="appleLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a7f3d0"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="50" cy="92" rx="34" ry="6" fill="#000" opacity="0.12"/>
+  <!-- Stem -->
+  <path d="M50 24 Q52 10 59 8 Q56 14 52 24 Z" fill="#78350f"/>
+  <!-- Leaf -->
+  <path d="M52 20 Q68 12 73 20 Q64 28 52 22 Z" fill="url(#appleLeaf)"/>
+  <!-- Apple Body (Curved Dimples at Top and Bottom) -->
+  <path d="M50 30 C35 18 14 26 14 52 C14 76 34 88 50 86 C66 88 86 76 86 52 C86 26 65 18 50 30 Z" fill="url(#appleGrad)"/>
+  <!-- Shine -->
+  <path d="M28 36 Q40 28 48 34 Q36 38 28 54 Q24 44 28 36 Z" fill="#ffffff" opacity="0.45"/>
+  <circle cx="32" cy="40" r="3.5" fill="#ffffff" opacity="0.6"/>
+</svg>

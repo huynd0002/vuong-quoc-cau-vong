@@ -1,0 +1,26 @@
+{
+  "name": "Vương Quốc Cầu Vồng - Game Học Toán 5-6 Tuổi",
+  "short_name": "Vương Quốc Cầu Vồng",
+  "description": "Game giáo dục phiêu lưu 2D cho trẻ mầm non 5-6 tuổi khám phá màu sắc, hình khối và toán tư duy.",
+  "start_url": "/game.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#a9d5b0",
+  "theme_color": "#4b956d",
+  "categories": ["education", "kids", "games"],
+  "icons": [
+    {
+      "src": "/assets/pet_bunny_idle.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/hero_idle.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

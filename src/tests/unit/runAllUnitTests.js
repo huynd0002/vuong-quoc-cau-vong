@@ -1,0 +1,59 @@
+import { runSaveAdapterTests } from './saveAdapter.test.js';
+import { runCookingSystemTests } from './cookingSystem.test.js';
+import { runSchemaValidatorTests } from './schemaValidator.test.js';
+import { runProgressionSystemTests } from './progressionSystem.test.js';
+import { runPetSystemTests } from './petSystem.test.js';
+import { runZone1ContentTests } from './zone1Content.test.js';
+import { runCampaignStateMachineTests } from './campaignStateMachine.test.js';
+import { runZoneContent6ZonesTests } from './zoneContent6Zones.test.js';
+import { runPwaAndAudioTests } from './pwaAndAudio.test.js';
+import { runCustomQuestionsTests } from './customQuestions.test.js';
+import { runButterflyTests } from './butterfly.test.js';
+import { runFishingSystemTests } from './fishingSystem.test.js';
+import { runBadgeSystemTests } from './badgeSystem.test.js';
+import { runFashionSystemTests } from './fashionSystem.test.js';
+import { runBackpackSystemTests } from './backpackSystem.test.js';
+import { runVirtualJoystickTests } from './virtualJoystick.test.js';
+
+console.log('====================================================');
+console.log('  CHẠY TẤT CẢ UNIT TESTS (GIAI ĐOẠN 2 ĐẾN 6: REBUILD)');
+console.log('====================================================\n');
+
+try {
+  runSaveAdapterTests();
+  runCookingSystemTests();
+  console.log('');
+  runSchemaValidatorTests();
+  console.log('');
+  runProgressionSystemTests();
+  console.log('');
+  runPetSystemTests();
+  console.log('');
+  runZone1ContentTests();
+  console.log('');
+  runCampaignStateMachineTests();
+  console.log('');
+  runZoneContent6ZonesTests();
+  console.log('');
+  runPwaAndAudioTests();
+  console.log('');
+  runCustomQuestionsTests();
+  console.log('');
+  runButterflyTests();
+  console.log('');
+  runFishingSystemTests();
+  console.log('');
+  runBadgeSystemTests();
+  console.log('');
+  runFashionSystemTests();
+  console.log('');
+  runBackpackSystemTests();
+  console.log('');
+  runVirtualJoystickTests();
+  console.log('\n====================================================');
+  console.log('  TẤT CẢ 15/15 BỘ UNIT TESTS ĐÃ VƯỢT QUA!   ');
+  console.log('====================================================');
+} catch (err) {
+  console.error('\n❌ TEST THẤT BẠI:', err);
+  process.exit(1);
+}

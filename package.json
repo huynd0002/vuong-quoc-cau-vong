@@ -1,0 +1,24 @@
+{
+  "name": "rainbow-kingdom-rebuild",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build-portable.mjs",
+    "build:web": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test:unit": "node src/tests/unit/runAllUnitTests.js",
+    "test:browser": "node src/tests/browser/verifyAudioSystemComplete.test.js",
+    "test": "node src/tests/unit/runAllUnitTests.js && node src/tests/browser/verifyAudioSystemComplete.test.js"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1",
+    "vite": "^6.4.1",
+    "esbuild": "^0.25.12"
+  },
+  "license": "UNLICENSED"
+}

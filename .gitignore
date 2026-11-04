@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+portable.js
+game.html
+
+# Temporary test artifacts
+artifacts/
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Antigravity agent files
+.gemini/
