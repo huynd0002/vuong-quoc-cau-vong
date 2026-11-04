@@ -8,6 +8,7 @@
     "build": "node scripts/build-portable.mjs",
     "build:web": "vite build",
     "preview": "vite preview --host 0.0.0.0",
+    "pixelfx": "node pixelfx-repo/tools/serve.mjs 8090",
     "test:unit": "node src/tests/unit/runAllUnitTests.js",
     "test:browser": "node src/tests/browser/verifyAudioSystemComplete.test.js",
     "test": "node src/tests/unit/runAllUnitTests.js && node src/tests/browser/verifyAudioSystemComplete.test.js"
