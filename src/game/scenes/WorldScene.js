@@ -9,6 +9,7 @@ import { Butterfly } from '../entities/Butterfly.js';
 import { PondFish } from '../entities/PondFish.js';
 import { TeleportPortal } from '../entities/TeleportPortal.js';
 import { FireflyEffect } from '../effects/FireflyEffect.js';
+import { FireworkCelebrationEffect } from '../effects/FireworkCelebrationEffect.js';
 import { CloudEffect } from '../effects/CloudEffect.js';
 import { LakeWaterEffect, isPointInLake, clampOutOfLake } from '../effects/LakeWaterEffect.js';
 import { PetBathWaterEffect } from '../effects/PetBathWaterEffect.js';
@@ -493,6 +494,9 @@ export class WorldScene extends Phaser.Scene {
         this.petSleepModal.hide();
         this.petSleepModal = null;
       }
+      if (this.fireworkCelebration) {
+        this.fireworkCelebration.stop();
+      }
       this.interruptPetStationAction(false);
       if (this.petBedShadow) {
         this.petBedShadow.destroy();
@@ -904,6 +908,18 @@ export class WorldScene extends Phaser.Scene {
       if (this.pet) {
         this.pet.celebrate();
       }
+
+      // Kích hoạt pháo hoa PixelFX (explosions/firework-rocket) ăn mừng hạ gục Boss rực rỡ!
+      if (!this.fireworkCelebration) {
+        this.fireworkCelebration = new FireworkCelebrationEffect();
+        window.__fireworkCelebration = this.fireworkCelebration;
+      }
+      this.fireworkCelebration.launchSequence({
+        bossX: bossDeathX,
+        bossY: bossDeathY,
+        count: 4,
+        audioService: window.__audioService
+      });
 
       // Rung chấn động đỉnh cao khi hạ gục Boss vượt ải toàn map
       if (this.cameras?.main) {
