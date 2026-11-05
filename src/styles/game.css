@@ -7305,6 +7305,25 @@ button:focus-visible, summary:focus-visible { outline:3px solid #175dba; outline
   display: none !important;
 }
 
+/* Định vị cố định Nút Túi Của Bé ở chính giữa cạnh dưới màn hình, thu nhỏ 20% */
+#btn-floating-bag,
+.floating-bag-btn {
+  position: absolute !important;
+  bottom: 12px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 15 !important;
+}
+#btn-floating-bag:hover,
+.floating-bag-btn:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.04) !important;
+}
+#btn-floating-bag:active,
+.floating-bag-btn:active {
+  transform: translateX(-50%) translateY(1px) scale(0.96) !important;
+}
+
 /* ========================================================
    NÚT BẬT / TẮT DẪN CÚN ĐỒNG HÀNH (PET COMPANION TOGGLE)
    ======================================================== */

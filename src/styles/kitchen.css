@@ -1824,14 +1824,15 @@ body.is-handwash-dragging * {
    ========================================================================== */
 
 /* 1. Icon Túi của Bé đưa vào chính giữa cạnh dưới sân khấu, thu nhỏ lại 20% theo yêu cầu */
+#btn-floating-bag,
 .floating-bag-btn {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
-  z-index: 15;
-  display: flex;
+  position: absolute !important;
+  bottom: 12px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 15 !important;
+  display: flex !important;
   align-items: center;
   gap: 6px;
   max-width: 156px;
@@ -1846,12 +1847,14 @@ body.is-handwash-dragging * {
   user-select: none;
   -webkit-user-select: none;
 }
+#btn-floating-bag:hover,
 .floating-bag-btn:hover {
-  transform: translateX(-50%) translateY(-2px) scale(1.04);
+  transform: translateX(-50%) translateY(-2px) scale(1.04) !important;
   box-shadow: 0 10px 24px rgba(244, 114, 182, 0.5);
 }
+#btn-floating-bag:active,
 .floating-bag-btn:active {
-  transform: translateX(-50%) translateY(1px) scale(0.96);
+  transform: translateX(-50%) translateY(1px) scale(0.96) !important;
 }
 .floating-bag-img {
   width: 28px;

@@ -1504,8 +1504,8 @@ export class BattleArenaModal {
 
     const cards = [...rawCards].sort(() => Math.random() - 0.5);
     const totalPairs = question.pairs || Math.floor(cards.length / 2);
-    // Quy tắc số lần sai tối đa: 2 cặp (4 ô) -> sai 2 lần bị tính thua; nhiều ô lật hơn thì tăng lên
-    const maxMistakes = Math.max(2, totalPairs);
+    // Quy tắc số lần sai tối đa: Theo yêu cầu, điều chỉnh số lần sai về 1 hết, bé chỉ được sai 1 lần
+    const maxMistakes = 1;
     let matchedPairs = 0;
     let mistakeCount = 0;
     let selected = [];
@@ -1600,9 +1600,9 @@ export class BattleArenaModal {
               }
 
               if (mistakeCount >= maxMistakes) {
-                // ĐÃ SAI ĐỦ SỐ LẦN CHO PHÉP -> BỊ TÍNH THUA!
+                // ĐÃ SAI ĐỦ SỐ LẦN CHO PHÉP (1 LẦN) -> BỊ TÍNH THUA!
                 this.isTurnLocked = true;
-                banner.innerHTML = `<span>💥 ĐÃ SAI ${mistakeCount}/${maxMistakes} LẦN! Bé bị tính thua, Quái vật phản công! 💥</span>`;
+                banner.innerHTML = `<span>💥 ĐÃ SAI ${mistakeCount}/${maxMistakes} LẦN! Bé chỉ được sai 1 lần thôi, Quái vật phản công! 💥</span>`;
                 banner.style.background = '#fee2e2';
                 banner.style.borderColor = '#ef4444';
                 banner.style.color = '#b91c1c';
@@ -1613,7 +1613,7 @@ export class BattleArenaModal {
                   this.audioService.playChime(260, 0.25);
                 }
                 if (this.audioService?.speak) {
-                  this.audioService.speak(`Bé đã chọn sai ${mistakeCount} lần rồi! Quái vật phản công!`);
+                  this.audioService.speak('Bé chỉ được sai 1 lần thôi nhé! Quái vật phản công!');
                 }
 
                 setTimeout(() => {
@@ -1658,6 +1658,8 @@ export class BattleArenaModal {
 
     let activeLeftBtn = null;
     let matchedCount = 0;
+    let mistakeCount = 0;
+    const maxMistakes = 1;
     const totalCount = leftItems.length;
 
     const wrap = document.createElement('div');
@@ -1665,8 +1667,15 @@ export class BattleArenaModal {
 
     const banner = document.createElement('div');
     banner.className = 'interactive-instruction-banner';
-    banner.innerHTML = `<span>🔗 Chạm 1 ô Cột Trái rồi chạm ô tương ứng ở Cột Phải (<b id="pair-matched-count">0</b>/${totalCount})</span>`;
+    banner.innerHTML = `<span>🔗 Nối các cặp tương ứng (Đúng: <b id="pair-matched-count">0</b>/${totalCount} • <span class="pair-mistakes-counter">Sai: <b id="pair-mistakes-val">0</b>/${maxMistakes}</span>)</span>`;
     wrap.appendChild(banner);
+
+    const updateBanner = () => {
+      const countEl = wrap.querySelector('#pair-matched-count');
+      if (countEl) countEl.textContent = matchedCount;
+      const mistakesEl = wrap.querySelector('#pair-mistakes-val');
+      if (mistakesEl) mistakesEl.textContent = mistakeCount;
+    };
 
     const colsWrap = document.createElement('div');
     colsWrap.className = 'pair-match-columns';
@@ -1795,11 +1804,36 @@ export class BattleArenaModal {
             }, 700);
           }
         } else {
+          mistakeCount++;
+          updateBanner();
           btn.classList.add('mismatch-shake');
           activeLeftBtn.classList.add('mismatch-shake');
           if (this.audioService?.playChime) {
             this.audioService.playChime(320, 0.1);
           }
+
+          if (mistakeCount >= maxMistakes) {
+            this.isTurnLocked = true;
+            banner.innerHTML = `<span>💥 BÉ ĐÃ NỐI SAI! Bé chỉ được sai 1 lần thôi, Quái vật phản công! 💥</span>`;
+            banner.style.background = '#fee2e2';
+            banner.style.borderColor = '#ef4444';
+            banner.style.color = '#b91c1c';
+
+            if (this.audioService?.playPlayerHurt) {
+              this.audioService.playPlayerHurt();
+            } else if (this.audioService?.playChime) {
+              this.audioService.playChime(260, 0.25);
+            }
+            if (this.audioService?.speak) {
+              this.audioService.speak('Bé chỉ được sai 1 lần thôi nhé! Quái vật phản công!');
+            }
+
+            setTimeout(() => {
+              this.executeMonsterAttack();
+            }, 750);
+            return;
+          }
+
           setTimeout(() => {
             btn.classList.remove('mismatch-shake');
             if (activeLeftBtn) {
@@ -1870,6 +1904,8 @@ export class BattleArenaModal {
     const poolItems = [...rawItems].sort(() => Math.random() - 0.5);
 
     let pickedItem = null;
+    let mistakeCount = 0;
+    const maxMistakes = 1;
     const totalItems = rawItems.length;
 
     const wrap = document.createElement('div');
@@ -1877,8 +1913,15 @@ export class BattleArenaModal {
 
     const banner = document.createElement('div');
     banner.className = 'interactive-instruction-banner';
-    banner.innerHTML = `<span>🔢 Kéo thả hoặc chạm xếp theo đường nối (<b id="sort-placed-count">0</b>/${totalItems})</span>`;
+    banner.innerHTML = `<span>🔢 Xếp theo thứ tự (<b id="sort-placed-count">0</b>/${totalItems} • <span class="sort-mistakes-counter">Sai: <b id="sort-mistakes-val">0</b>/${maxMistakes}</span>)</span>`;
     wrap.appendChild(banner);
+
+    const updateBanner = (placedCount) => {
+      const countEl = wrap.querySelector('#sort-placed-count');
+      if (countEl) countEl.textContent = placedCount;
+      const mistakesEl = wrap.querySelector('#sort-mistakes-val');
+      if (mistakesEl) mistakesEl.textContent = mistakeCount;
+    };
 
     const poolDiv = document.createElement('div');
     poolDiv.className = 'drag-pool-items';
@@ -1931,6 +1974,7 @@ export class BattleArenaModal {
 
       const countEl = wrap.querySelector('#sort-placed-count');
       if (countEl) countEl.textContent = filled;
+      updateBanner(filled);
       updateConnectors();
 
       if (filled === totalItems) {
@@ -1961,10 +2005,35 @@ export class BattleArenaModal {
             this.executeHeroAttack();
           }, 700);
         } else {
+          mistakeCount++;
+          updateBanner(filled);
           slotsDiv.classList.add('has-error');
           if (this.audioService?.playChime) {
             this.audioService.playChime(320, 0.12);
           }
+
+          if (mistakeCount >= maxMistakes) {
+            this.isTurnLocked = true;
+            banner.innerHTML = `<span>💥 CHƯA ĐÚNG THỨ TỰ RỒI! Bé chỉ được sai 1 lần thôi, Quái vật phản công! 💥</span>`;
+            banner.style.background = '#fee2e2';
+            banner.style.borderColor = '#ef4444';
+            banner.style.color = '#b91c1c';
+
+            if (this.audioService?.playPlayerHurt) {
+              this.audioService.playPlayerHurt();
+            } else if (this.audioService?.playChime) {
+              this.audioService.playChime(260, 0.25);
+            }
+            if (this.audioService?.speak) {
+              this.audioService.speak('Bé chỉ được sai 1 lần thôi nhé! Quái vật phản công!');
+            }
+
+            setTimeout(() => {
+              this.executeMonsterAttack();
+            }, 750);
+            return;
+          }
+
           if (this.audioService?.speak) {
             this.audioService.speak('Bé hãy kéo đổi chỗ các số để xếp đúng thứ tự nhé!');
           }
