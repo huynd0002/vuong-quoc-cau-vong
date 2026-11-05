@@ -529,6 +529,8 @@ export class CharacterSelectModal {
       this.container.style.display = 'flex';
       this.container.classList.add('fade-in');
       this.isVisible = true;
+      const dialog = this.container.querySelector('.character-modal-dialog');
+      if (dialog) dialog.scrollTop = 0;
     }
 
     if (this.audioService) {
@@ -553,6 +555,8 @@ export class CharacterSelectModal {
       this.container.style.display = 'flex';
       this.container.classList.add('fade-in');
       this.isVisible = true;
+      const dialog = this.container.querySelector('.character-modal-dialog');
+      if (dialog) dialog.scrollTop = 0;
     }
 
     if (this.audioService) {

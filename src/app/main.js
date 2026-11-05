@@ -1186,11 +1186,58 @@ const config = {
 const game = new Phaser.Game(config);
 window.__PHASER_GAME__ = game;
 
-// Cập nhật scale khi xoay màn hình
+// Khắc phục triệt để việc mất hình trên iPad / Safari: Quản lý phục hồi WebGL Context & Visibility
+const setupPhaserCanvasRecovery = () => {
+  const canvas = game.canvas || document.querySelector('#game-root canvas');
+  if (canvas && !canvas.__recoveryBound) {
+    canvas.__recoveryBound = true;
+    canvas.addEventListener('webglcontextlost', (e) => {
+      e.preventDefault();
+      console.warn('[Phaser] WebGL Context bị mất! Đang giữ trạng thái và ngăn chặn lỗi...');
+    });
+    canvas.addEventListener('webglcontextrestored', () => {
+      console.info('[Phaser] WebGL Context đã phục hồi! Tái tạo lại khung hình thế giới...');
+      const ws = game.scene.getScene('WorldScene');
+      if (ws && ws.scene) {
+        ws.scene.restart();
+      }
+    });
+  }
+};
+if (game.canvas) {
+  setupPhaserCanvasRecovery();
+} else {
+  game.events.once('ready', setupPhaserCanvasRecovery);
+}
+
+// Khi quay trở lại tab trên Safari / iPad hoặc mở khóa màn hình
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    if (window.__PHASER_GAME__) {
+      try {
+        window.__PHASER_GAME__.step();
+        const ws = window.__PHASER_GAME__.scene.getScene('WorldScene');
+        if (ws) {
+          if (ws.setWorldScale) ws.setWorldScale();
+          if (ws.hero?.restoreDisplaySize) ws.hero.restoreDisplaySize();
+        }
+      } catch (err) {
+        console.warn('[Game] Lỗi thức tỉnh khung cảnh:', err);
+      }
+    }
+  }
+});
+
+// Cập nhật scale khi xoay màn hình hoặc thay đổi kích thước cửa sổ
 game.scale.on('resize', () => {
   const worldScene = game.scene.getScene('WorldScene');
   if (worldScene && worldScene.setWorldScale) {
     worldScene.setWorldScale();
+  }
+});
+window.addEventListener('resize', () => {
+  if (game && game.scale) {
+    game.scale.refresh();
   }
 });
 
