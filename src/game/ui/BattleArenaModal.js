@@ -425,42 +425,7 @@ export class BattleArenaModal {
     const key = String(encounter?.spriteKey || encounter?.monsterId || encounter?.id || '').toLowerCase();
     const name = String(encounter?.name || '').toLowerCase();
 
-    if (key.includes('desert_fox') || key === 'enc_map4_1' || name.includes('cáo') || name.includes('fennec')) {
-      return {
-        idle: desertFoxIdleUrl,
-        attack: desertFoxSkillUrl,
-        hit: desertFoxHitUrl,
-        celebrate: desertFoxCelebrateUrl,
-        fallback: desertFoxIdleUrl,
-        flipIdle: false,
-        flipAttack: false,
-        flipHit: false
-      };
-    }
-    if (key.includes('scarab') || key === 'enc_map4_2' || name.includes('bọ') || name.includes('kim quy')) {
-      return {
-        idle: scarabIdleUrl,
-        attack: scarabSkillUrl,
-        hit: scarabHitUrl,
-        celebrate: scarabCelebrateUrl,
-        fallback: scarabIdleUrl,
-        flipIdle: false,
-        flipAttack: false,
-        flipHit: false
-      };
-    }
-    if (key.includes('desert_falcon') || key === 'enc_map4_3' || name.includes('chim ưng') || name.includes('falcon')) {
-      return {
-        idle: desertFalconIdleUrl,
-        attack: desertFalconSkillUrl,
-        hit: desertFalconHitUrl,
-        celebrate: desertFalconCelebrateUrl,
-        fallback: desertFalconIdleUrl,
-        flipIdle: false,
-        flipAttack: false,
-        flipHit: false
-      };
-    }
+    // 1. Quái vật Map 1 (Làng Quê Yên Bình)
     if (key.includes('mushroom') || key === 'enc_map1_1' || name.includes('nấm')) {
       return {
         idle: mushroomIdleUrl,
@@ -485,7 +450,7 @@ export class BattleArenaModal {
         flipHit: true
       };
     }
-    if (key.includes('ladybug') || key === 'enc_map1_3' || name.includes('bọ rùa')) {
+    if (key.includes('ladybug') || key === 'enc_map1_3' || name.includes('bọ rùa') || name.includes('cánh cam') || (name.includes('rùa') && !name.includes('biển'))) {
       return {
         idle: ladybugIdleUrl,
         attack: ladybugSkillUrl,
@@ -495,6 +460,44 @@ export class BattleArenaModal {
         flipIdle: true,
         flipAttack: false,
         flipHit: true
+      };
+    }
+
+    // 2. Quái vật Map 4 (Sa Mạc Ánh Dương)
+    if (key.includes('desert_fox') || key === 'enc_map4_1' || name.includes('cáo') || name.includes('fennec')) {
+      return {
+        idle: desertFoxIdleUrl,
+        attack: desertFoxSkillUrl,
+        hit: desertFoxHitUrl,
+        celebrate: desertFoxCelebrateUrl,
+        fallback: desertFoxIdleUrl,
+        flipIdle: false,
+        flipAttack: false,
+        flipHit: false
+      };
+    }
+    if (key.includes('scarab') || key === 'enc_map4_2' || name.includes('kim quy') || name.includes('bọ hung') || (name.includes('bọ') && !name.includes('rùa'))) {
+      return {
+        idle: scarabIdleUrl,
+        attack: scarabSkillUrl,
+        hit: scarabHitUrl,
+        celebrate: scarabCelebrateUrl,
+        fallback: scarabIdleUrl,
+        flipIdle: false,
+        flipAttack: false,
+        flipHit: false
+      };
+    }
+    if (key.includes('desert_falcon') || key === 'enc_map4_3' || name.includes('chim ưng') || name.includes('falcon')) {
+      return {
+        idle: desertFalconIdleUrl,
+        attack: desertFalconSkillUrl,
+        hit: desertFalconHitUrl,
+        celebrate: desertFalconCelebrateUrl,
+        fallback: desertFalconIdleUrl,
+        flipIdle: false,
+        flipAttack: false,
+        flipHit: false
       };
     }
     if (key.includes('starfish') || key === 'enc_map2_2' || name.includes('sao biển')) {
@@ -694,84 +697,7 @@ export class BattleArenaModal {
     const key = String(encounter?.spriteKey || encounter?.monsterId || encounter?.id || '').toLowerCase();
     const name = String(encounter?.name || '').toLowerCase();
 
-    if (key.includes('desert_fox') || key === 'enc_map4_1' || name.includes('cáo') || name.includes('fennec')) {
-      return {
-        id: 'skill_fox_sand_whirl',
-        name: 'Hồ Ly Kim Cát: Cơn Lốc Cát Vàng Lấp Lánh',
-        badge: '🦊✨',
-        element: 'sand',
-        projUrl: desertFoxProjUrl,
-        impactUrl: desertFoxImpactUrl,
-        projSize: 68,
-        impactSize: 180,
-        glowColor: '#f59e0b',
-        filter: 'drop-shadow(0 0 16px rgba(245, 158, 11, 0.9))',
-        soundType: 'triangle',
-        baseFreq: 380,
-        stepNames: [
-          'Bé Cáo Vẫy Chiếc Đuôi Xù Bông',
-          'Vểnh Đôi Tai To Tụ Hạt Cát Vàng',
-          'Chạy Nhún Nhảy Vui Nhộn',
-          'Bắn Cầu Lửa Cát Sang Trái',
-          'Lốc Xoáy Cát Bay Nhanh Thoăn Thoắt',
-          'Hạt Vàng Bùng Nổ Lấp Lánh',
-          'Cáo Con Lộn Nhào Dễ Thương',
-          'Vui Mừng Vẫy Tai Tươi Cười!'
-        ]
-      };
-    }
-    if (key.includes('scarab') || key === 'enc_map4_2' || name.includes('bọ') || name.includes('kim quy')) {
-      return {
-        id: 'skill_scarab_jewel_blast',
-        name: 'Kim Quy Thần Giáp: Ngọc Bích Thái Dương',
-        badge: '🪲☀️',
-        element: 'emerald_sun',
-        projUrl: scarabProjUrl,
-        impactUrl: scarabImpactUrl,
-        projSize: 72,
-        impactSize: 190,
-        glowColor: '#10b981',
-        filter: 'drop-shadow(0 0 18px rgba(16, 185, 129, 0.95))',
-        soundType: 'sine',
-        baseFreq: 320,
-        stepNames: [
-          'Bọ Kim Quy Giương Mai Ngọc Bích',
-          'Viên Ngọc Mặt Trời Tỏa Ánh Hoàng Kim',
-          'Bò Lắc Lư Vững Vàng Tích Lực',
-          'Bắn Cầu Ngọc Ánh Dương Sang Trái',
-          'Ánh Sáng Xanh Ngọc Bay Rực Rỡ',
-          'Pháo Hoa Ngọc Bích Bùng Nổ',
-          'Bọ Con Cười Tít Mắt Tinh Nghịch',
-          'Thu Chân Nhỏ Về Thế Thủ Đáng Yêu!'
-        ]
-      };
-    }
-    if (key.includes('desert_falcon') || key === 'enc_map4_3' || name.includes('chim ưng') || name.includes('falcon')) {
-      return {
-        id: 'skill_falcon_solar_gust',
-        name: 'Thần Điêu Liệng Cánh: Cơn Lốc Ánh Dương',
-        badge: '🦅☀️',
-        element: 'solar_wind',
-        projUrl: desertFalconProjUrl,
-        impactUrl: desertFalconImpactUrl,
-        projSize: 75,
-        impactSize: 200,
-        glowColor: '#eab308',
-        filter: 'drop-shadow(0 0 20px rgba(234, 179, 8, 0.95))',
-        soundType: 'sawtooth',
-        baseFreq: 360,
-        stepNames: [
-          'Chim Ưng Thần Vỗ Cánh Lông Vàng',
-          'Vương Miện Mặt Trời Lóe Sáng',
-          'Bay Lượn Nhào Lộn Giữa Không Trung',
-          'Quạt Cánh Phóng Lốc Lửa Sang Trái',
-          'Gió Lốc Thái Dương Cuộn Sóng Ánh Sáng',
-          'Nổ Tung Bụi Sao Vàng Lấp Lánh',
-          'Chim Ưng Nghiêng Cánh Điêu Luyện',
-          'Đậu Lại Oai Phong Giữa Sa Mạc!'
-        ]
-      };
-    }
+    // 1. Kỹ năng Quái vật Map 1 (Làng Quê Yên Bình)
     if (key.includes('mushroom') || key === 'enc_map1_1' || name.includes('nấm')) {
       return {
         id: 'skill_mushroom_spore_blast',
@@ -824,7 +750,7 @@ export class BattleArenaModal {
         ]
       };
     }
-    if (key.includes('ladybug') || key === 'enc_map1_3' || name.includes('bọ rùa')) {
+    if (key.includes('ladybug') || key === 'enc_map1_3' || name.includes('bọ rùa') || name.includes('cánh cam') || (name.includes('rùa') && !name.includes('biển'))) {
       return {
         id: 'skill_ladybug_amber_beam',
         name: 'Quang Ba Hổ Phách: Tia Sáng Ngọc Cam',
@@ -847,6 +773,86 @@ export class BattleArenaModal {
           'Hoa Lửa Cam Bùng Nổ Lấp Lánh',
           'Gập Cánh Chắp Tay Dễ Thương',
           'Cười Tít Mắt Tươi Vui!'
+        ]
+      };
+    }
+
+    // 2. Kỹ năng Quái vật Map 4 (Sa Mạc Ánh Dương)
+    if (key.includes('desert_fox') || key === 'enc_map4_1' || name.includes('cáo') || name.includes('fennec')) {
+      return {
+        id: 'skill_fox_sand_whirl',
+        name: 'Hồ Ly Kim Cát: Cơn Lốc Cát Vàng Lấp Lánh',
+        badge: '🦊✨',
+        element: 'sand',
+        projUrl: desertFoxProjUrl,
+        impactUrl: desertFoxImpactUrl,
+        projSize: 68,
+        impactSize: 180,
+        glowColor: '#f59e0b',
+        filter: 'drop-shadow(0 0 16px rgba(245, 158, 11, 0.9))',
+        soundType: 'triangle',
+        baseFreq: 380,
+        stepNames: [
+          'Bé Cáo Vẫy Chiếc Đuôi Xù Bông',
+          'Vểnh Đôi Tai To Tụ Hạt Cát Vàng',
+          'Chạy Nhún Nhảy Vui Nhộn',
+          'Bắn Cầu Lửa Cát Sang Trái',
+          'Lốc Xoáy Cát Bay Nhanh Thoăn Thoắt',
+          'Hạt Vàng Bùng Nổ Lấp Lánh',
+          'Cáo Con Lộn Nhào Dễ Thương',
+          'Vui Mừng Vẫy Tai Tươi Cười!'
+        ]
+      };
+    }
+    if (key.includes('scarab') || key === 'enc_map4_2' || name.includes('kim quy') || name.includes('bọ hung') || (name.includes('bọ') && !name.includes('rùa'))) {
+      return {
+        id: 'skill_scarab_jewel_blast',
+        name: 'Kim Quy Thần Giáp: Ngọc Bích Thái Dương',
+        badge: '🪲☀️',
+        element: 'emerald_sun',
+        projUrl: scarabProjUrl,
+        impactUrl: scarabImpactUrl,
+        projSize: 72,
+        impactSize: 190,
+        glowColor: '#10b981',
+        filter: 'drop-shadow(0 0 18px rgba(16, 185, 129, 0.95))',
+        soundType: 'sine',
+        baseFreq: 320,
+        stepNames: [
+          'Bọ Kim Quy Giương Mai Ngọc Bích',
+          'Viên Ngọc Mặt Trời Tỏa Ánh Hoàng Kim',
+          'Bò Lắc Lư Vững Vàng Tích Lực',
+          'Bắn Cầu Ngọc Ánh Dương Sang Trái',
+          'Ánh Sáng Xanh Ngọc Bay Rực Rỡ',
+          'Pháo Hoa Ngọc Bích Bùng Nổ',
+          'Bọ Con Cười Tít Mắt Tinh Nghịch',
+          'Thu Chân Nhỏ Về Thế Thủ Đáng Yêu!'
+        ]
+      };
+    }
+    if (key.includes('desert_falcon') || key === 'enc_map4_3' || name.includes('chim ưng') || name.includes('falcon')) {
+      return {
+        id: 'skill_falcon_solar_gust',
+        name: 'Thần Điêu Liệng Cánh: Cơn Lốc Ánh Dương',
+        badge: '🦅☀️',
+        element: 'solar_wind',
+        projUrl: desertFalconProjUrl,
+        impactUrl: desertFalconImpactUrl,
+        projSize: 75,
+        impactSize: 200,
+        glowColor: '#eab308',
+        filter: 'drop-shadow(0 0 20px rgba(234, 179, 8, 0.95))',
+        soundType: 'sawtooth',
+        baseFreq: 360,
+        stepNames: [
+          'Chim Ưng Thần Vỗ Cánh Lông Vàng',
+          'Vương Miện Mặt Trời Lóe Sáng',
+          'Bay Lượn Nhào Lộn Giữa Không Trung',
+          'Quạt Cánh Phóng Lốc Lửa Sang Trái',
+          'Gió Lốc Thái Dương Cuộn Sóng Ánh Sáng',
+          'Nổ Tung Bụi Sao Vàng Lấp Lánh',
+          'Chim Ưng Nghiêng Cánh Điêu Luyện',
+          'Đậu Lại Oai Phong Giữa Sa Mạc!'
         ]
       };
     }
@@ -2632,25 +2638,15 @@ export class BattleArenaModal {
       }
       if (this.arenaHeroImg) this.arenaHeroImg.src = this.getHeroSkinAssets().idleRight;
 
-      // Triết lý mầm non: Không Game Over
+      // Xử lý khi Bé hết Tim: Thông báo Bạn đã bị thua & đưa về maps Nuôi thú (hồi 1 Tim, ăn để lên tim lại)
       if (this.heroHearts <= 0) {
-        if (this.audioService) {
-          this.audioService.playHeal();
-          this.audioService.speak('Phép Cầu Vồng đã hồi tim cho bé! Mình cùng chọn lại nhé!');
-        }
-        this.heroHearts = 3;
-        this.heroMaxHearts = 3;
-        this.bonusHeartsRemaining = 0;
-        this.cookingSystem?.recordBattleHearts(3);
-        this.renderHearts(this.arenaHeroHearts, this.heroHearts, this.heroMaxHearts);
-        if (this.feedbackText) {
-          this.feedbackText.textContent = '🌈 Phép Cầu Vồng hồi phục tim cho bé! Bé hãy chọn lại đáp án nhé!';
-        }
-      } else {
-        if (this.audioService) {
-          this.audioService.playTryAgain();
-          this.audioService.speak('Chưa đúng rồi! Bé cố lên, cùng chọn lại nhé!');
-        }
+        this.showDefeatModal();
+        return;
+      }
+
+      if (this.audioService) {
+        this.audioService.playTryAgain();
+        this.audioService.speak('Chưa đúng rồi! Bé cố lên, cùng chọn lại nhé!');
       }
 
       this.isTurnLocked = false;
@@ -2658,6 +2654,87 @@ export class BattleArenaModal {
         this.turnIndicator.textContent = '✨ Bé hãy chọn lại đáp án đúng nhé!';
       }
     }, 550);
+  }
+
+  /**
+   * Xử lý khi Bé Sâu hết tim:
+   * 1. Báo "Bạn đã bị thua"
+   * 2. Hồi đúng 1 Tim (phải ăn đồ ăn trong Bếp để hồi lại đủ tim)
+   * 3. Đưa nhân vật quay về map Nuôi thú (map_pet_farm)
+   */
+  showDefeatModal() {
+    this.isTurnLocked = true;
+
+    // 1. Cập nhật 1 Tim theo yêu cầu: Hồi 1 Tim, phải ăn để lên tim lại
+    this.heroHearts = 1;
+    this.bonusHeartsRemaining = 0;
+    if (this.cookingSystem) {
+      this.cookingSystem.recordBattleHearts(1);
+    }
+    if (typeof window !== 'undefined' && typeof window.__updateHeroVitalsHud === 'function') {
+      window.__updateHeroVitalsHud();
+    }
+
+    // 2. Phát âm thanh và giọng đọc thông báo thua
+    if (this.audioService) {
+      this.audioService.playPlayerHurt?.();
+      setTimeout(() => {
+        this.audioService?.speak?.('Bạn đã bị thua! Bé đã hết tim rồi, cùng về Nông Trại nghỉ ngơi và ăn món ngon để hồi phục tim nhé!');
+      }, 350);
+    }
+
+    // 3. Hiển thị hộp thoại / card thông báo thua
+    let defeatOverlay = document.getElementById('arena-defeat-overlay');
+    if (!defeatOverlay) {
+      defeatOverlay = document.createElement('div');
+      defeatOverlay.id = 'arena-defeat-overlay';
+      defeatOverlay.className = 'arena-defeat-overlay';
+      defeatOverlay.innerHTML = `
+        <div class="arena-defeat-card">
+          <div class="defeat-badge">💔 THỬ THÁCH CHƯA VƯỢT QUA</div>
+          <div class="defeat-avatar-wrap">
+            <span class="defeat-icon">🐾</span>
+          </div>
+          <h2 class="defeat-title">BẠN ĐÃ BỊ THUA!</h2>
+          <p class="defeat-desc">
+            Bé đã hết trái tim rồi! Đừng buồn nhé, các bạn thú cưng đang đợi bé về Nông Trại nghỉ ngơi đó.
+          </p>
+          <div class="defeat-heal-notice">
+            <span class="heal-pill">❤️ Hồi lại 1 Tim</span>
+            <span class="heal-hint">🍳 Bé nhớ vào Bếp ăn thêm món ngon để lên lại đủ 3 Tim nhé!</span>
+          </div>
+          <div class="defeat-buttons">
+            <button class="modal-cta-button defeat-return-cta" id="btn-defeat-return-farm" type="button">
+              🏡 Về Nông Trại Nuôi Thú ✨
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(defeatOverlay);
+    }
+
+    defeatOverlay.style.display = 'flex';
+    defeatOverlay.removeAttribute('hidden');
+
+    const handleReturn = () => {
+      defeatOverlay.style.display = 'none';
+      defeatOverlay.setAttribute('hidden', 'true');
+      this.closeArena();
+
+      // Đưa nhân vật quay về maps Nuôi thú (map_pet_farm)
+      if (typeof window !== 'undefined' && typeof window.__travelToZone === 'function') {
+        window.__travelToZone('map_pet_farm');
+      } else {
+        window.dispatchEvent(new CustomEvent('game:portal-warp-start', {
+          detail: { targetMapId: 'map_pet_farm' }
+        }));
+      }
+    };
+
+    const returnBtn = document.getElementById('btn-defeat-return-farm');
+    if (returnBtn) {
+      returnBtn.onclick = handleReturn;
+    }
   }
 
   /**
@@ -2881,6 +2958,11 @@ export class BattleArenaModal {
   }
 
   closeArena() {
+    const defeatOverlay = document.getElementById('arena-defeat-overlay');
+    if (defeatOverlay) {
+      defeatOverlay.style.display = 'none';
+      defeatOverlay.setAttribute('hidden', 'true');
+    }
     if (this._autoOpenMazeTimer) {
       clearTimeout(this._autoOpenMazeTimer);
       this._autoOpenMazeTimer = null;

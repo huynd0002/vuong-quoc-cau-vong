@@ -9257,3 +9257,154 @@ html, body {
     touch-action: manipulation;
   }
 }
+
+/* ==========================================================================
+   MODAL THÔNG BÁO BỊ THUA KHI HẾT TIM (DEFEAT MODAL)
+   ========================================================================== */
+.arena-defeat-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: defeatFadeIn 0.3s ease-out both;
+  pointer-events: auto;
+}
+
+.arena-defeat-card {
+  width: min(520px, 94vw);
+  background: linear-gradient(180deg, #fffdf8 0%, #fff7ed 100%);
+  border: 3.5px solid #f87171;
+  border-radius: 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 8px 0 #dc2626;
+  padding: 28px 24px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: defeatPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.defeat-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 99px;
+  background: #fee2e2;
+  border: 1.5px solid #f87171;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.defeat-avatar-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 3px solid #fca5a5;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.defeat-icon {
+  font-size: 38px;
+  line-height: 1;
+}
+
+.defeat-title {
+  margin: 0;
+  font-size: clamp(22px, 3.2vw, 28px);
+  font-weight: 900;
+  color: #991b1b;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.defeat-desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #475569;
+  font-weight: 700;
+}
+
+.defeat-heal-notice {
+  background: #ffffff;
+  border: 1.5px dashed #f59e0b;
+  border-radius: 16px;
+  padding: 10px 14px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.defeat-heal-notice .heal-pill {
+  font-size: 14px;
+  font-weight: 900;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  padding: 3px 12px;
+  border-radius: 99px;
+}
+
+.defeat-heal-notice .heal-hint {
+  font-size: 12px;
+  color: #78350f;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.defeat-buttons {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.defeat-return-cta {
+  width: 100%;
+  min-height: 52px;
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%) !important;
+  border: 2px solid #15803d !important;
+  border-radius: 18px !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 0 #14532d, 0 8px 16px rgba(22, 163, 74, 0.3) !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.defeat-return-cta:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+}
+
+.defeat-return-cta:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #14532d !important;
+}
+
+@keyframes defeatFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes defeatPopIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}

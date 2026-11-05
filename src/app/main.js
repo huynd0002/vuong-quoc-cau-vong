@@ -122,6 +122,7 @@ export function updateHeroVitalsHud() {
     energyVal.textContent = energy;
   }
 }
+window.__updateHeroVitalsHud = updateHeroVitalsHud;
 
 function updateKitchenStatus() {
   const state = cookingSystem.getState();

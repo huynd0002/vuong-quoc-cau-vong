@@ -238,6 +238,6 @@ export class CookingSystem {
     const result = this.mutate(state => { const bonus = state.bonusHearts; const hearts = state.hearts + bonus; state.bonusHearts = 0; return { ok: true, hearts, bonus, maxHearts: LIMIT.hearts + bonus }; });
     return result.ok ? result : { ok: false, hearts: 3, maxHearts: 3 };
   }
-  recordBattleHearts(hearts) { return this.mutate(state => { state.hearts = hearts > 0 ? Math.min(3, hearts) : 3; return { ok: true }; }); }
+  recordBattleHearts(hearts) { return this.mutate(state => { state.hearts = Math.max(1, Math.min(LIMIT.hearts, Math.floor(Number(hearts) || 1))); return { ok: true }; }); }
   useEnergy() { return this.mutate(state => { if (!state.energy) return fail('empty'); state.energy--; return { ok: true }; }); }
 }
