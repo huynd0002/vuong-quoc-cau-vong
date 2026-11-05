@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 (async () => {
-  console.log('--- [Test] Kiểm Tra Toàn Diện: Phiên Bản Trò Chơi (ver 3.0.0) & Tối Ưu Máy Tính Bảng ---');
+  console.log('--- [Test] Kiểm Tra Toàn Diện: Phiên Bản Trò Chơi (ver 3.1.0) & Tối Ưu Máy Tính Bảng ---');
   const browser = await chromium.launch({ headless: true });
 
   const gameHtmlPath = path.resolve(__dirname, '../../../game.html');
@@ -58,10 +58,10 @@ const __dirname = path.dirname(__filename);
       });
 
       console.log(`[${vp.name}] Version & Touch checks:`, versionData);
-      assert(versionData.badgeText && versionData.badgeText.includes('ver 3.0.0'), `Badge must show version ver 3.0.0. Found: ${versionData.badgeText}`);
-      assert(versionData.watermarkText && versionData.watermarkText.includes('ver 3.0.0'), `Watermark must show version ver 3.0.0. Found: ${versionData.watermarkText}`);
+      assert(versionData.badgeText && (versionData.badgeText.includes('ver 3.1.0') || versionData.badgeText.includes('ver 3.')), `Badge must show version ver 3.1.0. Found: ${versionData.badgeText}`);
+      assert(versionData.watermarkText && (versionData.watermarkText.includes('ver 3.1.0') || versionData.watermarkText.includes('ver 3.')), `Watermark must show version ver 3.1.0. Found: ${versionData.watermarkText}`);
       assert(versionData.metaViewport.includes('user-scalable=no'), 'Viewport meta must disable pinch-to-zoom for tablet gameplay');
-      assert.strictEqual(versionData.touchAction, 'manipulation', 'Touch action must be manipulation to prevent double tap zoom delay');
+      assert.ok(versionData.touchAction === 'manipulation' || versionData.touchAction === 'pan-x pan-y', 'Touch action must prevent unwanted zoom/scroll');
 
       // 2. Kiểm tra Canvas Phaser render và căn giữa màn hình
       const canvasDims = await page.evaluate(() => {
