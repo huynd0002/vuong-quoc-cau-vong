@@ -6759,12 +6759,16 @@ button:focus-visible, summary:focus-visible { outline:3px solid #175dba; outline
 }
 
 
-/* Hide debug pills according to user request (Keep only Map and Add Questions) */
+/* Ẩn hoàn toàn toàn bộ cụm quick-actions (gồm Bản Đồ 6 Vùng và Thêm Câu Hỏi) theo yêu cầu người dùng */
+.quick-actions,
+#btn-open-map,
+#btn-quick-add-question,
 #test-encounter,
 #test-boss,
 #btn-test-portal,
 #btn-quick-pet-farm {
   display: none !important;
+  pointer-events: none !important;
 }
 
 /* Hide Mê Cung and Túi from topbar according to Image 2 */
