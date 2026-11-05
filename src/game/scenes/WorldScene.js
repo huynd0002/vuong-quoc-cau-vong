@@ -2886,8 +2886,8 @@ export class WorldScene extends Phaser.Scene {
     const isOnDock = (heroX >= 615 && heroX <= 830 && heroY >= 290 && heroY <= 425) || dist <= 85;
     this.dockStartFishingBtnEl.style.display = isOnDock ? 'inline-flex' : 'none';
     if (isOnDock) {
-      this.dockStartFishingBtnEl.style.left = '53.8%';
-      this.dockStartFishingBtnEl.style.top = '41%';
+      this.dockStartFishingBtnEl.style.left = '50%';
+      this.dockStartFishingBtnEl.style.top = '34%';
       const curFishing = window.__fishingSystem?.getState?.() || {};
       const isBasketFull = (curFishing.basket?.length || 0) >= 6;
       if (isBasketFull) {
@@ -3511,8 +3511,8 @@ export class WorldScene extends Phaser.Scene {
 
     st.attempts = (st.attempts || 0) + 1;
 
-    // Khi bấm trúng vùng canh (hoặc hỗ trợ bé 5-6 tuổi sau 3 lần cố gắng)
-    if (inZone || st.attempts >= 3) {
+    // Yêu cầu: Bấm trúng vùng canh mới được tính nhịp kéo
+    if (inZone) {
       st.currentHits = (st.currentHits || 0) + 1;
       st.currentStep = st.currentHits;
 
@@ -3600,15 +3600,28 @@ export class WorldScene extends Phaser.Scene {
         }
       }
     } else {
-      window.__audioService?.playChime?.(360, 0.12);
-      this.spawnFloatingPopup(st.castX, st.castY - 48, '💨 Hụt rồi! Chờ cá vào vùng xanh!', '#f97316');
+      // Yêu cầu: Câu cá hụt 1 lần là mất cá luôn!
+      window.__audioService?.playChime?.(300, 0.22);
+      this.spawnFloatingPopup(st.castX, st.castY - 48, '💨 Hụt rồi! Cá vụt mất rồi!', '#ef4444');
+      this.spawnStationParticles(st.castX, st.castY, ['💦', '💨', '🫧'], 0x94a3b8);
       const trackEl = this.onMapAuditionEl?.querySelector('#fishing-vertical-track');
       if (trackEl) {
-        trackEl.style.transform = 'scale(1.06)';
-        setTimeout(() => {
-          if (trackEl) trackEl.style.transform = '';
-        }, 150);
+        trackEl.style.transform = 'scale(1.08)';
+        trackEl.style.borderColor = '#ef4444';
       }
+
+      // Cá trong hồ vụt lặn sâu trốn thoát
+      if (this.activeBitingPondFish && typeof this.activeBitingPondFish.swimAway === 'function') {
+        this.activeBitingPondFish.swimAway();
+      } else if (this.activeBitingPondFish && typeof this.activeBitingPondFish.resetBackToPond === 'function') {
+        this.activeBitingPondFish.resetBackToPond();
+      }
+
+      window.__fishingSystem?.recordTurnMiss?.('escaped');
+
+      setTimeout(() => {
+        this.stopOnMapFishing(false);
+      }, 420);
     }
   }
 
@@ -3685,6 +3698,34 @@ export class WorldScene extends Phaser.Scene {
     const card = document.createElement('div');
     card.id = 'onmap-catch-visual-card';
 
+    // Helper: Định vị chính xác Nút Túi Của Bé để cá bay vào túi và nảy túi
+    const triggerFlyToBag = (flyDelay, removeDelay) => {
+      setTimeout(() => {
+        if (!card.parentNode) return;
+        const bagBtn = document.getElementById('btn-floating-bag') || document.querySelector('.floating-bag-btn');
+        if (bagBtn) {
+          const bagRect = bagBtn.getBoundingClientRect();
+          const rootEl = document.getElementById('game-root') || document.body;
+          const rootRect = rootEl.getBoundingClientRect();
+          const targetX = Math.round(bagRect.left + bagRect.width / 2 - rootRect.left);
+          const targetY = Math.round(bagRect.top + bagRect.height / 2 - rootRect.top);
+          card.style.setProperty('--bag-fly-x', `${targetX}px`);
+          card.style.setProperty('--bag-fly-y', `${targetY}px`);
+
+          setTimeout(() => {
+            bagBtn.classList.remove('bag-bounce-on-catch');
+            void bagBtn.offsetWidth;
+            bagBtn.classList.add('bag-bounce-on-catch');
+            setTimeout(() => bagBtn.classList.remove('bag-bounce-on-catch'), 450);
+          }, 300);
+        }
+        card.classList.add('fly-to-bag');
+      }, flyDelay);
+      setTimeout(() => {
+        card.remove();
+      }, removeDelay);
+    };
+
     if (isRareFish) {
       // CÁ THẦN THOẠI QUÝ HIẾM: Hiệu ứng Magic cực đỉnh, tia sáng vũ trụ, vinh danh rực rỡ!
       card.className = 'onmap-catch-visual-card rare-fish-magic-celebration';
@@ -3725,14 +3766,7 @@ export class WorldScene extends Phaser.Scene {
       gameRoot.appendChild(card);
 
       // Cá hiếm hiển thị ăn mừng rực rỡ 3.4s trước khi bay vào túi
-      setTimeout(() => {
-        if (card.parentNode) {
-          card.classList.add('fly-to-bag');
-        }
-      }, 3400);
-      setTimeout(() => {
-        card.remove();
-      }, 4000);
+      triggerFlyToBag(3400, 4000);
     } else if (isBigFish) {
       // CÁ TO KHỦNG: Hiệu ứng chúc mừng rực rỡ, pháo hoa, vinh danh huy hoàng!
       card.className = 'onmap-catch-visual-card big-fish-celebration';
@@ -3764,14 +3798,7 @@ export class WorldScene extends Phaser.Scene {
       gameRoot.appendChild(card);
 
       // Cá to hiển thị ăn mừng 2.4s trước khi bay vào túi
-      setTimeout(() => {
-        if (card.parentNode) {
-          card.classList.add('fly-to-bag');
-        }
-      }, 2400);
-      setTimeout(() => {
-        card.remove();
-      }, 3000);
+      triggerFlyToBag(2400, 3000);
     } else {
       // CÁ NHỎ: Chỉ bay thẳng nhanh vào túi, không gián đoạn rình rang
       card.className = 'onmap-catch-visual-card small-fish-quick';
@@ -3793,14 +3820,7 @@ export class WorldScene extends Phaser.Scene {
       gameRoot.appendChild(card);
 
       // Cá nhỏ bay vào túi siêu nhanh trong 600ms
-      setTimeout(() => {
-        if (card.parentNode) {
-          card.classList.add('fly-to-bag');
-        }
-      }, 600);
-      setTimeout(() => {
-        card.remove();
-      }, 1150);
+      triggerFlyToBag(600, 1150);
     }
   }
 

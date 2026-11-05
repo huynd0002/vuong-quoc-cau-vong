@@ -230,6 +230,30 @@ export class PondFish {
     });
   }
 
+  /**
+   * Cá vụt thoát lặn nhanh xuống sâu khi bé câu hụt (hụt 1 lần là mất cá luôn)
+   */
+  swimAway() {
+    if (!this.sprite?.active) return;
+    this.spawnSurfaceRipple(1.8);
+    this.state = 'diving';
+    if (this.scene?.tweens) {
+      this.scene.tweens.killTweensOf(this.sprite);
+      this.scene.tweens.add({
+        targets: this.sprite,
+        alpha: 0.15,
+        scale: this.scale * 0.72,
+        duration: 380,
+        ease: 'Cubic.easeIn',
+        onComplete: () => {
+          this.resetBackToPond();
+        }
+      });
+    } else {
+      this.resetBackToPond();
+    }
+  }
+
   resetBackToPond() {
     if (!this.sprite?.active) return;
     const pt = this.pickSafePondPoint();

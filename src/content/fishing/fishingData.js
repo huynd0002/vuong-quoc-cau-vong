@@ -12,7 +12,7 @@ export const FISHING_LIMITS = Object.freeze({
   HOOK_WINDOW_MS: 2200,
   HOOK_WINDOW_ASSIST_MS: 3000,
   PULL_TIMEOUT_MS: 30000,
-  MAX_PULL_STRIKES: 3,
+  MAX_PULL_STRIKES: 1, // Bé chỉ được hụt 1 lần, hụt 1 lần là mất cá luôn
   INPUT_DEBOUNCE_MS: 350,
   ANTI_REPEAT_HISTORY: 3
 });
