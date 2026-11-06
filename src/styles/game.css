@@ -8675,11 +8675,11 @@ button:focus-visible, summary:focus-visible { outline:3px solid #175dba; outline
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .pair-column-divider {
-  font-size: 22px;
+  font-size: 24px;
   color: #ec4899;
   font-weight: 900;
   display: flex;
@@ -8689,40 +8689,104 @@ button:focus-visible, summary:focus-visible { outline:3px solid #175dba; outline
 
 .pair-item-btn {
   background: #ffffff;
-  border: 2.5px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 8px 12px;
+  border: 3.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 8px 14px;
   font-size: 14px;
   font-weight: 800;
   color: #1e293b;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 3px 0 #cbd5e1;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 0 #cbd5e1;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 78px;
+  position: relative;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.pair-item-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.pair-item-img {
+  width: 68px;
+  height: 68px;
+  max-width: 100%;
+  max-height: 72px;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pair-giant-emoji {
+  font-size: 50px;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .pair-item-btn:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.02);
   border-color: #a855f7;
+}
+
+.pair-item-btn:hover .pair-item-img,
+.pair-item-btn:hover .pair-giant-emoji {
+  transform: scale(1.08);
 }
 
 .pair-item-btn.selected-left {
   border-color: #8b5cf6;
   background: #f5f3ff;
-  box-shadow: 0 3px 0 #6d28d9, 0 0 12px rgba(139, 92, 246, 0.4);
-  transform: scale(1.03);
+  box-shadow: 0 4px 0 #6d28d9, 0 0 16px rgba(139, 92, 246, 0.45);
+  transform: scale(1.05);
 }
 
 .pair-item-btn.matched-pair {
   border-color: #22c55e !important;
   background: #f0fdf4 !important;
   color: #15803d !important;
-  box-shadow: 0 3px 0 #16a34a !important;
+  box-shadow: 0 4px 0 #16a34a, 0 0 14px rgba(34, 197, 94, 0.35) !important;
   pointer-events: none;
+  transform: scale(1.02);
+}
+
+.pair-check-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 3px 8px rgba(34, 197, 94, 0.5);
+  z-index: 5;
+  animation: popPairBadge 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes popPairBadge {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .pair-item-btn.mismatch-shake {

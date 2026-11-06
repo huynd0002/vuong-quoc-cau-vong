@@ -1733,12 +1733,30 @@ export class BattleArenaModal {
     const colRight = document.createElement('div');
     colRight.className = 'pair-column pair-col-right';
 
+    // Helper tạo nội dung thuần hình ảnh (hoặc emoji khổng lồ), loại bỏ chữ text để bé dễ nhìn và không cần đọc chữ
+    const renderPairVisualItem = (item) => {
+      if (item.image) {
+        return `<div class="pair-item-visual"><img src="${item.image}" class="pair-item-img" alt="" draggable="false" /></div>`;
+      }
+      const icon = item.icon || item.emoji;
+      if (icon) {
+        return `<div class="pair-item-visual"><span class="pair-giant-emoji">${icon}</span></div>`;
+      }
+      if (typeof item.text === 'string') {
+        const emojiMatch = item.text.match(/[\p{Extended_Pictographic}\u2600-\u27BF]/u);
+        if (emojiMatch && emojiMatch[0]) {
+          return `<div class="pair-item-visual"><span class="pair-giant-emoji">${emojiMatch[0]}</span></div>`;
+        }
+      }
+      return `<div class="pair-item-visual"><span class="pair-giant-emoji">✨</span></div>`;
+    };
+
     leftItems.forEach(item => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'pair-item-btn pair-left';
       btn.dataset.id = item.id;
-      btn.innerHTML = `<span class="pair-item-text">${item.text}</span>`;
+      btn.innerHTML = renderPairVisualItem(item);
 
       btn.addEventListener('click', () => {
         if (this.isTurnLocked || btn.classList.contains('matched-pair')) return;
@@ -1760,7 +1778,7 @@ export class BattleArenaModal {
       btn.className = 'pair-item-btn pair-right';
       btn.dataset.id = item.id;
       btn.dataset.matchId = item.matchId;
-      btn.innerHTML = `<span class="pair-item-text">${item.text}</span>`;
+      btn.innerHTML = renderPairVisualItem(item);
 
       btn.addEventListener('click', () => {
         if (this.isTurnLocked || btn.classList.contains('matched-pair')) return;
@@ -1779,8 +1797,19 @@ export class BattleArenaModal {
           activeLeftBtn.classList.add('matched-pair');
           btn.classList.add('matched-pair');
 
-          activeLeftBtn.innerHTML = `<span>✓ ${activeLeftBtn.textContent}</span>`;
-          btn.innerHTML = `<span>✓ ${btn.textContent}</span>`;
+          // Giữ nguyên hình ảnh to đẹp mắt, chỉ gắn thêm huy hiệu tích xanh góc trên
+          if (!activeLeftBtn.querySelector('.pair-check-badge')) {
+            const badgeA = document.createElement('div');
+            badgeA.className = 'pair-check-badge';
+            badgeA.textContent = '✓';
+            activeLeftBtn.appendChild(badgeA);
+          }
+          if (!btn.querySelector('.pair-check-badge')) {
+            const badgeB = document.createElement('div');
+            badgeB.className = 'pair-check-badge';
+            badgeB.textContent = '✓';
+            btn.appendChild(badgeB);
+          }
 
           matchedCount++;
           const countEl = wrap.querySelector('#pair-matched-count');

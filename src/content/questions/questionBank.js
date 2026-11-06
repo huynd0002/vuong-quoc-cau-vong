@@ -1666,21 +1666,42 @@ export const QUESTION_BANK = {
     skillId: 'matching',
     type: 'pair_matching',
     difficulty: 1,
-    prompt: '🔗 Bé hãy nối con vật với món ăn yêu thích của bạn ấy nhé! 🥕',
-    speak: 'Bé hãy nối con vật với món ăn yêu thích của bạn ấy nhé!',
+    prompt: '🔗 Bé hãy chạm nối con vật với món ăn yêu thích của bạn ấy nhé! 🥕',
+    speak: 'Bé hãy chạm nối con vật với món ăn yêu thích của bạn ấy nhé!',
     leftColumn: [
-      { id: 'l1', text: '🐰 Bé Thỏ' },
-      { id: 'l2', text: '🐒 Chú Khỉ' },
-      { id: 'l3', text: '🐶 Chó Cún' }
+      { id: 'l1', text: 'Thỏ Trắng', image: '/assets/edu/animals/anim_bunny.png' },
+      { id: 'l2', text: 'Chú Khỉ', image: '/assets/edu/animals/anim_monkey.png' },
+      { id: 'l3', text: 'Mèo Con', image: '/assets/edu/animals/anim_cat.png' }
     ],
     rightColumn: [
-      { id: 'r1', text: '🥕 Củ Cà Rốt', matchId: 'l1' },
-      { id: 'r2', text: '🍌 Quả Chuối', matchId: 'l2' },
-      { id: 'r3', text: '🦴 Khúc Xương', matchId: 'l3' }
+      { id: 'r1', text: 'Cà Rốt', image: '/assets/edu/matching/pair_rabbit_carrot.jpg', matchId: 'l1' },
+      { id: 'r2', text: 'Chuối Vàng', image: '/assets/edu/matching/pair_monkey_banana.jpg', matchId: 'l2' },
+      { id: 'r3', text: 'Cá Nhỏ', image: '/assets/edu/matching/pair_cat_fish.jpg', matchId: 'l3' }
     ],
-    choices: ['Cà rốt', 'Chuối', 'Xương'],
+    choices: ['Cà rốt', 'Chuối', 'Cá ngon'],
     correct: 0,
-    hint: 'Bé Thỏ thích ăn cà rốt, Chú Khỉ thích chuối ngọt, còn Cún con gặm khúc xương!'
+    hint: 'Bé Thỏ thích ăn cà rốt, Chú Khỉ thích chuối ngọt, còn Bé Mèo thích cá tươi ngon!'
+  },
+  q_map1_pair_nature: {
+    id: 'q_map1_pair_nature',
+    skillId: 'matching',
+    type: 'pair_matching',
+    difficulty: 1,
+    prompt: '🔗 Bé hãy nối hình ảnh thiên nhiên tương ứng với nhau nhé! 🌸',
+    speak: 'Bé hãy nối hình ảnh thiên nhiên tương ứng với nhau nhé!',
+    leftColumn: [
+      { id: 'l1', text: 'Mây Mưa', image: '/assets/edu/matching/pair_rain_cloud.jpg' },
+      { id: 'l2', text: 'Hoa Hướng Dương', image: '/assets/edu/matching/pair_sun_flower.jpg' },
+      { id: 'l3', text: 'Tổ Chim', image: '/assets/edu/matching/pair_bird_nest.jpg' }
+    ],
+    rightColumn: [
+      { id: 'r1', text: 'Chiếc Ô', image: '/assets/edu/toys/toy_umbrella.png', matchId: 'l1' },
+      { id: 'r2', text: 'Chú Ong', image: '/assets/edu/animals/anim_bee.png', matchId: 'l2' },
+      { id: 'r3', text: 'Chú Vịt Con', image: '/assets/edu/animals/anim_duck.png', matchId: 'l3' }
+    ],
+    choices: ['Chiếc Ô', 'Chú Ong', 'Vịt Con'],
+    correct: 0,
+    hint: 'Trời mưa thì che ô, hoa thơm gọi bạn ong đến, tổ chim có chim con ngoan ngoãn!'
   },
   q_map1_drag_size: {
     id: 'q_map1_drag_size',
@@ -1727,18 +1748,39 @@ export const QUESTION_BANK = {
     prompt: '🔗 Bé hãy nối hình khối với đồ vật có hình dạng tương ứng nhé! ⭕',
     speak: 'Bé hãy nối hình khối với đồ vật có hình dạng tương ứng nhé!',
     leftColumn: [
-      { id: 'l1', text: '⭕ Hình Tròn' },
-      { id: 'l2', text: '⬛ Hình Vuông' },
-      { id: 'l3', text: '🔺 Hình Tam Giác' }
+      { id: 'l1', text: 'Hình Tròn', image: '/assets/edu/shapes/shape_circle.png' },
+      { id: 'l2', text: 'Hình Vuông', image: '/assets/edu/shapes/shape_square.png' },
+      { id: 'l3', text: 'Hình Tam Giác', image: '/assets/edu/shapes/shape_triangle.png' }
     ],
     rightColumn: [
-      { id: 'r1', text: '⚽ Quả Bóng Tròn', matchId: 'l1' },
-      { id: 'r2', text: '🎁 Hộp Quà Vuông', matchId: 'l2' },
-      { id: 'r3', text: '⛵ Cánh Buồm Nhọn', matchId: 'l3' }
+      { id: 'r1', text: 'Quả Bóng Tròn', image: '/assets/edu/toys/toy_ball.png', matchId: 'l1' },
+      { id: 'r2', text: 'Hộp Quà Vuông', image: '/assets/edu/toys/toy_blocks.png', matchId: 'l2' },
+      { id: 'r3', text: 'Cánh Buồm Nhọn', image: '/assets/edu/toys/toy_boat.png', matchId: 'l3' }
     ],
     choices: ['Hình Tròn', 'Hình Vuông', 'Hình Tam Giác'],
     correct: 0,
     hint: 'Quả bóng tròn xoe, chiếc hộp quà vuông vức, cánh buồm hình tam giác!'
+  },
+  q_map2_pair_colors_fruits: {
+    id: 'q_map2_pair_colors_fruits',
+    skillId: 'matching',
+    type: 'pair_matching',
+    difficulty: 2,
+    prompt: '🔗 Bé hãy nối sắc màu với loại quả có màu sắc tương ứng nhé! 🍎',
+    speak: 'Bé hãy nối sắc màu với loại quả có màu sắc tương ứng nhé!',
+    leftColumn: [
+      { id: 'l1', text: 'Màu Đỏ', image: '/assets/edu/colors/color_red.png' },
+      { id: 'l2', text: 'Màu Vàng', image: '/assets/edu/colors/color_yellow.png' },
+      { id: 'l3', text: 'Màu Cam', image: '/assets/edu/colors/color_orange.png' }
+    ],
+    rightColumn: [
+      { id: 'r1', text: 'Quả Táo Đỏ', image: '/assets/edu/fruits/fruit_apple.png', matchId: 'l1' },
+      { id: 'r2', text: 'Quả Chuối Vàng', image: '/assets/edu/matching/pair_monkey_banana.jpg', matchId: 'l2' },
+      { id: 'r3', text: 'Quả Cam Mọng', image: '/assets/edu/fruits/fruit_orange.png', matchId: 'l3' }
+    ],
+    choices: ['Quả Táo', 'Quả Chuối', 'Quả Cam'],
+    correct: 0,
+    hint: 'Táo tươi màu đỏ, chuối thơm màu vàng, quả cam mọng nước màu cam!'
   },
   q_map2_drag_count_sequence: {
     id: 'q_map2_drag_count_sequence',
@@ -1785,21 +1827,42 @@ export const QUESTION_BANK = {
     skillId: 'matching',
     type: 'pair_matching',
     difficulty: 3,
-    prompt: '🔗 Bé hãy nối chữ số với số lượng quả pha lê tương ứng nhé! ⭐',
-    speak: 'Bé hãy nối chữ số với số lượng quả pha lê tương ứng nhé!',
+    prompt: '🔗 Bé hãy chạm nối các bạn nhỏ với món quà yêu thích nhé! ⭐',
+    speak: 'Bé hãy chạm nối các bạn nhỏ với món quà yêu thích nhé!',
     leftColumn: [
-      { id: 'l1', text: 'Số 2️⃣' },
-      { id: 'l2', text: 'Số 3️⃣' },
-      { id: 'l3', text: 'Số 4️⃣' }
+      { id: 'l1', text: 'Gấu Bông', image: '/assets/edu/toys/toy_teddy.png' },
+      { id: 'l2', text: 'Bé Khỉ', image: '/assets/edu/animals/anim_monkey.png' },
+      { id: 'l3', text: 'Bé Ong', image: '/assets/edu/animals/anim_bee.png' }
     ],
     rightColumn: [
-      { id: 'r1', text: '💎💎 (2 viên)', matchId: 'l1' },
-      { id: 'r2', text: '💎💎💎 (3 viên)', matchId: 'l2' },
-      { id: 'r3', text: '💎💎💎💎 (4 viên)', matchId: 'l3' }
+      { id: 'r1', text: 'Quả Táo Đỏ', image: '/assets/edu/fruits/fruit_apple.png', matchId: 'l1' },
+      { id: 'r2', text: 'Quả Chuối Vàng', image: '/assets/edu/matching/pair_monkey_banana.jpg', matchId: 'l2' },
+      { id: 'r3', text: 'Hoa Hướng Dương', image: '/assets/edu/matching/pair_sun_flower.jpg', matchId: 'l3' }
     ],
-    choices: ['2 viên', '3 viên', '4 viên'],
+    choices: ['Gấu và Táo', 'Khỉ và Chuối', 'Ong và Hoa'],
     correct: 0,
-    hint: 'Bé đếm số viên pha lê ở mỗi ô rồi nối với số tương ứng nhé!'
+    hint: 'Bác Gấu thích ăn táo, Bé Khỉ thích ăn chuối ngọt, chú Ong thích hút mật hoa!'
+  },
+  q_map3_pair_toys: {
+    id: 'q_map3_pair_toys',
+    skillId: 'matching',
+    type: 'pair_matching',
+    difficulty: 3,
+    prompt: '🔗 Bé hãy nối các cặp đồ chơi cùng nhóm với nhau nhé! 🧸',
+    speak: 'Bé hãy nối các cặp đồ chơi cùng nhóm với nhau nhé!',
+    leftColumn: [
+      { id: 'l1', text: 'Gấu Bông', image: '/assets/edu/toys/toy_teddy.png' },
+      { id: 'l2', text: 'Máy Bay', image: '/assets/edu/toys/toy_plane.png' },
+      { id: 'l3', text: 'Kem Ốc Quế', image: '/assets/edu/toys/toy_icecream.png' }
+    ],
+    rightColumn: [
+      { id: 'r1', text: 'Trống Vui Nhộn', image: '/assets/edu/toys/toy_drum.png', matchId: 'l1' },
+      { id: 'r2', text: 'Ô Tô Con', image: '/assets/edu/toys/toy_car.png', matchId: 'l2' },
+      { id: 'r3', text: 'Kẹo Mút', image: '/assets/edu/toys/toy_lollipop.png', matchId: 'l3' }
+    ],
+    choices: ['Gấu và Trống', 'Xe và Máy Bay', 'Kem và Kẹo'],
+    correct: 0,
+    hint: 'Gấu bông chơi cùng trống rộn rã, máy bay bay cùng ô tô, kem ngọt sánh đôi kẹo mút!'
   },
   q_map3_drag_stars_sequence: {
     id: 'q_map3_drag_stars_sequence',
@@ -1846,21 +1909,21 @@ export const QUESTION_BANK = {
     skillId: 'matching',
     type: 'pair_matching',
     difficulty: 4,
-    prompt: '🔗 Bé hãy nối phép tính tia nắng với kết quả đúng nhé! ☀️',
-    speak: 'Bé hãy nối phép tính tia nắng với kết quả đúng nhé!',
+    prompt: '🔗 Bé hãy chạm nối các cặp sinh vật biển nhiệm màu nhé! 🌊',
+    speak: 'Bé hãy chạm nối các cặp sinh vật biển nhiệm màu nhé!',
     leftColumn: [
-      { id: 'l1', text: '1 + 2' },
-      { id: 'l2', text: '2 + 2' },
-      { id: 'l3', text: '5 - 1' }
+      { id: 'l1', text: 'Cá Voi', image: '/assets/edu/animals/anim_whale.png' },
+      { id: 'l2', text: 'Chú Rùa', image: '/assets/edu/animals/anim_turtle.png' },
+      { id: 'l3', text: 'Chú Cua', image: '/assets/edu/animals/anim_crab.png' }
     ],
     rightColumn: [
-      { id: 'r1', text: '= 3 ⭐', matchId: 'l1' },
-      { id: 'r2', text: '= 4 ⭐', matchId: 'l2' },
-      { id: 'r3', text: '= 4 ☀️', matchId: 'l3' }
+      { id: 'r1', text: 'Cá Voi', image: '/assets/edu/animals/anim_whale.png', matchId: 'l1' },
+      { id: 'r2', text: 'Chú Rùa', image: '/assets/edu/animals/anim_turtle.png', matchId: 'l2' },
+      { id: 'r3', text: 'Chú Cua', image: '/assets/edu/animals/anim_crab.png', matchId: 'l3' }
     ],
-    choices: ['3', '4', '4'],
+    choices: ['Cá Voi', 'Chú Rùa', 'Chú Cua'],
     correct: 0,
-    hint: '1 cộng 2 bằng 3, 2 cộng 2 bằng 4, 5 bớt 1 còn 4!'
+    hint: 'Bé hãy tìm hình chú cá voi, bạn rùa biển và bạn cua đỏ giống nhau để nối nhé!'
   },
   q_map4_drag_even_sequence: {
     id: 'q_map4_drag_even_sequence',
@@ -1907,21 +1970,21 @@ export const QUESTION_BANK = {
     skillId: 'matching',
     type: 'pair_matching',
     difficulty: 5,
-    prompt: '🔗 Bé hãy nối các cặp từ và hình ảnh tương phản đối lập nhé! ⚖️',
-    speak: 'Bé hãy nối các cặp từ và hình ảnh tương phản đối lập nhé!',
+    prompt: '🔗 Bé hãy nối các cặp hình ảnh tương phản đối lập nhé! ⚖️',
+    speak: 'Bé hãy nối các cặp hình ảnh tương phản đối lập nhé!',
     leftColumn: [
-      { id: 'l1', text: '☀️ Ban Ngày' },
-      { id: 'l2', text: '🐘 Voi Rất To' },
-      { id: 'l3', text: '🔥 Nóng Ấm' }
+      { id: 'l1', text: 'Ban Ngày', icon: '☀️' },
+      { id: 'l2', text: 'Bác Voi To', image: '/assets/edu/animals/anim_elephant.png' },
+      { id: 'l3', text: 'Lửa Nóng', icon: '🔥' }
     ],
     rightColumn: [
-      { id: 'r1', text: '🌙 Ban Đêm', matchId: 'l1' },
-      { id: 'r2', text: '🐜 Kiến Rất Nhỏ', matchId: 'l2' },
-      { id: 'r3', text: '❄️ Lạnh Giá', matchId: 'l3' }
+      { id: 'r1', text: 'Ban Đêm', icon: '🌙', matchId: 'l1' },
+      { id: 'r2', text: 'Kiến Bé Xíu', icon: '🐜', matchId: 'l2' },
+      { id: 'r3', text: 'Tuyết Lạnh', icon: '❄️', matchId: 'l3' }
     ],
     choices: ['Ban Đêm', 'Kiến Nhỏ', 'Lạnh Giá'],
     correct: 0,
-    hint: 'Ngày đối lập với Đêm, Voi to lớn đối lập với Kiến bé xíu, Nóng đối lập với Lạnh!'
+    hint: 'Mặt trời đối lập với Mặt trăng, Bác Voi to lớn đối lập bạn Kiến bé xíu, Ngọn lửa ấm đối lập bông tuyết lạnh!'
   },
   q_map5_drag_countdown: {
     id: 'q_map5_drag_countdown',
@@ -1970,21 +2033,21 @@ export const QUESTION_BANK = {
     skillId: 'matching',
     type: 'pair_matching',
     difficulty: 5,
-    prompt: '🔗 Bé hãy nối số lượng góc với hình khối kỳ diệu nhé! 📐',
-    speak: 'Bé hãy nối số lượng góc với hình khối kỳ diệu nhé!',
+    prompt: '🔗 Bé hãy nối hình khối với đồ vật tương ứng nhé! 📐',
+    speak: 'Bé hãy nối hình khối với đồ vật tương ứng nhé!',
     leftColumn: [
-      { id: 'l1', text: '3 Góc nhọn' },
-      { id: 'l2', text: '4 Góc vuông' },
-      { id: 'l3', text: '0 Góc (tròn)' }
+      { id: 'l1', text: 'Hình Tròn', image: '/assets/edu/shapes/shape_circle.png' },
+      { id: 'l2', text: 'Hình Vuông', image: '/assets/edu/shapes/shape_square.png' },
+      { id: 'l3', text: 'Hình Trái Tim', image: '/assets/edu/shapes/shape_heart.png' }
     ],
     rightColumn: [
-      { id: 'r1', text: '🔺 Hình Tam Giác', matchId: 'l1' },
-      { id: 'r2', text: '⬛ Hình Vuông', matchId: 'l2' },
-      { id: 'r3', text: '⭕ Hình Tròn', matchId: 'l3' }
+      { id: 'r1', text: 'Bóng Tròn', image: '/assets/edu/toys/toy_ball.png', matchId: 'l1' },
+      { id: 'r2', text: 'Khối Hộp Vuông', image: '/assets/edu/toys/toy_blocks.png', matchId: 'l2' },
+      { id: 'r3', text: 'Kẹo Mút Tròn', image: '/assets/edu/toys/toy_lollipop.png', matchId: 'l3' }
     ],
     choices: ['Tam Giác', 'Hình Vuông', 'Hình Tròn'],
     correct: 0,
-    hint: '3 góc nhọn là Hình Tam Giác, 4 góc đều là Hình Vuông, không có góc nào là Hình Tròn!'
+    hint: 'Bé nối hình tròn với quả bóng, hình vuông với khối hộp, trái tim với kẹo ngọt ngào!'
   },
   q_map6_drag_rainbow_spectrum: {
     id: 'q_map6_drag_rainbow_spectrum',
@@ -2325,21 +2388,23 @@ export const QUESTION_BANK = {
   },
   q_map6_pair_matching_animals: {
     id: 'q_map6_pair_matching_animals',
-    skillId: 'pair_matching',
+    skillId: 'matching',
     type: 'pair_matching',
     difficulty: 3,
     zone: 'zone6',
-    prompt: 'Bé hãy chạm vào 2 hình con vật giống nhau để nối đường cầu vồng nhé! 🌈',
-    speak: 'Bé hãy chạm vào hai hình con vật giống nhau để nối đường cầu vồng nhé!',
-    items: [
-      { id: 'a1', label: 'Sư Tử', icon: '🦁', image: '/assets/edu/animals/anim_lion.png', pairId: 'p1' },
-      { id: 'a2', label: 'Chú Voi', icon: '🐘', image: '/assets/edu/animals/anim_elephant.png', pairId: 'p2' },
-      { id: 'a3', label: 'Hươu Cao Cổ', icon: '🦒', image: '/assets/edu/animals/anim_giraffe.png', pairId: 'p3' },
-      { id: 'a4', label: 'Sư Tử', icon: '🦁', image: '/assets/edu/animals/anim_lion.png', pairId: 'p1' },
-      { id: 'a5', label: 'Chú Voi', icon: '🐘', image: '/assets/edu/animals/anim_elephant.png', pairId: 'p2' },
-      { id: 'a6', label: 'Hươu Cao Cổ', icon: '🦒', image: '/assets/edu/animals/anim_giraffe.png', pairId: 'p3' }
+    prompt: '🔗 Bé hãy chạm nối hai hình con vật giống nhau để mở cổng cầu vồng nhé! 🦁🐘🦒',
+    speak: 'Bé hãy chạm nối hai hình con vật giống nhau để mở cổng cầu vồng nhé!',
+    leftColumn: [
+      { id: 'l1', text: 'Sư Tử', image: '/assets/edu/animals/anim_lion.png' },
+      { id: 'l2', text: 'Chú Voi', image: '/assets/edu/animals/anim_elephant.png' },
+      { id: 'l3', text: 'Hươu Cao Cổ', image: '/assets/edu/animals/anim_giraffe.png' }
     ],
-    choices: ['Hoàn thành ghép cặp', 'Chưa xong'],
+    rightColumn: [
+      { id: 'r1', text: 'Sư Tử', image: '/assets/edu/animals/anim_lion.png', matchId: 'l1' },
+      { id: 'r2', text: 'Chú Voi', image: '/assets/edu/animals/anim_elephant.png', matchId: 'l2' },
+      { id: 'r3', text: 'Hươu Cao Cổ', image: '/assets/edu/animals/anim_giraffe.png', matchId: 'l3' }
+    ],
+    choices: ['Sư Tử', 'Voi', 'Hươu Cao Cổ'],
     correct: 0,
     hint: 'Nối bạn Sư tử với Sư tử, Voi với Voi, Hươu với Hươu nhé!'
   }
