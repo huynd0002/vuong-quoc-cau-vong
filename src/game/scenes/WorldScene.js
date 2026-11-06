@@ -662,9 +662,14 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
-    // 8. Điều khiển bàn phím
-    this.cursors = this.input.keyboard.createCursorKeys();
-    this.wasd = this.input.keyboard.addKeys('W,A,S,D');
+    // 8. Điều khiển bàn phím an toàn cho mọi thiết bị (máy tính, tablet, cảm ứng)
+    const dummyKey = { isDown: false };
+    this.cursors = this.input?.keyboard ? this.input.keyboard.createCursorKeys() : {
+      up: dummyKey, down: dummyKey, left: dummyKey, right: dummyKey
+    };
+    this.wasd = this.input?.keyboard ? this.input.keyboard.addKeys('W,A,S,D') : {
+      W: dummyKey, A: dummyKey, S: dummyKey, D: dummyKey
+    };
 
     // 9. Điều khiển cảm ứng (Tap/Click to move)
     this.input.on('pointerdown', (pointer) => {
@@ -1262,8 +1267,12 @@ export class WorldScene extends Phaser.Scene {
     // Khi câu cá: nhân vật vẫn có thể tự do đi lại và khám phá quanh hồ
     const heroSpeed = this.hero.speed || 165;
     const speed = (delta / 1000) * heroSpeed;
-    let dirX = Number(this.cursors.right.isDown || this.wasd.D.isDown) - Number(this.cursors.left.isDown || this.wasd.A.isDown);
-    let dirY = Number(this.cursors.down.isDown || this.wasd.S.isDown) - Number(this.cursors.up.isDown || this.wasd.W.isDown);
+    const rightDown = Boolean(this.cursors?.right?.isDown || this.wasd?.D?.isDown);
+    const leftDown = Boolean(this.cursors?.left?.isDown || this.wasd?.A?.isDown);
+    const downDown = Boolean(this.cursors?.down?.isDown || this.wasd?.S?.isDown);
+    const upDown = Boolean(this.cursors?.up?.isDown || this.wasd?.W?.isDown);
+    let dirX = Number(rightDown) - Number(leftDown);
+    let dirY = Number(downDown) - Number(upDown);
 
     const jX = this.joystickVector ? this.joystickVector.x : 0;
     const jY = this.joystickVector ? this.joystickVector.y : 0;

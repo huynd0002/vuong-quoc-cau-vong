@@ -1156,6 +1156,11 @@ function getPhaserRendererType() {
     const testCanvas = document.createElement('canvas');
     const gl = testCanvas.getContext('webgl2') || testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
     if (gl && typeof gl.getParameter === 'function') {
+      // Giải phóng context thử nghiệm để không làm cạn kiệt tài nguyên WebGL của trình duyệt
+      try {
+        const loseExt = gl.getExtension('WEBGL_lose_context');
+        if (loseExt) loseExt.loseContext();
+      } catch {}
       return Phaser.AUTO;
     }
   } catch (err) {
@@ -1195,9 +1200,31 @@ const config = {
   scene: [BootScene, PreloadScene, WorldScene]
 };
 
-// Khởi chạy Phaser Game
-const game = new Phaser.Game(config);
+// Khởi chạy Phaser Game với cơ chế Fallback tự động đa tầng
+let game;
+try {
+  game = new Phaser.Game(config);
+} catch (webglErr) {
+  console.warn('[Phaser] Lỗi khởi tạo WebGL, tự động chuyển sang chế độ Canvas 2D an toàn:', webglErr);
+  config.type = Phaser.CANVAS;
+  game = new Phaser.Game(config);
+}
 window.__PHASER_GAME__ = game;
+
+// Watchdog an toàn: Đảm bảo WorldScene luôn hiển thị và không bao giờ bị đơ màn hình xanh
+setTimeout(() => {
+  const ws = window.__worldScene || game?.scene?.getScene('WorldScene');
+  if (!ws || !ws.sys || !ws.sys.isActive()) {
+    console.warn('[Phaser Watchdog] WorldScene chưa hoạt động sau 2.2s, cưỡng chế kích hoạt thế giới...');
+    try {
+      if (game?.scene && !game.scene.isActive('WorldScene')) {
+        game.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+      }
+    } catch (e) {
+      console.error('[Phaser Watchdog] Không thể khởi động WorldScene tự động:', e);
+    }
+  }
+}, 2200);
 
 // Khắc phục triệt để việc mất hình trên iPad / Safari: Quản lý phục hồi WebGL Context & Visibility
 const setupPhaserCanvasRecovery = () => {
@@ -1288,7 +1315,7 @@ if (typeof window !== 'undefined' && /^https?:$/.test(window.location.protocol) 
   });
 }
 
-export const GAME_VERSION = '3.4.0';
+export const GAME_VERSION = '3.5.0';
 
 export function syncGameVersionDisplay() {
   const vText = `ver ${GAME_VERSION}`;

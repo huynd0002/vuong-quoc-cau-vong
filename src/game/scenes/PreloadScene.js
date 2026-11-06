@@ -291,13 +291,34 @@ export class PreloadScene extends Phaser.Scene {
       console.warn(`[PreloadScene] Asset fallback kích hoạt cho: ${file.key}`);
     });
 
-    this.load.once('complete', () => {
+    this.hasTransitioned = false;
+    const transitionToWorld = () => {
+      if (this.hasTransitioned) return;
+      this.hasTransitioned = true;
+      if (this.preloadWatchdog) clearTimeout(this.preloadWatchdog);
       window.dispatchEvent(new CustomEvent('game:load-complete'));
+      if (this.sys && this.sys.isActive()) {
+        this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+      }
+    };
+
+    // Watchdog an toàn: Nếu mạng chậm hoặc giải mã tài nguyên bị kẹt quá 1.8 giây,
+    // tự động bỏ qua và chuyển cảnh ngay vào WorldScene, không để bé bị kẹt ở màn hình xanh
+    this.preloadWatchdog = setTimeout(() => {
+      console.warn('[PreloadScene] Watchdog kích hoạt: Quá thời gian nạp tài nguyên, tự động vào thế giới!');
+      transitionToWorld();
+    }, 1800);
+
+    this.load.once('complete', () => {
+      transitionToWorld();
     });
   }
 
   create() {
-    // Bản đồ khởi đầu luôn là Nông Trại Nuôi Thú (map_pet_farm) khi bé vào game
-    this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+    if (this.preloadWatchdog) clearTimeout(this.preloadWatchdog);
+    if (!this.hasTransitioned) {
+      this.hasTransitioned = true;
+      this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+    }
   }
 }
