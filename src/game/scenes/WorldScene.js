@@ -155,7 +155,8 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
-    // 1. Vẽ hình nền map với cơ chế bảo đảm nạp tức thì
+    // 1. Vẽ hình nền map với cơ chế bảo đảm nạp tức thì và nền an toàn
+    this.drawFallbackBackground();
     this.bgImage = null;
     if (this.textures.exists(mapConfig.bgKey)) {
       this.bgImage = this.add.image(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2, mapConfig.bgKey)
@@ -1235,6 +1236,7 @@ export class WorldScene extends Phaser.Scene {
     this.cameras.main.setViewport(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
     this.cameras.main.setZoom(1);
     this.cameras.main.centerOn(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2);
+    this.cameras.main.setBounds(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
   }
 
   update(time, delta) {

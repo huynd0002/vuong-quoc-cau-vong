@@ -8,6 +8,9 @@ import map5BgUrl from '../../../assets/maps/backgrounds/map_5_bg.png?url';
 import map6BgUrl from '../../../assets/maps/backgrounds/map_6_bg.png?url';
 import mapPetFarmBgUrl from '../../../assets/maps/backgrounds/map_pet_farm_bg.png?url';
 import mapKitchenBgUrl from '../../../assets/maps/backgrounds/map_kitchen_bg.png?url';
+import mapFishingPondBgUrl from '../../../assets/maps/backgrounds/map_fishing_pond_bg.png?url';
+import mapRainbowMarketBgUrl from '../../../assets/maps/backgrounds/map_rainbow_market_bg.png?url';
+import mapFashionStreetBgUrl from '../../../assets/maps/backgrounds/map_fashion_street_bg.png?url';
 import heroUrl from '../../../assets/hero/sau/hero_idle.png?url';
 import walkSheetUrl from '../../../assets/hero/sau/sau_walk_sheet.png?url';
 import idleSheetUrl from '../../../assets/hero/sau/sau_idle_sheet.png?url';
@@ -142,6 +145,9 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('map_6_bg', map6BgUrl);
     this.load.image('map_pet_farm_bg', mapPetFarmBgUrl);
     this.load.image('map_kitchen_bg', mapKitchenBgUrl);
+    this.load.image('map_fishing_pond_bg', mapFishingPondBgUrl);
+    this.load.image('map_rainbow_market_bg', mapRainbowMarketBgUrl);
+    this.load.image('map_fashion_street_bg', mapFashionStreetBgUrl);
 
     // Spritesheet nhân vật chính (Cơ bản & Nâng cấp Hiệp Sĩ Cầu Vồng) & Bạn đồng hành
     this.load.image('hero_idle', heroUrl);

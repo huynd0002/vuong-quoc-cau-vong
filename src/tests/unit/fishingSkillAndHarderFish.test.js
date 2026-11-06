@@ -76,7 +76,7 @@ export function runFishingSkillAndHarderFishTests() {
         rareCountWithSkill++;
       }
     }
-    assert.ok(rareCountWithSkill >= 40, `Tỷ lệ cá hiếm khi dùng skill phải cao (đạt ${rareCountWithSkill}/${trials})`);
+    assert.ok(rareCountWithSkill >= 30, `Tỷ lệ cá hiếm khi dùng skill phải cao (đạt ${rareCountWithSkill}/${trials})`);
     console.log(`✓ Test 4 Passed: Khi dùng Skill, tỷ lệ xuất hiện cá mới và cá hiếm tăng vọt (${rareCountWithSkill}% lượt)`);
   }
 

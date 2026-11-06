@@ -1150,9 +1150,22 @@ if (testPortalBtn) {
   });
 }
 
-// 6. Cấu hình Phaser 2D Engine
+// 6. Cấu hình Phaser 2D Engine với khả năng tự động thích ứng & Canvas 2D Fallback
+function getPhaserRendererType() {
+  try {
+    const testCanvas = document.createElement('canvas');
+    const gl = testCanvas.getContext('webgl2') || testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+    if (gl && typeof gl.getParameter === 'function') {
+      return Phaser.AUTO;
+    }
+  } catch (err) {
+    console.warn('[Phaser] WebGL không khả dụng, sử dụng chế độ Canvas 2D:', err);
+  }
+  return Phaser.CANVAS;
+}
+
 const config = {
-  type: Phaser.AUTO,
+  type: getPhaserRendererType(),
   parent: 'game-root',
   width: DESIGN_WIDTH,
   height: DESIGN_HEIGHT,
@@ -1193,7 +1206,13 @@ const setupPhaserCanvasRecovery = () => {
     canvas.__recoveryBound = true;
     canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      console.warn('[Phaser] WebGL Context bị mất! Đang giữ trạng thái và ngăn chặn lỗi...');
+      console.warn('[Phaser] WebGL Context bị mất! Đang tự động khôi phục khung cảnh...');
+      setTimeout(() => {
+        const ws = game.scene.getScene('WorldScene');
+        if (ws && ws.sys && ws.sys.isActive()) {
+          ws.scene.restart();
+        }
+      }, 500);
     });
     canvas.addEventListener('webglcontextrestored', () => {
       console.info('[Phaser] WebGL Context đã phục hồi! Tái tạo lại khung hình thế giới...');
@@ -1215,7 +1234,9 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     if (window.__PHASER_GAME__) {
       try {
-        window.__PHASER_GAME__.step();
+        if (window.__PHASER_GAME__.scale) {
+          window.__PHASER_GAME__.scale.refresh();
+        }
         const ws = window.__PHASER_GAME__.scene.getScene('WorldScene');
         if (ws) {
           if (ws.setWorldScale) ws.setWorldScale();
@@ -1267,7 +1288,7 @@ if (typeof window !== 'undefined' && /^https?:$/.test(window.location.protocol) 
   });
 }
 
-export const GAME_VERSION = '3.2.0';
+export const GAME_VERSION = '3.4.0';
 
 export function syncGameVersionDisplay() {
   const vText = `ver ${GAME_VERSION}`;
