@@ -744,6 +744,16 @@ window.addEventListener('hero:profile-changed', () => {
   updateHeroVitalsHud();
 });
 
+// Lắng nghe sự kiện Bé Thăng Cấp (Player Level Up)
+window.addEventListener('game:player-level-up', (e) => {
+  const newLevel = e.detail?.level || 2;
+  hudController.setStatus(`🎉 CHÚC MỪNG BÉ ĐÃ LÊN CẤP ${newLevel}! ✨`);
+  if (audioService) {
+    audioService.playLevelUp?.();
+    audioService.speak?.(`Chúc mừng bé đã lên cấp ${newLevel}!`);
+  }
+});
+
 // Lắng nghe sự kiện mở khóa skin khi lên cấp
 window.addEventListener('hero:skin-unlocked', (e) => {
   const skin = e.detail?.skin;
@@ -1327,7 +1337,7 @@ if (typeof window !== 'undefined' && /^https?:$/.test(window.location.protocol) 
   });
 }
 
-export const GAME_VERSION = '3.5.3';
+export const GAME_VERSION = '3.5.4';
 
 export function syncGameVersionDisplay() {
   const vText = `ver ${GAME_VERSION}`;

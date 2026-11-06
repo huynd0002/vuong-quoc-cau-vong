@@ -1061,6 +1061,14 @@ export class WorldScene extends Phaser.Scene {
       }
     });
 
+    // 7b. Hiệu ứng khi Bé Thăng Cấp (ui/level-up VFX trên đầu nhân vật)
+    this.addManagedListener('game:player-level-up', (e) => {
+      this.playHeroLevelUpVFX(e.detail?.level);
+    });
+    this.addManagedListener('hero:level-up', (e) => {
+      this.playHeroLevelUpVFX(e.detail?.level);
+    });
+
     // 8. Lắng nghe khi bé ăn món ăn tại Bếp Cầu Vồng để hiển thị hiệu ứng chúc mừng sinh động
     this.addManagedListener('game:dish-eaten', () => {
       if (this.currentMapId !== 'map_kitchen' || !this.hero?.sprite) return;
@@ -1108,6 +1116,16 @@ export class WorldScene extends Phaser.Scene {
       const station = this.mapConfig?.petStations?.find(s => s.type === type || (type === 'potty' && s.type === 'toilet'));
       if (station) this.handlePetStationInteraction(station);
     });
+  }
+
+  /**
+   * Phát hiệu ứng ui/level-up VFX (97 frames pixel-art VFX) trên đầu nhân vật khi lên cấp
+   */
+  playHeroLevelUpVFX(level) {
+    if (this.hero && typeof this.hero.playLevelUpVFX === 'function') {
+      return this.hero.playLevelUpVFX();
+    }
+    return null;
   }
 
   /**

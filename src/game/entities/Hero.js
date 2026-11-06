@@ -967,6 +967,104 @@ export class Hero {
     }
   }
 
+  playLevelUpVFX() {
+    if (!this.scene?.add) return null;
+
+    if (!this.scene.anims.exists('vfx_level_up_anim') && this.scene.textures.exists('vfx_level_up_sheet')) {
+      this.scene.anims.create({
+        key: 'vfx_level_up_anim',
+        frames: this.scene.anims.generateFrameNumbers('vfx_level_up_sheet', { start: 0, end: 96 }),
+        frameRate: 30,
+        repeat: 0
+      });
+    }
+
+    if (!this.scene.anims.exists('vfx_level_up_anim')) return null;
+
+    // Tọa độ hiển thị hiệu ứng: nâng lên 26px để dòng chữ "LEVEL UP!" nổi bật trọn vẹn ngay trên đỉnh đầu nhân vật
+    const feetOffsetY = this.skin === 'knight' ? 33 : 38;
+    const vfxOffsetY = feetOffsetY - 26;
+    const startX = this.getX();
+    const startY = this.getY();
+
+    // Sprite VFX Level Up (97 frames pixel-art VFX)
+    // Pivot [88, 114] trên kích thước [176, 138] -> Cột sáng vàng vươn lên từ chân và chữ LEVEL UP! tỏa sáng rực rỡ ngay trên đỉnh đầu
+    const vfxSprite = this.scene.add.sprite(startX, startY + vfxOffsetY, 'vfx_level_up_sheet');
+    vfxSprite.setOrigin(88 / 176, 114 / 138);
+    vfxSprite.setScale(1.4); // Phóng nhẹ 1.4x để bao trọn cơ thể bé 110px và chữ LEVEL UP! nổi bật rõ ràng
+    vfxSprite.setDepth(Math.floor(startY + 95));
+    vfxSprite.play('vfx_level_up_anim');
+
+    // Vòng hào quang vàng kim bừng sáng dưới chân (Golden ground aura pulse)
+    const groundPulse = this.scene.add.ellipse(startX, startY + feetOffsetY, 92, 38, 0xfacc15, 0.45);
+    groundPulse.setStrokeStyle(3, 0xffffff, 0.9).setDepth(Math.floor(startY + 15));
+    this.scene.tweens.add({
+      targets: groundPulse,
+      scaleX: 1.6,
+      scaleY: 1.6,
+      alpha: 0,
+      duration: 1250,
+      repeat: 1,
+      onComplete: () => groundPulse.destroy()
+    });
+
+    // 14 hạt bụi sao vàng kim bay lơ lửng bốc lên xung quanh (Floating sparkles)
+    const sparkChars = ['✨', '⭐', '✦', '💫', '🌟'];
+    for (let i = 0; i < 14; i++) {
+      const offsetX = (i % 2 === 0 ? 1 : -1) * (15 + (i * 7) % 35);
+      const sp = this.scene.add.text(
+        startX + offsetX,
+        startY + feetOffsetY + ((i * 5) % 20 - 10),
+        sparkChars[i % sparkChars.length],
+        { fontSize: '13px' }
+      ).setOrigin(0.5).setDepth(Math.floor(startY + 96)).setAlpha(0);
+
+      this.scene.tweens.add({
+        targets: sp,
+        y: sp.y - (65 + (i * 9) % 45),
+        alpha: { from: 0.95, to: 0 },
+        scale: { from: 0.8, to: 1.35 },
+        duration: 900 + i * 120,
+        delay: 200 + i * 80,
+        ease: 'Quad.easeOut',
+        onComplete: () => sp.destroy()
+      });
+    }
+
+    // Nhịp nhảy nhót ăn mừng dễ thương của nhân vật khi thăng cấp
+    if (this.sprite) {
+      this.scene.tweens.add({
+        targets: [this.sprite, this.accessorySprite].filter(Boolean),
+        y: '-=12',
+        duration: 220,
+        yoyo: true,
+        repeat: 3,
+        ease: 'Sine.easeInOut'
+      });
+    }
+
+    // Bám theo vị trí nhân vật nếu bé đang di chuyển
+    const followTimer = this.scene.time.addEvent({
+      delay: 16,
+      repeat: 200, // ~3.2s
+      callback: () => {
+        if (!vfxSprite || !vfxSprite.active) {
+          followTimer.remove();
+          return;
+        }
+        vfxSprite.setPosition(this.getX(), this.getY() + vfxOffsetY);
+        vfxSprite.setDepth(Math.floor(this.getY() + 95));
+      }
+    });
+
+    vfxSprite.on('animationcomplete', () => {
+      followTimer.remove();
+      vfxSprite.destroy();
+    });
+
+    return vfxSprite;
+  }
+
   destroy() {
     this.clearHeadBadge();
     if (this.idleTween) this.idleTween.stop();

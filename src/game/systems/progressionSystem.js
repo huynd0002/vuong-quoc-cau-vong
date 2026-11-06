@@ -56,6 +56,16 @@ export class ProgressionSystem {
       unlockedNewSkin = 'knight';
     }
 
+    if (leveledUp && typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('game:player-level-up', {
+        detail: {
+          level: player.level,
+          stars: player.stars,
+          unlockedNewSkin
+        }
+      }));
+    }
+
     return {
       starsGained,
       expGained,

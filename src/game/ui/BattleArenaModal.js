@@ -2926,6 +2926,17 @@ export class BattleArenaModal {
     setTimeout(() => {
       this.closeArena();
 
+      if (rewardRes?.leveledUp) {
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('hero:level-up', {
+            detail: {
+              level: rewardRes.currentLevel,
+              unlockedNewSkin: rewardRes.unlockedNewSkin
+            }
+          }));
+        }, 300);
+      }
+
       if (isBossEncounter) {
         window.dispatchEvent(new CustomEvent('game:boss-resolved', {
           detail: {
