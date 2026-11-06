@@ -160,43 +160,65 @@ export class WorldScene extends Phaser.Scene {
     // 1. Vẽ hình nền map với cơ chế bảo đảm nạp tức thì và nền an toàn
     this.drawFallbackBackground();
     this.bgImage = null;
+
+    const applyBgTexture = (key) => {
+      if (!this.add) return;
+      if (this.bgImage && this.bgImage.active) {
+        this.bgImage.setTexture(key);
+      } else {
+        this.bgImage = this.add.image(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2, key)
+          .setDisplaySize(DESIGN_WIDTH, DESIGN_HEIGHT)
+          .setDepth(-5);
+      }
+    };
+
     if (this.textures.exists(mapConfig.bgKey)) {
-      this.bgImage = this.add.image(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2, mapConfig.bgKey)
-        .setDisplaySize(DESIGN_WIDTH, DESIGN_HEIGHT)
-        .setDepth(-5);
+      applyBgTexture(mapConfig.bgKey);
     } else {
       const targetUrl = MAP_BG_ASSETS[mapConfig.bgKey] || map1BgUrl;
       this.load.image(mapConfig.bgKey, targetUrl);
       this.load.once(`filecomplete-image-${mapConfig.bgKey}`, () => {
-        if (!this.sys || !this.sys.isActive()) return;
-        if (this.bgImage && this.bgImage.active) {
-          this.bgImage.setTexture(mapConfig.bgKey);
-        } else {
-          this.bgImage = this.add.image(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2, mapConfig.bgKey)
-            .setDisplaySize(DESIGN_WIDTH, DESIGN_HEIGHT)
-            .setDepth(-5);
-        }
+        applyBgTexture(mapConfig.bgKey);
       });
-      this.load.start();
+      try {
+        if (!this.load.isLoading()) {
+          this.load.start();
+        }
+      } catch {}
 
       if (this.textures.exists('map_1_bg')) {
-        this.bgImage = this.add.image(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2, 'map_1_bg')
-          .setDisplaySize(DESIGN_WIDTH, DESIGN_HEIGHT)
-          .setDepth(-5);
+        applyBgTexture('map_1_bg');
       } else {
         this.drawFallbackBackground();
       }
     }
 
+    // Lắng nghe sự kiện nạp trễ từ Phaser TextureManager để tự động đắp ảnh nền khi tải xong
+    this.textures.on('addtexture', (key) => {
+      if (key === mapConfig.bgKey) {
+        applyBgTexture(key);
+      }
+    });
+
     // 2. Trang trí hoa cỏ nhẹ & Bộ Props Sống Động
-    this.createDecorations();
-    this.createProps(mapConfig);
+    try {
+      this.createDecorations();
+      this.createProps(mapConfig);
+    } catch (decorErr) {
+      console.warn('[WorldScene] Lỗi trang trí nền/props (đã bỏ qua an toàn):', decorErr);
+    }
 
     // 3. Khởi tạo Hero (Bé Sâu / Bé Sâu Hiệp Sĩ Nâng Cấp)
-    const spawn = mapConfig.heroSpawn || { x: 380, y: 510 };
-    const initialSkin = saveState?.player?.selectedSkin || (saveState?.player?.level >= 2 ? 'knight' : 'default');
-    this.hero = new Hero(this, spawn.x, spawn.y, { skin: initialSkin });
-    this.hero.restoreDisplaySize();
+    try {
+      const spawn = mapConfig.heroSpawn || { x: 380, y: 510 };
+      const initialSkin = saveState?.player?.selectedSkin || (saveState?.player?.level >= 2 ? 'knight' : 'default');
+      this.hero = new Hero(this, spawn.x, spawn.y, { skin: initialSkin });
+      this.hero.restoreDisplaySize();
+    } catch (heroErr) {
+      console.error('[WorldScene] Lỗi khởi tạo Hero (đang dùng fallback khẩn cấp):', heroErr);
+      const spawn = mapConfig.heroSpawn || { x: 380, y: 510 };
+      this.hero = new Hero(this, spawn.x, spawn.y, { skin: 'default' });
+    }
 
     // Hien thi Huy Hieu tren dau nhan vat neu da deo
     const badgeSys = window.__badgeSystem;
@@ -280,26 +302,31 @@ export class WorldScene extends Phaser.Scene {
     const isCompanion = Boolean(saveState?.pet?.isCompanion);
     const petType = saveState?.pet?.type || 'dog';
 
-    if (isFarmMap) {
-      // Tại Nông Trại Nuôi Thú: Chú cún luôn hiện diện tự do để bé chăm sóc, cho ăn, tắm mát, chơi bóng
-      this.pet = new Pet(this, this.hero, {
-        type: petType,
-        size: 96,
-        visible: true,
-        mode: 'farm_roam',
-        x: 480,
-        y: 420
-      });
-    } else if (isCompanion) {
-      // Tại các maps khác: Cún CHỈ xuất hiện và đi theo KHI VÀ CHỈ KHI đã được bé yêu cầu tại nông trại
-      this.pet = new Pet(this, this.hero, {
-        type: petType,
-        size: 96,
-        visible: true,
-        mode: 'follow'
-      });
-    } else {
-      // Chưa được yêu cầu: Cún ở lại nông trại, hoàn toàn không xuất hiện ở map này
+    try {
+      if (isFarmMap) {
+        // Tại Nông Trại Nuôi Thú: Chú cún luôn hiện diện tự do để bé chăm sóc, cho ăn, tắm mát, chơi bóng
+        this.pet = new Pet(this, this.hero, {
+          type: petType,
+          size: 96,
+          visible: true,
+          mode: 'farm_roam',
+          x: 480,
+          y: 420
+        });
+      } else if (isCompanion) {
+        // Tại các maps khác: Cún CHỈ xuất hiện và đi theo KHI VÀ CHỈ KHI đã được bé yêu cầu tại nông trại
+        this.pet = new Pet(this, this.hero, {
+          type: petType,
+          size: 96,
+          visible: true,
+          mode: 'follow'
+        });
+      } else {
+        // Chưa được yêu cầu: Cún ở lại nông trại, hoàn toàn không xuất hiện ở map này
+        this.pet = null;
+      }
+    } catch (petErr) {
+      console.warn('[WorldScene] Lỗi khởi tạo Pet (đã bỏ qua an toàn):', petErr);
       this.pet = null;
     }
 

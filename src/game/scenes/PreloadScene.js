@@ -297,30 +297,49 @@ export class PreloadScene extends Phaser.Scene {
 
     this.load.on('loaderror', (file) => {
       console.warn(`[PreloadScene] Asset fallback kích hoạt cho: ${file.key}`);
+      // Tạo texture dự phòng 2x2 nếu tài nguyên bị lỗi nạp mạng
+      try {
+        if (!this.textures.exists(file.key)) {
+          const canvas = document.createElement('canvas');
+          canvas.width = 32;
+          canvas.height = 32;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.fillStyle = '#86efac';
+            ctx.fillRect(0, 0, 32, 32);
+            this.textures.addCanvas(file.key, canvas);
+          }
+        }
+      } catch (err) {
+        console.warn(`[PreloadScene] Không thể tạo fallback texture cho ${file.key}:`, err);
+      }
     });
 
     this.hasTransitioned = false;
     const transitionToWorld = () => {
       if (this.hasTransitioned) return;
       this.hasTransitioned = true;
-      if (this.preloadWatchdog) clearTimeout(this.preloadWatchdog);
-      try {
-        if (this.load.isLoading()) {
-          this.load.stop();
-        }
-      } catch {}
+      if (this.preloadWatchdog) {
+        clearTimeout(this.preloadWatchdog);
+        this.preloadWatchdog = null;
+      }
       window.dispatchEvent(new CustomEvent('game:load-complete'));
-      if (this.sys && this.sys.isActive()) {
+      try {
         this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+      } catch (startErr) {
+        console.error('[PreloadScene] Lỗi khi chuyển cảnh WorldScene:', startErr);
+        if (this.game?.scene) {
+          this.game.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+        }
       }
     };
 
-    // Watchdog an toàn: Nếu mạng chậm hoặc giải mã tài nguyên bị kẹt quá 1.8 giây,
-    // tự động bỏ qua và chuyển cảnh ngay vào WorldScene, không để bé bị kẹt ở màn hình xanh
+    // Watchdog an toàn: Dự phòng tối đa 8 giây nếu mạng quá yếu hoặc máy quá chậm,
+    // tự động chuyển cảnh vào WorldScene mà KHÔNG HỦY TIẾN TRÌNH TẢI (không gọi load.stop())
     this.preloadWatchdog = setTimeout(() => {
-      console.warn('[PreloadScene] Watchdog kích hoạt: Quá thời gian nạp tài nguyên, tự động vào thế giới!');
+      console.warn('[PreloadScene] Watchdog an toàn kích hoạt: Tự động vào thế giới, tài nguyên tiếp tục nạp nền!');
       transitionToWorld();
-    }, 1800);
+    }, 8000);
 
     this.load.once('complete', () => {
       transitionToWorld();
@@ -328,10 +347,17 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   create() {
-    if (this.preloadWatchdog) clearTimeout(this.preloadWatchdog);
+    if (this.preloadWatchdog) {
+      clearTimeout(this.preloadWatchdog);
+      this.preloadWatchdog = null;
+    }
     if (!this.hasTransitioned) {
       this.hasTransitioned = true;
-      this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+      try {
+        this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+      } catch (e) {
+        console.error('[PreloadScene.create] Lỗi khởi động WorldScene:', e);
+      }
     }
   }
 }

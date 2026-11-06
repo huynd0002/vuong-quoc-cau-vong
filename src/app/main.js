@@ -1232,12 +1232,15 @@ const ensureWorldSceneActive = () => {
       document.getElementById('game-root')?.appendChild(canvas);
     }
     const ws = window.__worldScene || game?.scene?.getScene('WorldScene');
+    // Chỉ kích hoạt khẩn cấp nếu WorldScene chưa hoạt động VÀ PreloadScene đã kết thúc
     if (!ws || !ws.sys || !ws.sys.isActive()) {
-      console.warn('[Phaser Watchdog] Kích hoạt WorldScene khẩn cấp...');
+      const isPreloadActive = game?.scene?.isActive('PreloadScene');
+      if (isPreloadActive) {
+        // PreloadScene đang chạy nạp tài nguyên, không ngắt quãng
+        return;
+      }
+      console.warn('[Phaser Watchdog] Kích hoạt WorldScene bảo vệ...');
       if (game?.scene) {
-        if (game.scene.isActive('PreloadScene')) {
-          game.scene.stop('PreloadScene');
-        }
         game.scene.start('WorldScene', { mapId: 'map_pet_farm' });
       }
     }
@@ -1245,8 +1248,9 @@ const ensureWorldSceneActive = () => {
     console.error('[Phaser Watchdog] Lỗi kích hoạt thế giới:', e);
   }
 };
-setTimeout(ensureWorldSceneActive, 1800);
-setTimeout(ensureWorldSceneActive, 3200);
+// Đặt thời gian kiểm tra an toàn sau 5s và 9s (không can thiệp sớm ở 1.8s)
+setTimeout(ensureWorldSceneActive, 5000);
+setTimeout(ensureWorldSceneActive, 9000);
 
 // Khắc phục triệt để việc mất hình trên iPad / Safari: Quản lý phục hồi WebGL Context & Visibility
 const setupPhaserCanvasRecovery = () => {
@@ -1316,6 +1320,30 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
+export const GAME_VERSION = '3.5.7';
+
+// Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
+if (typeof window !== 'undefined' && 'caches' in window) {
+  try {
+    const cachedVer = localStorage.getItem('rainbow_kingdom_game_version');
+    if (cachedVer !== GAME_VERSION) {
+      console.info(`[VersionSync] Phát hiện phiên bản mới: ${GAME_VERSION} (phiên bản cũ: ${cachedVer || 'không rõ'}). Đang dọn dẹp toàn bộ cache cũ...`);
+      window.caches.keys().then((keys) => {
+        return Promise.all(keys.map(k => window.caches.delete(k)));
+      }).then(() => {
+        localStorage.setItem('rainbow_kingdom_game_version', GAME_VERSION);
+        if (/^https?:$/.test(window.location.protocol) && 'serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(regs => {
+            for (const reg of regs) reg.update();
+          }).catch(() => {});
+        }
+      }).catch(err => {
+        console.warn('[VersionSync] Lỗi dọn cache cũ:', err);
+      });
+    }
+  } catch {}
+}
+
 // Đăng ký Service Worker cho Progressive Web App (PWA)
 if (typeof window !== 'undefined' && /^https?:$/.test(window.location.protocol) && 'serviceWorker' in navigator) {
   let hadController = Boolean(navigator.serviceWorker.controller);
@@ -1336,8 +1364,6 @@ if (typeof window !== 'undefined' && /^https?:$/.test(window.location.protocol) 
     });
   });
 }
-
-export const GAME_VERSION = '3.5.6';
 
 export function syncGameVersionDisplay() {
   const vText = `ver ${GAME_VERSION}`;

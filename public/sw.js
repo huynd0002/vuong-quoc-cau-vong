@@ -3,9 +3,9 @@
  * Cung cấp khả năng hoạt động Offline, bộ đệm tài nguyên tốc độ cao và cập nhật an toàn.
  */
 
-// rainbow-kingdom-cache-v1
+// rainbow-kingdom-cache-v1 (legacy support)
 const LEGACY_CACHE = 'rainbow-kingdom-cache-v1';
-const CACHE_NAME = 'rainbow-kingdom-cache-v3.5';
+const CACHE_NAME = 'rainbow-kingdom-cache-v3.5.7';
 
 const STATIC_ASSETS = [
   '/',
