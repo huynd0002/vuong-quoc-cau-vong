@@ -917,8 +917,8 @@ export const SPECIAL_MAPS_CONFIG = {
     "objective": "Mượn cần ở Chú Rái Cá → Ra Bến Sen hoặc Bến Nắng câu cá → Xem Sổ Cá & Giỏ Cá!",
     "bgKey": "map_fishing_pond_bg",
     "heroSpawn": {
-      "x": 250,
-      "y": 535
+      "x": 240,
+      "y": 645
     },
     "storyIntro": null,
     "propsPuzzle": null,
@@ -1023,11 +1023,11 @@ export const SPECIAL_MAPS_CONFIG = {
         "id": "station_fish_book",
         "name": "Sổ Huy Hiệu",
         "type": "fish_book",
-        "x": 910,
-        "y": 315,
+        "x": 985,
+        "y": 230,
         "interactionPoint": {
-          "x": 865,
-          "y": 365
+          "x": 960,
+          "y": 380
         },
         "icon": "🏅",
         "badge": "🏅",
@@ -1038,8 +1038,8 @@ export const SPECIAL_MAPS_CONFIG = {
     "returnPortal": {
       "id": "portal_pond_to_farm",
       "name": "Về Nông Trại",
-      "x": 150,
-      "y": 510,
+      "x": 160,
+      "y": 645,
       "targetMapId": "map_pet_farm",
       "targetMapName": "Nông Trại",
       "isReturn": true,
@@ -1048,8 +1048,8 @@ export const SPECIAL_MAPS_CONFIG = {
     "teleportPortal": {
       "id": "portal_pond_to_market",
       "name": "Chợ Cầu Vồng",
-      "x": 1120,
-      "y": 510,
+      "x": 1140,
+      "y": 645,
       "targetMapId": "map_rainbow_market",
       "targetMapName": "Chợ Cầu Vồng",
       "isReturn": false,

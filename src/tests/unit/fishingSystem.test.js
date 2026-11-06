@@ -247,8 +247,8 @@ export function runFishingSystemTests() {
     const lotusDock = pondCfg.fishingStations.find((s) => s.id === 'station_lotus_dock');
     const fishBook = pondCfg.fishingStations.find((s) => s.id === 'station_fish_book');
     assert.deepEqual(lotusDock.interactionPoint, { x: 688, y: 360 });
-    assert.equal(fishBook.x, 910);
-    assert.equal(fishBook.y, 315);
+    assert.equal(fishBook.x, 985);
+    assert.equal(fishBook.y, 230);
 
     // Kiểm tra mồi bait_lotus cũng trừ đi 1 viên mỗi khi cá cắn câu
     fishing.equipBait('bait_lotus');

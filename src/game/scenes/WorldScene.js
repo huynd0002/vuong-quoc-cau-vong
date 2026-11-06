@@ -2790,7 +2790,7 @@ export class WorldScene extends Phaser.Scene {
    * Khởi tạo Hồ Câu Lá Sen:
    * - Gộp 2 điểm câu thành 1 vòng tròn xanh dương duy nhất trên mũi cầu gỗ (668, 426)
    * - Khi bé đi tới đứng trong vòng tròn xanh mới hiện nút "🎣 Bắt đầu câu cá" (#btn-start-fishing-dock)
-   * - Cuốn sách Sổ Cá (📖) đặt ở vị trí mới trước hiên nhà (910, 315)
+   * - Cuốn sách Sổ Huy Hiệu (🏅) đặt ở vị trí mới trên mái hiên nhà (985, 230)
    * - Tạo 5 thực thể cá bơi 8 hướng, ngoi lên, lặn xuống tự nhiên trong lòng hồ
    */
   initFishingPondStations(stations, waterZone) {
@@ -2898,7 +2898,7 @@ export class WorldScene extends Phaser.Scene {
 
     stations.forEach((st) => {
       // Ẩn hoàn toàn 2 nhãn câu cá màu xanh trên map (station_lotus_dock, station_sunny_dock)
-      // và các trạm phụ (otter_guide, prep_basket). Chỉ giữ lại icon Cuốn Sách 📖 ở vị trí mới (910, 315)!
+      // và các trạm phụ (otter_guide, prep_basket). Chỉ giữ lại icon Huy Hiệu 🏅 trên mái hiên nhà (985, 230)!
       const isHiddenStation =
         st.type === 'dock' ||
         st.type === 'otter_guide' ||
@@ -2985,34 +2985,14 @@ export class WorldScene extends Phaser.Scene {
     btn.addEventListener('pointerdown', handleStartFishing);
     btn.addEventListener('touchstart', handleStartFishing, { passive: false });
 
-    // Nút Dùng Skill: Gọi Đàn Cá & x2 Cá
+    // Xoá bỏ hoàn toàn phần nút Skill thêm cá theo yêu cầu người chơi
     const oldSkillBtn = document.getElementById('btn-fishing-skill-dock');
     if (oldSkillBtn) oldSkillBtn.remove();
-
-    const skillBtn = document.createElement('button');
-    skillBtn.type = 'button';
-    skillBtn.id = 'btn-fishing-skill-dock';
-    skillBtn.className = 'dock-fishing-skill-btn';
-    skillBtn.style.display = 'none';
-    const isSkillActive = window.__fishingSystem?.isFishingSkillActive?.();
-    skillBtn.classList.toggle('skill-active', Boolean(isSkillActive));
-    skillBtn.innerHTML = isSkillActive
-      ? `<span>✨ Đang Bật Skill x2 Cá!</span>`
-      : `<span>⚡ Dùng Skill Gọi Đàn Cá (x2)</span>`;
-
-    const handleUseSkill = (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      this.activateFishingSkill();
-    };
-    skillBtn.addEventListener('click', handleUseSkill);
-    skillBtn.addEventListener('pointerdown', handleUseSkill);
+    this.dockFishingSkillBtnEl = null;
 
     const gameRoot = document.getElementById('game-root') || document.body;
     gameRoot.appendChild(btn);
-    gameRoot.appendChild(skillBtn);
     this.dockStartFishingBtnEl = btn;
-    this.dockFishingSkillBtnEl = skillBtn;
 
     if (this.hero) {
       this.updateDockFishingProximityButton(this.hero.getX(), this.hero.getY());
@@ -3034,12 +3014,7 @@ export class WorldScene extends Phaser.Scene {
     const isOnDock = (heroX >= 615 && heroX <= 830 && heroY >= 290 && heroY <= 425) || dist <= 85;
     this.dockStartFishingBtnEl.style.display = isOnDock ? 'inline-flex' : 'none';
     if (this.dockFishingSkillBtnEl) {
-      this.dockFishingSkillBtnEl.style.display = isOnDock ? 'inline-flex' : 'none';
-      const isSkillActive = window.__fishingSystem?.isFishingSkillActive?.();
-      this.dockFishingSkillBtnEl.classList.toggle('skill-active', Boolean(isSkillActive));
-      this.dockFishingSkillBtnEl.innerHTML = isSkillActive
-        ? `<span>✨ Đang Bật Skill x2 Cá!</span>`
-        : `<span>⚡ Dùng Skill Gọi Đàn Cá (x2)</span>`;
+      this.dockFishingSkillBtnEl.style.display = 'none';
     }
     if (isOnDock) {
       this.dockStartFishingBtnEl.style.left = '50%';
@@ -3589,9 +3564,7 @@ export class WorldScene extends Phaser.Scene {
         <div class="onmap-audition-stars" id="onmap-audition-stars" style="display:flex;justify-content:center;gap:3px;margin-top:3px;">
           ${starsHtml}
         </div>
-        <button type="button" class="onmap-audition-skill-btn ${window.__fishingSystem?.isFishingSkillActive?.() ? 'skill-active' : ''}" id="btn-audition-skill" title="Dùng Skill: Gọi Đàn Cá & x2 Cá">
-          ${window.__fishingSystem?.isFishingSkillActive?.() ? '✨ x2 Cá Đang Bật' : '⚡ Skill x2 Cá'}
-        </button>
+
       </div>
       <div class="fishing-vertical-track" id="fishing-vertical-track" data-orientation="vertical">
         <div class="fishing-vertical-zone" id="fishing-vertical-zone" style="top:${st.zoneTop}%;height:${st.zoneHeight}%;">
@@ -3611,15 +3584,7 @@ export class WorldScene extends Phaser.Scene {
     gameRoot.appendChild(el);
     this.onMapAuditionEl = el;
 
-    el.querySelector('#btn-audition-skill')?.addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      this.activateFishingSkill();
-      const b = el.querySelector('#btn-audition-skill');
-      if (b) {
-        b.classList.add('skill-active');
-        b.textContent = '✨ x2 Cá Đang Bật';
-      }
-    });
+
     el.querySelector('#btn-onmap-pull')?.addEventListener('click', (ev) => {
       ev.stopPropagation();
       this.handleVerticalAuditionPull();
