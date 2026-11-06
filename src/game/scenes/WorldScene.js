@@ -3133,6 +3133,7 @@ export class WorldScene extends Phaser.Scene {
    * Dọn dẹp trạng thái câu cá trực tiếp trên map
    */
   stopOnMapFishing(cancelTurn = true) {
+    this.cleanupBiteCatchPrompt();
     if (this.onMapFishingRaf) {
       cancelAnimationFrame(this.onMapFishingRaf);
       this.onMapFishingRaf = null;
@@ -3240,33 +3241,6 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
-    // Biểu tượng chấm than ❗ bật nảy phía trên phao câu
-    if (this.onMapBiteExclamation) {
-      this.onMapBiteExclamation.destroy();
-    }
-    this.onMapBiteExclamation = this.add.text(castX, castY - 34, '❗', {
-      fontSize: '30px',
-      fontStyle: 'bold',
-      stroke: '#ffffff',
-      strokeThickness: 4
-    }).setOrigin(0.5).setDepth(30);
-
-    this.tweens.add({
-      targets: this.onMapBiteExclamation,
-      y: castY - 46,
-      scaleX: { from: 0.7, to: 1.25 },
-      scaleY: { from: 0.7, to: 1.25 },
-      duration: 240,
-      yoyo: true,
-      repeat: 2,
-      onComplete: () => {
-        if (this.onMapBiteExclamation) {
-          this.onMapBiteExclamation.destroy();
-          this.onMapBiteExclamation = null;
-        }
-      }
-    });
-
     this.cameras?.main?.shake?.(130, 0.0025);
     this.spawnStationParticles(castX, castY, ['💦', '⚡', '✨', '🫧'], 0xfacc15);
   }
@@ -3345,6 +3319,7 @@ export class WorldScene extends Phaser.Scene {
     if (this.dockFishingSkillBtnEl) {
       this.dockFishingSkillBtnEl.style.display = 'none';
     }
+    this.spawnFloatingPopup(this.hero.getX(), this.hero.getY() - 56, '🎣 Thả cần...', '#38bdf8');
 
     // 3. Hiển thị cần câu cắm ở bến hồ hướng tự nhiên về phía phao trên mặt hồ (bé vẫn đi lại tự do)
     const equippedRodObj = RODS.find(r => r.id === fState.equippedRod) || RODS[0];
@@ -3497,7 +3472,7 @@ export class WorldScene extends Phaser.Scene {
       const baseZoneHeight = Math.max(12, Math.min(60, diff.zoneHeight + (equippedRodObj?.auditionZoneBonus || 0)));
       const markerSpeed = diff.markerSpeed;
 
-      this.onMapFishingState.phase = 'audition';
+      this.onMapFishingState.phase = 'bite_waiting';
       this.onMapFishingState.turn = biteRes.turn || turn;
       this.onMapFishingState.species = biteRes.species;
       this.onMapFishingState.weightG = biteRes.weightG || 250;
@@ -3520,6 +3495,9 @@ export class WorldScene extends Phaser.Scene {
       this.spawnFishingBiteVfx(castX, castY);
       window.__audioService?.playFishBite?.();
 
+      // Hiệu ứng VFX ui/exclamation trên đầu nhân vật khi cá cắn mồi!
+      this.hero?.playExclamationVFX?.();
+
       // Hiệu ứng trừ 1 mồi câu trực quan trên đầu bé
       this.spawnFloatingPopup(heroX, heroY - 58, `-1 ${equippedBaitObj.icon || '🌿'} (${remainingBait})`, '#0284c7');
       window.__audioService?.playChime?.(760, 0.18);
@@ -3536,8 +3514,238 @@ export class WorldScene extends Phaser.Scene {
       }
       drawFishingLine(castX, castY, 1);
 
-      this.mountVerticalAuditionBar();
+      // Hiển thị nút "🎣 BẮT!" rung rung giữa màn hình với thời gian đếm ngược 5 giây
+      this.mountBiteCatchPrompt();
     }, biteTimeMs);
+  }
+
+  /**
+   * Hiển thị nút "BẮT" rung rung giữa màn hình với 5s đếm ngược khi cá cắn mồi.
+   * Bé có 5 giây để bấm "BẮT":
+   * - Nếu bấm trong 5s: Bắt đầu audition để bắt cá như hiện tại.
+   * - Nếu hết 5s chưa bấm: Cá vuột mất và bơi đi.
+   */
+  mountBiteCatchPrompt() {
+    const st = this.onMapFishingState;
+    if (!st) return;
+
+    this.cleanupBiteCatchPrompt();
+
+    // 1. Tạo container cố định ở chính giữa màn hình (đặt ở top 60% để không che nhân vật và bến câu)
+    const container = document.createElement('div');
+    container.id = 'onmap-bite-catch-container';
+    container.className = 'onmap-bite-catch-container';
+    container.style.cssText = `
+      position: fixed;
+      left: 50%;
+      top: 60%;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      pointer-events: auto;
+      user-select: none;
+      -webkit-user-select: none;
+      animation: biteContainerPop 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    `;
+
+    // Nhúng style CSS hiệu ứng rung rung rực rỡ và đếm ngược nếu chưa có
+    if (!document.getElementById('bite-catch-keyframes-style')) {
+      const styleTag = document.createElement('style');
+      styleTag.id = 'bite-catch-keyframes-style';
+      styleTag.textContent = `
+        @keyframes biteContainerPop {
+          0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+          100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        @keyframes biteRumbleShake {
+          0% { transform: scale(1) translate(0, 0) rotate(0deg); }
+          12% { transform: scale(1.1) translate(-6px, 3px) rotate(-5deg); }
+          25% { transform: scale(1.12) translate(6px, -3px) rotate(5deg); }
+          38% { transform: scale(1.1) translate(-5px, -2px) rotate(-4deg); }
+          50% { transform: scale(1.14) translate(5px, 2px) rotate(4deg); }
+          62% { transform: scale(1.1) translate(-4px, 2px) rotate(-3deg); }
+          75% { transform: scale(1.12) translate(4px, -2px) rotate(3deg); }
+          88% { transform: scale(1.1) translate(-3px, 1px) rotate(-1deg); }
+          100% { transform: scale(1) translate(0, 0) rotate(0deg); }
+        }
+        @keyframes biteGlowRingPulse {
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.85), 0 10px 28px rgba(220, 38, 38, 0.65); }
+          50% { box-shadow: 0 0 0 26px rgba(239, 68, 68, 0), 0 16px 36px rgba(234, 88, 12, 0.75); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0), 0 10px 28px rgba(220, 38, 38, 0.65); }
+        }
+        .btn-bite-catch-shaking {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          background: linear-gradient(135deg, #ef4444 0%, #ea580c 45%, #facc15 100%);
+          border: 4.5px solid #ffffff;
+          border-radius: 9999px;
+          padding: 18px 48px;
+          font-family: inherit;
+          font-size: 34px;
+          font-weight: 900;
+          color: #ffffff;
+          letter-spacing: 1.5px;
+          text-shadow: 0 3px 6px rgba(0,0,0,0.45);
+          cursor: pointer;
+          animation: biteRumbleShake 0.35s infinite ease-in-out, biteGlowRingPulse 1.1s infinite ease-out;
+          transition: transform 0.1s ease;
+          outline: none;
+        }
+        .btn-bite-catch-shaking:hover {
+          filter: brightness(1.1);
+        }
+        .btn-bite-catch-shaking:active {
+          transform: scale(0.92) !important;
+        }
+        .bite-timer-bar-wrap {
+          width: 240px;
+          height: 12px;
+          background: rgba(0, 0, 0, 0.55);
+          border: 2px solid #ffffff;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .bite-timer-bar-fill {
+          height: 100%;
+          width: 100%;
+          background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+          transition: width 0.05s linear;
+        }
+        .bite-timer-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: rgba(0, 0, 0, 0.72);
+          color: #fef08a;
+          padding: 5px 18px;
+          border-radius: 20px;
+          font-size: 16px;
+          font-weight: 800;
+          border: 1.5px solid rgba(254, 240, 138, 0.7);
+          box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+        }
+      `;
+      document.head.appendChild(styleTag);
+    }
+
+    container.innerHTML = `
+      <button id="btn-onmap-fishing-catch" class="btn-bite-catch-shaking" type="button" aria-label="Bắt cá ngay">
+        <span style="font-size: 40px; line-height: 1;">🎣</span>
+        <span>BẮT!</span>
+      </button>
+      <div class="bite-timer-label">
+        <span>⏱️</span>
+        <span>Bấm nhanh: <strong id="bite-timer-val">5.0</strong>s</span>
+      </div>
+      <div class="bite-timer-bar-wrap">
+        <div id="bite-timer-bar-fill" class="bite-timer-bar-fill"></div>
+      </div>
+    `;
+
+    const gameRoot = document.getElementById('game-root') || document.body;
+    gameRoot.appendChild(container);
+    this.onMapBiteCatchEl = container;
+
+    const catchBtn = container.querySelector('#btn-onmap-fishing-catch');
+    const timerValEl = container.querySelector('#bite-timer-val');
+    const timerBarEl = container.querySelector('#bite-timer-bar-fill');
+
+    const totalDurationMs = 5000;
+    const startTime = Date.now();
+
+    // 2. Xử lý khi bé bấm nút "BẮT!"
+    const handleCatch = (ev) => {
+      if (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+      if (!this.onMapFishingState || this.onMapFishingState.phase !== 'bite_waiting') return;
+
+      this.cleanupBiteCatchPrompt();
+      window.__audioService?.playChime?.(920, 0.22);
+
+      // Chuyển sang giai đoạn Audition để giật cá như hiện tại
+      this.onMapFishingState.phase = 'audition';
+      this.mountVerticalAuditionBar();
+    };
+
+    if (catchBtn) {
+      catchBtn.addEventListener('click', handleCatch);
+      catchBtn.addEventListener('pointerdown', handleCatch);
+      catchBtn.addEventListener('touchstart', handleCatch, { passive: false });
+    }
+
+    // Cho phép bấm phím Space hoặc Enter để BẮT cho thuận tiện
+    this.onMapFishingCatchKeyHandler = (ev) => {
+      if (ev.code === 'Space' || ev.key === ' ' || ev.key === 'Enter') {
+        ev.preventDefault();
+        handleCatch();
+      }
+    };
+    window.addEventListener('keydown', this.onMapFishingCatchKeyHandler);
+
+    // 3. Cập nhật thanh thời gian và số giây đếm ngược mượt mà mỗi 50ms
+    this.onMapFishingCatchInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const remainingMs = Math.max(0, totalDurationMs - elapsed);
+      const remainingSec = (remainingMs / 1000).toFixed(1);
+      const pct = Math.max(0, Math.min(100, (remainingMs / totalDurationMs) * 100));
+
+      if (timerValEl) timerValEl.textContent = remainingSec;
+      if (timerBarEl) timerBarEl.style.width = `${pct}%`;
+
+      if (remainingMs <= 0) {
+        clearInterval(this.onMapFishingCatchInterval);
+        this.onMapFishingCatchInterval = null;
+      }
+    }, 50);
+
+    // 4. Nếu sau 5 giây bé chưa bấm -> Cá vụt mất và bơi đi!
+    this.onMapFishingCatchTimeout = setTimeout(() => {
+      if (!this.onMapFishingState || this.onMapFishingState.phase !== 'bite_waiting') return;
+
+      this.cleanupBiteCatchPrompt();
+
+      // Âm thanh và thông báo cá trốn thoát
+      window.__audioService?.playChime?.(300, 0.22);
+      this.spawnFloatingPopup(st.castX, st.castY - 48, '💨 Cá đã bơi mất rồi! Bé hãy thử lại nhé!', '#ef4444');
+      this.spawnStationParticles(st.castX, st.castY, ['💦', '💨', '🫧'], 0x94a3b8);
+
+      if (this.activeBitingPondFish && typeof this.activeBitingPondFish.swimAway === 'function') {
+        this.activeBitingPondFish.swimAway();
+      } else if (this.activeBitingPondFish && typeof this.activeBitingPondFish.resetBackToPond === 'function') {
+        this.activeBitingPondFish.resetBackToPond();
+      }
+
+      window.__fishingSystem?.recordTurnMiss?.('escaped');
+      this.stopOnMapFishing(false);
+    }, totalDurationMs);
+  }
+
+  cleanupBiteCatchPrompt() {
+    if (this.onMapFishingCatchTimeout) {
+      clearTimeout(this.onMapFishingCatchTimeout);
+      this.onMapFishingCatchTimeout = null;
+    }
+    if (this.onMapFishingCatchInterval) {
+      clearInterval(this.onMapFishingCatchInterval);
+      this.onMapFishingCatchInterval = null;
+    }
+    if (this.onMapFishingCatchKeyHandler) {
+      window.removeEventListener('keydown', this.onMapFishingCatchKeyHandler);
+      this.onMapFishingCatchKeyHandler = null;
+    }
+    if (this.onMapBiteCatchEl) {
+      this.onMapBiteCatchEl.remove();
+      this.onMapBiteCatchEl = null;
+    }
   }
 
   /**

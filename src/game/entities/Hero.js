@@ -1065,6 +1065,71 @@ export class Hero {
     return vfxSprite;
   }
 
+  /**
+   * Hiệu ứng VFX ui/exclamation (43 frames pixel-art VFX)
+   * Biểu tượng dấu chấm than ! màu vàng cam bật nảy mạnh mẽ trên đỉnh đầu bé khi cá cắn câu
+   */
+  playExclamationVFX(customX = null, customY = null) {
+    if (!this.scene?.add) return null;
+
+    if (!this.scene.anims.exists('vfx_exclamation_anim') && this.scene.textures.exists('vfx_exclamation_sheet')) {
+      this.scene.anims.create({
+        key: 'vfx_exclamation_anim',
+        frames: this.scene.anims.generateFrameNumbers('vfx_exclamation_sheet', { start: 0, end: 42 }),
+        frameRate: 30,
+        repeat: 0
+      });
+    }
+
+    if (!this.scene.anims.exists('vfx_exclamation_anim')) return null;
+
+    const feetOffsetY = this.skin === 'knight' ? 33 : 38;
+    // Đỉnh đầu nhân vật: đưa lên trên đầu bé để dấu chấm than phóng vút lên không trung
+    const vfxOffsetY = feetOffsetY - 72;
+    const startX = customX !== null ? customX : this.getX();
+    const startY = customY !== null ? customY : this.getY();
+
+    // Sprite VFX Exclamation (43 frames pixel-art VFX)
+    // Pivot [42, 92] trên kích thước [84, 104] -> origin (42/84, 92/104) = (0.5, 0.8846)
+    const vfxSprite = this.scene.add.sprite(startX, startY + vfxOffsetY, 'vfx_exclamation_sheet');
+    vfxSprite.setOrigin(42 / 84, 92 / 104);
+    vfxSprite.setScale(1.4);
+    vfxSprite.setDepth(Math.floor(startY + 98));
+    vfxSprite.play('vfx_exclamation_anim');
+
+    // Nhịp giật mình dễ thương của nhân vật khi cá đớp mồi
+    if (this.sprite) {
+      this.scene.tweens.add({
+        targets: [this.sprite, this.accessorySprite].filter(Boolean),
+        y: '-=10',
+        duration: 110,
+        yoyo: true,
+        ease: 'Quad.easeOut'
+      });
+    }
+
+    // Bám theo vị trí nhân vật nếu bé đang di chuyển
+    const followTimer = this.scene.time.addEvent({
+      delay: 16,
+      repeat: 95, // ~1.5s
+      callback: () => {
+        if (!vfxSprite || !vfxSprite.active) {
+          followTimer.remove();
+          return;
+        }
+        vfxSprite.setPosition(this.getX(), this.getY() + vfxOffsetY);
+        vfxSprite.setDepth(Math.floor(this.getY() + 98));
+      }
+    });
+
+    vfxSprite.on('animationcomplete', () => {
+      followTimer.remove();
+      vfxSprite.destroy();
+    });
+
+    return vfxSprite;
+  }
+
   destroy() {
     this.clearHeadBadge();
     if (this.idleTween) this.idleTween.stop();
