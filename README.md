@@ -63,7 +63,8 @@ GAME_HỌC/
 │   ├── monsters/           # Quái vật tinh thể & đối thủ đấu trí
 │   ├── pets/               # Hoạt ảnh Bé Cún Vàng
 │   └── ui/                 # Giao diện nút bấm 3D, khung viền, icon
-├── docs/                   # Tài liệu thiết kế, kế hoạch & báo cáo
+├── docs/                   # Tài liệu thiết kế, kế hoạch, triển khai & báo cáo
+│   ├── deployment/         # Hướng dẫn đưa game lên online (Vercel, Netlify, Firebase)
 │   ├── plans/              # Kế hoạch phát triển các giai đoạn
 │   ├── reports/            # Báo cáo kỹ thuật & tối ưu
 │   └── specs/              # Đặc tả cơ chế, quy chuẩn game & nuôi thú
@@ -91,6 +92,7 @@ GAME_HỌC/
 ## 📚 Tra Cứu Tài Liệu Chi Tiết
 
 Xem thêm chi tiết thiết kế hệ thống trong thư mục [`docs/`](./docs/):
+- **Hướng Dẫn Đưa Game Lên Online:** [`docs/deployment/HUONG_DAN_DUA_GAME_LEN_ONLINE.md`](./docs/deployment/HUONG_DAN_DUA_GAME_LEN_ONLINE.md)
 - **Nuôi Thú Cưng:** [`docs/specs/he-thong-nuoi-thu.md`](./docs/specs/he-thong-nuoi-thu.md)
 - **Hồ Câu & Chợ Cầu Vồng:** [`docs/plans/FISHING_PLAN.md`](./docs/plans/FISHING_PLAN.md)
 - **Phố Thời Trang:** [`docs/plans/FASHION_MAP_PLAN.md`](./docs/plans/FASHION_MAP_PLAN.md)

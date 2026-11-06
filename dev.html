@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Vương Quốc Cầu Vồng" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/assets/hero_idle.png" />
+    <link rel="apple-touch-icon" href="/assets/hero/sau/hero_idle.png" />
     <title>Vương Quốc Cầu Vồng | Game Giáo Dục Phiêu Lưu 2D</title>
   </head>
   <body>
@@ -89,25 +89,26 @@
           </button>
           <span class="stat-pill" id="hero-stars"><img src="/assets/ui/custom_kids_ui/icon_star_3d.png" class="stat-icon" alt="⭐"> <span>0</span></span>
           <button class="stat-pill clickable-pill" id="btn-top-map" type="button" aria-label="Mở Bản Đồ Chiến Dịch">
-            <img src="/assets/ui/custom_kids_ui/icon_world_map_3d.png" class="topbar-icon" alt=""> <span>Bản đồ</span>
+            <img src="/assets/ui/custom_kids_ui/btn_menu_map.png" class="topbar-icon" alt=""> <span>Bản đồ</span>
           </button>
           <button class="stat-pill clickable-pill btn-character-selector" id="btn-select-character" type="button" aria-label="Chọn Nhân Vật & Ngoại Trang" title="Chọn nhân vật mới hoặc đổi quần áo">
-            <img src="/assets/ui/custom_kids_ui/icon_crown_3d.png" class="topbar-icon" alt=""> <span>Nhân Vật</span>
+            <span class="btn-icon">👑</span> <span>Nhân Vật</span>
           </button>
           <button class="stat-pill clickable-pill btn-parent-questions" id="btn-manage-questions" type="button" aria-label="Soạn & Thêm Câu Hỏi" title="Dành cho Phụ huynh / Giáo viên">
-            <img src="/assets/ui/custom_kids_ui/icon_quill_3d.png" class="topbar-icon" alt=""> <span>Thêm Câu Hỏi</span>
+            <span class="btn-icon">📝</span> <span>Thêm Câu Hỏi</span>
           </button>
           <button class="stat-pill clickable-pill btn-maze-game" id="btn-open-maze" type="button" aria-label="Mở Mê Cung Kỳ Diệu" title="Chơi mini game Mê Cung vẽ đường">
-            <img src="/assets/ui/custom_kids_ui/icon_maze_portal_3d.png" class="topbar-icon" alt=""> <span>Mê Cung</span>
+            <span class="btn-icon">🌀</span> <span>Mê Cung</span>
           </button>
+          <button class="stat-pill clickable-pill kitchen-entry" id="btn-open-bag" type="button" aria-label="Mở túi nhân vật">🎒 Túi</button>
           <button class="stat-pill clickable-pill kitchen-entry" id="btn-open-kitchen" type="button" aria-label="Vào bếp nấu ăn">
-            <img src="/assets/ui/custom_kids_ui/icon_kitchen_pan_3d.png" class="topbar-icon" alt=""> <span>Vào bếp</span>
+            <span>🍳 Vào bếp</span><small id="kitchen-status">❤️ 3 · 💛 +0 · ⚡ 0</small>
           </button>
           <button class="stat-pill clickable-pill btn-pet-care" id="pet-button" type="button" aria-label="Chăm sóc Thú Cưng (Bé Cún & Thỏ Bông)">
-            <img src="/assets/ui/custom_kids_ui/icon_pet_paw_3d.png" class="topbar-icon" alt=""> <span id="pet-name-top">Nuôi Thú</span>
+            <img src="/assets/ui/custom_kids_ui/btn_menu_pet.png" class="topbar-icon" alt=""> <span id="pet-name-top">🐶 Nuôi Thú</span>
           </button>
           <button class="stat-pill clickable-pill btn-coords-pill active-coords" id="btn-toggle-coords" type="button" aria-label="Tọa Độ X/Y" title="Tọa độ vị trí X/Y (Phím tắt: C)">
-            <img src="/assets/ui/custom_kids_ui/icon_compass_pin_3d.png" class="topbar-icon" alt=""> <span id="coords-display-text">X: 260 | Y: 620</span>
+            <span class="btn-icon">📍</span> <span id="coords-display-text">X: 260 | Y: 620</span>
           </button>
           <button class="stat-pill clickable-pill btn-joystick-pill active-joystick" id="btn-toggle-joystick" type="button" aria-label="Bật/Tắt Cần Gạt" title="Bật hoặc Tắt Cần gạt ảo (Phím tắt: J)">
             <span class="btn-icon">🕹️</span> <span id="joystick-toggle-text">Cần Gạt</span>
@@ -147,7 +148,7 @@
           </button>
 
           <!-- PHIÊN BẢN TRÒ CHƠI Ở GÓC PHẢI MÀN HÌNH (WATERMARK) -->
-          <div class="stage-version-watermark" id="stage-version-watermark" aria-label="Phiên bản trò chơi">ver 3.2.0</div>
+          <div class="stage-version-watermark" id="stage-version-watermark" aria-label="Phiên bản trò chơi">ver 3.3.0</div>
 
           <!-- VÒNG TRÒN TRẠNG THÁI THÚ CƯNG TRÊN NÔNG TRẠI (DẠNG %) -->
           <aside id="pet-farm-hud" class="pet-farm-hud" aria-label="Trạng thái thú cưng nông trại" hidden>
@@ -319,8 +320,8 @@
             </button>
           </aside>
 
-          <!-- Ruy băng nhiệm vụ -->
-          <div class="quest-ribbon">
+          <!-- Ruy băng nhiệm vụ (đã ẩn trên tất cả các maps theo yêu cầu người dùng) -->
+          <div class="quest-ribbon" style="display: none !important;" aria-hidden="true">
             <span class="quest-icon" aria-hidden="true">✿</span>
             <div>
               <span class="quest-label">NHIỆM VỤ</span>
@@ -333,8 +334,8 @@
             Dùng phím mũi tên hoặc chạm trên màn hình để Bé Sâu di chuyển.
           </div>
 
-          <!-- 0. MODAL THÔNG BÁO CHẠM TRÁN VÀ NÚT BẮT ĐẦU CHIẾN ĐẤU (ITEM 2) -->
-          <section class="game-modal encounter-prompt-modal" id="encounter-prompt-modal" aria-labelledby="prompt-monster-name" hidden>
+          <!-- 0. MODAL THÔNG BÁO CHẠM TRÁN VÀ NÚT BẮT ĐẦU CHIẾN ĐẤU (ITEM 2 - ĐÃ XOÁ BỎ Ở TẤT CẢ CÁC MAPS) -->
+          <section class="game-modal encounter-prompt-modal" id="encounter-prompt-modal" aria-labelledby="prompt-monster-name" hidden style="display: none !important;">
             <div class="modal-card prompt-card">
               <div class="prompt-badge">⚔️ THỬ THÁCH XUẤT HIỆN!</div>
               <div class="prompt-avatar-wrap">
@@ -429,15 +430,15 @@
                   <div class="arena-prompt-text" id="arena-question-prompt">
                     Đang nạp câu hỏi thử thách...
                   </div>
-                  <button class="hint-pill-btn" id="arena-btn-hint" type="button" aria-label="Gợi ý câu hỏi">
+                  <button class="hint-pill-btn" id="arena-btn-hint" type="button" aria-label="Gợi ý câu hỏi" hidden>
                     <img src="/assets/ui/custom_kids_ui/skill_hint_3d.png" alt="💡" style="width:26px;height:26px;object-fit:contain;">
                     <span>Gợi Ý</span>
                   </button>
-                  <button id="arena-energy-button" type="button" aria-label="Dùng một năng lượng để đỡ đòn kế tiếp">⚡ Đỡ đòn (0)</button>
+                  <button id="arena-energy-button" type="button" aria-label="Dùng một năng lượng để đỡ đòn kế tiếp" hidden>⚡ Đỡ đòn (0)</button>
                 </div>
 
                 <div class="arena-answers-grid" id="arena-answers-grid" role="group" aria-label="Các đáp án"></div>
-                <p class="arena-feedback-text" id="arena-feedback-text" aria-live="polite">Chọn đáp án bé nghĩ là đúng nhé.</p>
+                <p class="arena-feedback-text" id="arena-feedback-text" aria-live="polite" hidden>Chọn đáp án bé nghĩ là đúng nhé.</p>
               </div>
             </div>
           </section>
@@ -468,7 +469,7 @@
           <button class="restart-button" id="restart-button" type="button" hidden>Bé Sẵn Sàng ✨</button>
 
           <!-- 1. MODAL CỐT TRUYỆN ĐẦU VÙNG (STORY INTRO) -->
-          <section class="game-modal story-modal" id="story-modal" aria-labelledby="story-title" hidden>
+          <section class="game-modal story-modal" id="story-modal" aria-labelledby="story-title" hidden style="display: none !important;">
             <div class="modal-card">
               <div class="story-illustration" aria-hidden="true">🌻 🌈 🐛</div>
               <h2 id="story-title">Chào mừng đến Làng Quê Yên Bình!</h2>
@@ -599,8 +600,8 @@
                 </div>
               </div>
 
-              <!-- Thanh điều hướng 2 Tab Phụ Kiện (Đã lược bỏ Gương Thử và Bảng Dành Dụm) -->
-              <nav class="fashion-nav-bar" aria-label="Các trạm phụ kiện">
+              <!-- Thanh điều hướng 2 Tab Phụ Kiện -->
+              <nav class="fashion-nav-bar" style="display:none;" aria-label="Các trạm phụ kiện">
                 <button type="button" class="fashion-nav-tab active" data-tab="0">
                   <span class="tab-icon">👑</span>
                   <span class="tab-label">Quầy Phụ Kiện Bé Xinh</span>
@@ -611,7 +612,7 @@
                 </button>
               </nav>
 
-              <!-- Nội dung 2 Tab Pane Phụ Kiện -->
+              <!-- Nội dung Tab Pane Phụ Kiện -->
               <div class="fashion-tab-content-area">
                 <!-- Pane 0: Quầy Nón & Phụ Kiện (Active) -->
                 <div class="fashion-tab-pane active" id="pane-accessories">
@@ -644,7 +645,7 @@
               <span class="progress-star" aria-hidden="true">✦</span>
               <span id="progress-copy">Vùng 1: Làng Quê Yên Bình</span>
             </div>
-            <span class="game-version-badge" id="game-version-badge" title="Phiên bản trò chơi">ver 3.2.0</span>
+            <span class="game-version-badge" id="game-version-badge" title="Phiên bản trò chơi">ver 3.3.0</span>
           </div>
         </footer>
       </section>
