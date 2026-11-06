@@ -1041,7 +1041,7 @@ export class FishingModal {
                         <div style="font-size:1.08rem;font-weight:900;color:#0f172a;">${sp?.icon || '🐟'} ${sp?.name || 'Cá'}</div>
                         <div style="font-size:0.95rem;font-weight:900;color:#c2410c;">⚖️ ${fish.weightG}g (${getFishSizeLabel(fish.weightG)})</div>
                         <div style="font-size:0.84rem;font-weight:800;color:#475569;">
-                          🍲 Quy đổi Bếp: ${calculateFishPortions(fish.weightG)} phần cá · ⭐ Chợ: ${calculateFishSellPrice(fish.weightG)} Sao
+                          🍲 Quy đổi Bếp: ${calculateFishPortions(fish.weightG)} phần cá · ⭐ Chợ: ${calculateFishSellPrice(fish.weightG, fish.speciesId)} Sao
                         </div>
                       </div>
                     </div>

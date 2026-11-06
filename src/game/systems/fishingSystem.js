@@ -53,6 +53,8 @@ export function defaultFishingState() {
     assistMode: false,
     coPullMode: false,
     difficultyMode: 'normal',
+    skillActive: false,
+    skillDoubleCatch: false,
     recentSpecies: [],
     basket: [],
     activeTurn: null,
@@ -218,6 +220,8 @@ export function normalizeFishingState(raw = {}) {
     assistMode: Boolean(s.assistMode),
     coPullMode: Boolean(s.coPullMode),
     difficultyMode,
+    skillActive: Boolean(s.skillActive),
+    skillDoubleCatch: Boolean(s.skillDoubleCatch),
     recentSpecies,
     basket,
     activeTurn,
@@ -547,6 +551,7 @@ export class FishingSystem {
         rodId: activeRodId,
         recentSpecies: fishing.recentSpecies,
         isFirstTutorial,
+        isSkillActive: Boolean(fishing.skillActive || fishing.skillDoubleCatch),
         rng: this.rng
       });
 
@@ -663,10 +668,38 @@ export class FishingSystem {
         }
       }
 
+      // Xử lý Double Catch khi đang bật Skill Kỹ Năng Tăng Số Lượng Cá
+      let doubleCatchAwarded = false;
+      if (fishing.skillDoubleCatch || fishing.skillActive) {
+        if (caughtFish && (caughtFish.count || 1) < (species.maxStack || 1)) {
+          caughtFish.count = (caughtFish.count || 1) + 1;
+          if (!Array.isArray(caughtFish.weights)) caughtFish.weights = [caughtFish.weightG];
+          caughtFish.weights.push(weightG);
+          doubleCatchAwarded = true;
+        } else if (fishing.basket.length < FISHING_LIMITS.MAX_BASKET_SIZE) {
+          const bonusFish = {
+            id: `fish-${fishing.seq++}`,
+            speciesId: species.id,
+            weightG,
+            weights: [weightG],
+            dockId: turn.dockId,
+            caughtAt: nowTs,
+            keepForCooking: Boolean(keepForCooking),
+            count: 1,
+            maxStack: species.maxStack || 1,
+            isSpecial: Boolean(species.isSpecial),
+            isGlow: Boolean(species.isGlow)
+          };
+          fishing.basket.push(bonusFish);
+          doubleCatchAwarded = true;
+        }
+      }
+
       fishing.activeTurn = null;
       return {
         ok: true,
         fish: caughtFish,
+        doubleCatchAwarded,
         species,
         weightG,
         isStacked,
@@ -1136,5 +1169,25 @@ export class FishingSystem {
       fishing.difficultyMode = mode;
       return { ok: true, difficultyMode: fishing.difficultyMode };
     });
+  }
+  activateFishingSkill() {
+    return this.mutate((fishing) => {
+      fishing.skillActive = true;
+      fishing.skillDoubleCatch = true;
+      return { ok: true, skillActive: true, doubleCatch: true };
+    });
+  }
+
+  deactivateFishingSkill() {
+    return this.mutate((fishing) => {
+      fishing.skillActive = false;
+      fishing.skillDoubleCatch = false;
+      return { ok: true, skillActive: false };
+    });
+  }
+
+  isFishingSkillActive() {
+    const s = this.getState();
+    return Boolean(s.skillActive || s.skillDoubleCatch);
   }
 }

@@ -2863,9 +2863,34 @@ export class WorldScene extends Phaser.Scene {
     btn.addEventListener('pointerdown', handleStartFishing);
     btn.addEventListener('touchstart', handleStartFishing, { passive: false });
 
+    // Nút Dùng Skill: Gọi Đàn Cá & x2 Cá
+    const oldSkillBtn = document.getElementById('btn-fishing-skill-dock');
+    if (oldSkillBtn) oldSkillBtn.remove();
+
+    const skillBtn = document.createElement('button');
+    skillBtn.type = 'button';
+    skillBtn.id = 'btn-fishing-skill-dock';
+    skillBtn.className = 'dock-fishing-skill-btn';
+    skillBtn.style.display = 'none';
+    const isSkillActive = window.__fishingSystem?.isFishingSkillActive?.();
+    skillBtn.classList.toggle('skill-active', Boolean(isSkillActive));
+    skillBtn.innerHTML = isSkillActive
+      ? `<span>✨ Đang Bật Skill x2 Cá!</span>`
+      : `<span>⚡ Dùng Skill Gọi Đàn Cá (x2)</span>`;
+
+    const handleUseSkill = (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      this.activateFishingSkill();
+    };
+    skillBtn.addEventListener('click', handleUseSkill);
+    skillBtn.addEventListener('pointerdown', handleUseSkill);
+
     const gameRoot = document.getElementById('game-root') || document.body;
     gameRoot.appendChild(btn);
+    gameRoot.appendChild(skillBtn);
     this.dockStartFishingBtnEl = btn;
+    this.dockFishingSkillBtnEl = skillBtn;
 
     if (this.hero) {
       this.updateDockFishingProximityButton(this.hero.getX(), this.hero.getY());
@@ -2880,11 +2905,20 @@ export class WorldScene extends Phaser.Scene {
     if (!this.dockStartFishingBtnEl) return;
     if (this.currentMapId !== 'map_fishing_pond' || this.onMapFishingState) {
       this.dockStartFishingBtnEl.style.display = 'none';
+      if (this.dockFishingSkillBtnEl) this.dockFishingSkillBtnEl.style.display = 'none';
       return;
     }
     const dist = Math.hypot(heroX - 688, heroY - 360);
     const isOnDock = (heroX >= 615 && heroX <= 830 && heroY >= 290 && heroY <= 425) || dist <= 85;
     this.dockStartFishingBtnEl.style.display = isOnDock ? 'inline-flex' : 'none';
+    if (this.dockFishingSkillBtnEl) {
+      this.dockFishingSkillBtnEl.style.display = isOnDock ? 'inline-flex' : 'none';
+      const isSkillActive = window.__fishingSystem?.isFishingSkillActive?.();
+      this.dockFishingSkillBtnEl.classList.toggle('skill-active', Boolean(isSkillActive));
+      this.dockFishingSkillBtnEl.innerHTML = isSkillActive
+        ? `<span>✨ Đang Bật Skill x2 Cá!</span>`
+        : `<span>⚡ Dùng Skill Gọi Đàn Cá (x2)</span>`;
+    }
     if (isOnDock) {
       this.dockStartFishingBtnEl.style.left = '50%';
       this.dockStartFishingBtnEl.style.top = '34%';
@@ -3189,9 +3223,12 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
-    // 2. Ẩn nút "🎣 Bắt đầu câu cá" trong lúc đang thả câu
+    // 2. Ẩn nút "🎣 Bắt đầu câu cá" và nút Skill trong lúc đang thả câu
     if (this.dockStartFishingBtnEl) {
       this.dockStartFishingBtnEl.style.display = 'none';
+    }
+    if (this.dockFishingSkillBtnEl) {
+      this.dockFishingSkillBtnEl.style.display = 'none';
     }
 
     // 3. Hiển thị cần câu cắm ở bến hồ hướng tự nhiên về phía phao trên mặt hồ (bé vẫn đi lại tự do)
@@ -3430,6 +3467,9 @@ export class WorldScene extends Phaser.Scene {
         <div class="onmap-audition-stars" id="onmap-audition-stars" style="display:flex;justify-content:center;gap:3px;margin-top:3px;">
           ${starsHtml}
         </div>
+        <button type="button" class="onmap-audition-skill-btn ${window.__fishingSystem?.isFishingSkillActive?.() ? 'skill-active' : ''}" id="btn-audition-skill" title="Dùng Skill: Gọi Đàn Cá & x2 Cá">
+          ${window.__fishingSystem?.isFishingSkillActive?.() ? '✨ x2 Cá Đang Bật' : '⚡ Skill x2 Cá'}
+        </button>
       </div>
       <div class="fishing-vertical-track" id="fishing-vertical-track" data-orientation="vertical">
         <div class="fishing-vertical-zone" id="fishing-vertical-zone" style="top:${st.zoneTop}%;height:${st.zoneHeight}%;">
@@ -3449,6 +3489,15 @@ export class WorldScene extends Phaser.Scene {
     gameRoot.appendChild(el);
     this.onMapAuditionEl = el;
 
+    el.querySelector('#btn-audition-skill')?.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      this.activateFishingSkill();
+      const b = el.querySelector('#btn-audition-skill');
+      if (b) {
+        b.classList.add('skill-active');
+        b.textContent = '✨ x2 Cá Đang Bật';
+      }
+    });
     el.querySelector('#btn-onmap-pull')?.addEventListener('click', (ev) => {
       ev.stopPropagation();
       this.handleVerticalAuditionPull();
@@ -3672,7 +3721,17 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
-    const isRareFish = (caughtFish.speciesId === 'rainbow_fish' || caughtFish.speciesId === 'sun_spot_fish' || sp.id === 'rainbow_fish' || sp.id === 'sun_spot_fish');
+    const isRareFish = (
+      caughtFish.speciesId === 'rainbow_fish' ||
+      caughtFish.speciesId === 'sun_spot_fish' ||
+      caughtFish.speciesId === 'golden_dragon_fish' ||
+      caughtFish.speciesId === 'crystal_fairy_fish' ||
+      caughtFish.speciesId === 'galaxy_star_fish' ||
+      sp.id === 'rainbow_fish' ||
+      sp.id === 'golden_dragon_fish' ||
+      sp.id === 'crystal_fairy_fish' ||
+      sp.id === 'galaxy_star_fish'
+    );
     const isBigFish = (caughtFish.weightG >= 500);
 
     // Hiệu ứng tia nước tung tóe và Bé nhảy mừng trên cầu gỗ
@@ -3691,7 +3750,7 @@ export class WorldScene extends Phaser.Scene {
     // 3. Vinh danh Danh Hiệu khi câu cá tại vị trí khoanh đỏ (kèm âm thanh chúc mừng & VFX rung ánh sáng)
     this.showFishingTitleCelebration(caughtFish, isBigFish || isRareFish);
 
-    const sellStars = calculateFishSellPrice(caughtFish.weightG);
+    const sellStars = calculateFishSellPrice(caughtFish.weightG, caughtFish.speciesId);
     const oldToast = document.getElementById('onmap-catch-visual-card');
     if (oldToast) oldToast.remove();
 
@@ -3726,11 +3785,16 @@ export class WorldScene extends Phaser.Scene {
       }, removeDelay);
     };
 
+    const doubleCatchHtml = (catchRes?.doubleCatchAwarded || fishingSystem?.isFishingSkillActive?.())
+      ? `<div class="double-catch-ribbon">⚡ SKILL x2 CÁ! BÉ NHẬN ĐƯỢC 2 BẠN CÁ VÀO TÚI 🐟🐟</div>`
+      : '';
+
     if (isRareFish) {
       // CÁ THẦN THOẠI QUÝ HIẾM: Hiệu ứng Magic cực đỉnh, tia sáng vũ trụ, vinh danh rực rỡ!
       card.className = 'onmap-catch-visual-card rare-fish-magic-celebration';
       card.innerHTML = `
         <div class="magic-celestial-rays"></div>
+        ${doubleCatchHtml}
         <div class="magic-ribbon-title">✨ 🌟 🌈 CÁ THẦN THOẠI QUÝ HIẾM! 🌈 🌟 ✨</div>
         <div class="big-fish-halo magic-halo-wrap">
           <div class="magic-aura-ring"></div>
@@ -3771,6 +3835,7 @@ export class WorldScene extends Phaser.Scene {
       // CÁ TO KHỦNG: Hiệu ứng chúc mừng rực rỡ, pháo hoa, vinh danh huy hoàng!
       card.className = 'onmap-catch-visual-card big-fish-celebration';
       card.innerHTML = `
+        ${doubleCatchHtml}
         <div class="big-fish-ribbon">🎉 CÁ TO KHỦNG VỌT LÊN BỜ! 🏆</div>
         <div class="big-fish-halo">
           <img src="${caughtFish.asset}" alt="${caughtFish.name}" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='inline-flex';" />
@@ -3905,7 +3970,7 @@ export class WorldScene extends Phaser.Scene {
     const banner = document.createElement('div');
     banner.id = 'fishing-title-celebration-banner';
     banner.className = 'fishing-title-celebration-banner';
-    const sellStars = calculateFishSellPrice(caughtFish.weightG);
+    const sellStars = calculateFishSellPrice(caughtFish.weightG, caughtFish.speciesId);
 
     banner.innerHTML = `
       <div class="fishing-title-sunburst" aria-hidden="true"></div>
@@ -4089,5 +4154,76 @@ export class WorldScene extends Phaser.Scene {
         }));
       }
     });
+  }
+  /**
+   * Kích hoạt Kỹ Năng Câu Cá: Tăng số lượng cá bơi trong hồ và bật Double Catch (x2 cá)
+   */
+  activateFishingSkill() {
+    const fishingSystem = window.__fishingSystem;
+    if (!fishingSystem) return;
+    fishingSystem.activateFishingSkill();
+
+    // 1. Tăng ngay số lượng cá bơi trong hồ (gọi thêm 8 bạn cá mới)
+    this.spawnMorePondFishes(8);
+
+    // 2. Hào quang nhân vật & sóng nước bọt khí
+    const px = this.hero?.getX?.() ?? 688;
+    const py = (this.hero?.getY?.() ?? 360);
+    this.spawnStationParticles(px, py, ['⚡', '✨', '🌈', '🐟', '🫧', '⭐'], 0xf59e0b);
+    this.spawnStationParticles(425, 425, ['💦', '✨', '🫧', '🐟'], 0x38bdf8);
+
+    // 3. Âm thanh phép thuật ngân vang
+    window.__audioService?.playChime?.(880, 0.35);
+
+    // 4. Thông báo bay nổi bật
+    this.spawnFloatingPopup(px, py - 55, '⚡ SKILL BÙNG NỔ: ĐÀN CÁ TĂNG VỌT! BẮT X2 CÁ! 🐟🐟✨', '#f59e0b');
+
+    // 5. Cập nhật trạng thái các nút
+    if (this.dockFishingSkillBtnEl) {
+      this.dockFishingSkillBtnEl.classList.add('skill-active');
+      this.dockFishingSkillBtnEl.innerHTML = '<span>✨ Đang Bật Skill x2 Cá!</span>';
+    }
+    const auditionSkillBtn = document.getElementById('btn-audition-skill');
+    if (auditionSkillBtn) {
+      auditionSkillBtn.classList.add('skill-active');
+      auditionSkillBtn.textContent = '✨ x2 Cá Đang Bật';
+    }
+  }
+
+  /**
+   * Sinh thêm đàn cá bơi lội sinh động trong Hồ Câu Lá Sen
+   */
+  spawnMorePondFishes(count = 8) {
+    if (!this.pondFishes) this.pondFishes = [];
+    const sheetKeys = [
+      'fish_pond_swim_8dir',
+      'fish_orange_swim_8dir',
+      'fish_cloud_swim_8dir'
+    ];
+    for (let i = 0; i < count; i++) {
+      const texKey = sheetKeys[i % sheetKeys.length];
+      const startPos = {
+        x: 425 + Phaser.Math.Between(-120, 120),
+        y: 425 + Phaser.Math.Between(-70, 70)
+      };
+      if (this.textures.exists(texKey)) {
+        const pondFish = new PondFish(this, {
+          id: `pond_fish_extra_${Date.now()}_${i}`,
+          textureKey: texKey,
+          x: startPos.x,
+          y: startPos.y,
+          scale: 0.38 + Math.random() * 0.16,
+          speed: 46 + Math.random() * 25,
+          pondBounds: {
+            cx: 425,
+            cy: 425,
+            rx: 135,
+            ry: 95
+          }
+        });
+        this.spawnStationParticles(startPos.x, startPos.y, ['✨', '🫧', '🐟'], 0x38bdf8);
+        this.pondFishes.push(pondFish);
+      }
+    }
   }
 }

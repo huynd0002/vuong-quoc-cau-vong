@@ -306,6 +306,24 @@ export const FISH_DIFFICULTY_PROFILES = Object.freeze({
     zoneHeight: 14,
     markerSpeed: 176,
     label: 'Thần Thoại · 5 Lần Canh'
+  },
+  crystal_fairy_fish: {
+    requiredHits: 6,
+    zoneHeight: 13,
+    markerSpeed: 195,
+    label: 'Kỳ Ảo · 6 Lần Canh'
+  },
+  golden_dragon_fish: {
+    requiredHits: 6,
+    zoneHeight: 12,
+    markerSpeed: 210,
+    label: 'Hoàng Kim · 6 Lần Canh'
+  },
+  galaxy_star_fish: {
+    requiredHits: 7,
+    zoneHeight: 10,
+    markerSpeed: 240,
+    label: 'Vũ Trụ · 7 Lần Canh'
   }
 });
 
@@ -495,6 +513,99 @@ export const FISH_SPECIES = Object.freeze([
     sizeTier: 'special',
     isSpecial: true,
     isGlow: true
+  },
+  {
+    id: 'crystal_fairy_fish',
+    name: 'Cá Pha Lê Huyền Ảo',
+    icon: '💎',
+    color: '#38bdf8',
+    asset: '/assets/fishing/fish_crystal_fairy.png',
+    swimSheetKey: 'fish_cloud_swim_8dir',
+    minWeightG: 1200,
+    maxWeightG: 2600,
+    pullStages: 6,
+    requiredHits: 6,
+    requiredPullSteps: 8,
+    pullStepsLabel: '6 Nhịp Kéo (Kỳ Ảo · Siêu Khó)',
+    zoneHeight: 13,
+    markerSpeed: 195,
+    sweepDurationMs: 1800,
+    greenZoneRatio: 0.13,
+    fakeNibblesMin: 2,
+    fakeNibblesMax: 4,
+    splashChance: 0.60,
+    splashDurationMs: 1600,
+    preferredBaits: ['bait_sweet_cake', 'bait_crunchy'],
+    preferredDock: 'lotus_dock',
+    temperament: 'Cá tiên tử pha lê ngọc bích phát quang trong suốt, cần 6 lần canh chuẩn xác dứt khoát!',
+    hint: 'Quý hiếm! Dùng Mồi Bánh Thơm hoặc bật Skill Câu Cá để triệu hồi',
+    voiceIntro: 'Kì diệu chưa kìa! Cá Pha Lê Huyền Ảo long lanh như ngọc bích đang cắn câu!',
+    maxStack: 1,
+    sizeTier: 'special',
+    isSpecial: true,
+    isGlow: true
+  },
+  {
+    id: 'golden_dragon_fish',
+    name: 'Cá Rồng Hoàng Kim',
+    icon: '🐲',
+    color: '#eab308',
+    asset: '/assets/fishing/fish_golden_dragon.png',
+    swimSheetKey: 'fish_orange_swim_8dir',
+    minWeightG: 1500,
+    maxWeightG: 3200,
+    pullStages: 6,
+    requiredHits: 6,
+    requiredPullSteps: 8,
+    pullStepsLabel: '6 Nhịp Kéo (Hoàng Kim · Rất Khó)',
+    zoneHeight: 12,
+    markerSpeed: 210,
+    sweepDurationMs: 1700,
+    greenZoneRatio: 0.12,
+    fakeNibblesMin: 3,
+    fakeNibblesMax: 4,
+    splashChance: 0.70,
+    splashDurationMs: 1750,
+    preferredBaits: ['bait_sweet_cake'],
+    preferredDock: 'sunny_dock',
+    temperament: 'Vương giả rồng vàng uy phong, quẫy sóng hoàng kim dữ dội, cần 6 nhịp canh thần tốc tuyệt đối!',
+    hint: 'Thần thoại Bến Nắng! Dùng Mồi Bánh Thơm, Cần Rồng Thần hoặc bật Skill',
+    voiceIntro: 'Oa! Cá Rồng Hoàng Kim vảy vàng chói lọi, râu rồng lộng lẫy đang cắn câu!',
+    maxStack: 1,
+    sizeTier: 'special',
+    isSpecial: true,
+    isGlow: true
+  },
+  {
+    id: 'galaxy_star_fish',
+    name: 'Cá Ngân Hà Tinh Tú',
+    icon: '🌌',
+    color: '#a855f7',
+    asset: '/assets/fishing/fish_galaxy_star.png',
+    swimSheetKey: 'fish_pond_swim_8dir',
+    minWeightG: 2200,
+    maxWeightG: 4500,
+    pullStages: 7,
+    requiredHits: 7,
+    requiredPullSteps: 8,
+    pullStepsLabel: '7 Nhịp Kéo (Vũ Trụ · Cực Khó Đỉnh Cao)',
+    zoneHeight: 10,
+    markerSpeed: 240,
+    sweepDurationMs: 1600,
+    greenZoneRatio: 0.10,
+    fakeNibblesMin: 3,
+    fakeNibblesMax: 5,
+    splashChance: 0.80,
+    splashDurationMs: 1900,
+    preferredBaits: ['bait_sweet_cake'],
+    preferredDock: 'lotus_dock',
+    temperament: 'Bạn cá huyền bí nhất vũ trụ, mang dải ngân hà muôn ánh sao, thử thách tối thượng 7 lần canh hoàn mỹ!',
+    hint: 'Bảo vật tối thượng của Hồ Sen! Bật Skill Câu Cá để triệu hồi từ vũ trụ',
+    voiceIntro: 'Trời ơi phi thường quá! Cá Ngân Hà Tinh Tú mang ánh sáng muôn vì sao đã xuất hiện!',
+    maxStack: 1,
+    sizeTier: 'special',
+    isSpecial: true,
+    isGlow: true
   }
 ]);
 
@@ -503,16 +614,16 @@ export const FISH_SPECIES = Object.freeze([
  */
 export const BAIT_SPECIES_WEIGHTS = Object.freeze({
   bait_lotus: {
-    lotus_dock: { cloud_fish: 48, lotus_fish: 36, orange_fish: 12, silver_bell_fish: 4, sun_spot_fish: 0, rainbow_fish: 0 },
-    sunny_dock: { cloud_fish: 38, lotus_fish: 28, orange_fish: 26, silver_bell_fish: 8, sun_spot_fish: 0, rainbow_fish: 0 }
+    lotus_dock: { cloud_fish: 48, lotus_fish: 36, orange_fish: 12, silver_bell_fish: 4, sun_spot_fish: 0, rainbow_fish: 0, crystal_fairy_fish: 0, golden_dragon_fish: 0, galaxy_star_fish: 0 },
+    sunny_dock: { cloud_fish: 38, lotus_fish: 28, orange_fish: 26, silver_bell_fish: 8, sun_spot_fish: 0, rainbow_fish: 0, crystal_fairy_fish: 0, golden_dragon_fish: 0, galaxy_star_fish: 0 }
   },
   bait_crunchy: {
-    lotus_dock: { cloud_fish: 20, lotus_fish: 34, orange_fish: 26, silver_bell_fish: 18, sun_spot_fish: 2, rainbow_fish: 0 },
-    sunny_dock: { cloud_fish: 15, lotus_fish: 24, orange_fish: 36, silver_bell_fish: 21, sun_spot_fish: 4, rainbow_fish: 0 }
+    lotus_dock: { cloud_fish: 20, lotus_fish: 34, orange_fish: 26, silver_bell_fish: 17, sun_spot_fish: 2, rainbow_fish: 0, crystal_fairy_fish: 1, golden_dragon_fish: 0, galaxy_star_fish: 0 },
+    sunny_dock: { cloud_fish: 15, lotus_fish: 24, orange_fish: 36, silver_bell_fish: 20, sun_spot_fish: 4, rainbow_fish: 0, crystal_fairy_fish: 0, golden_dragon_fish: 1, galaxy_star_fish: 0 }
   },
   bait_sweet_cake: {
-    lotus_dock: { cloud_fish: 12, lotus_fish: 26, orange_fish: 28, silver_bell_fish: 21, sun_spot_fish: 9, rainbow_fish: 4 },
-    sunny_dock: { cloud_fish: 8, lotus_fish: 22, orange_fish: 28, silver_bell_fish: 25, sun_spot_fish: 12, rainbow_fish: 5 }
+    lotus_dock: { cloud_fish: 10, lotus_fish: 22, orange_fish: 26, silver_bell_fish: 19, sun_spot_fish: 9, rainbow_fish: 5, crystal_fairy_fish: 5, golden_dragon_fish: 2, galaxy_star_fish: 2 },
+    sunny_dock: { cloud_fish: 6, lotus_fish: 18, orange_fish: 26, silver_bell_fish: 22, sun_spot_fish: 12, rainbow_fish: 6, crystal_fairy_fish: 2, golden_dragon_fish: 6, galaxy_star_fish: 2 }
   }
 });
 
@@ -614,8 +725,11 @@ export function getDock(dockId) {
 }
 
 export function calculateFishSellPrice(weightG, speciesId = null) {
+  if (speciesId === 'galaxy_star_fish') return 16; // Cá Ngân Hà Tinh Tú cực phẩm vũ trụ nhận 16 Sao!
+  if (speciesId === 'golden_dragon_fish') return 12; // Cá Rồng Hoàng Kim nhận 12 Sao!
+  if (speciesId === 'crystal_fairy_fish') return 10; // Cá Pha Lê Huyền Ảo nhận 10 Sao!
   if (speciesId === 'rainbow_fish') return 8; // Cá Cầu Vồng thần thoại nhận thưởng lớn 8 Sao!
-  const w = Math.max(100, Math.min(2000, Math.round((Number(weightG) || 100) / 50) * 50));
+  const w = Math.max(100, Math.min(5000, Math.round((Number(weightG) || 100) / 50) * 50));
   for (const b of SELL_PRICE_BRACKETS) {
     if (w >= b.minG && w <= b.maxG) return b.shells;
   }
@@ -624,7 +738,7 @@ export function calculateFishSellPrice(weightG, speciesId = null) {
 }
 
 export function getFishSizeLabel(weightG) {
-  const w = Math.max(100, Math.min(2000, Math.round((Number(weightG) || 100) / 50) * 50));
+  const w = Math.max(100, Math.min(5000, Math.round((Number(weightG) || 100) / 50) * 50));
   for (const b of SELL_PRICE_BRACKETS) {
     if (w >= b.minG && w <= b.maxG) return b.sizeLabel;
   }
@@ -635,12 +749,14 @@ export function calculateFishPortions(weightG) {
   const w = Number(weightG) || 100;
   if (w < 600) return 1;
   if (w < 1200) return 2;
-  return 3;
+  if (w < 2000) return 3;
+  if (w < 3000) return 4;
+  return 5;
 }
 
 /**
  * Chọn loài cá và cân nặng bước 50g có áp dụng luật chống lặp 3 lần liên tiếp (FISHING_PLAN 8.1)
- * và cộng thưởng chất lượng cá + cân nặng theo cấp độ Cần Câu (rodId).
+ * và cộng thưởng chất lượng cá + cân nặng theo cấp độ Cần Câu (rodId), cùng hiệu ứng DÙNG SKILL CÂU CÁ.
  */
 export function rollFishSpeciesAndWeight({
   baitId = 'bait_lotus',
@@ -648,6 +764,7 @@ export function rollFishSpeciesAndWeight({
   rodId = 'rod_lotus',
   recentSpecies = [],
   isFirstTutorial = false,
+  isSkillActive = false,
   rng = Math.random
 } = {}) {
   if (isFirstTutorial) {
@@ -662,6 +779,17 @@ export function rollFishSpeciesAndWeight({
   const rod = getRod(rodId) || RODS[0];
   const baitMap = BAIT_SPECIES_WEIGHTS[baitId] || BAIT_SPECIES_WEIGHTS.bait_lotus;
   const rawWeights = { ...(baitMap[dockId] || baitMap.lotus_dock) };
+
+  // HIỆU ỨNG DÙNG SKILL: Tăng đột biến cơ hội gọi các bạn cá mới quý hiếm và khó bắt!
+  if (isSkillActive) {
+    rawWeights.cloud_fish = Math.max(2, Math.round((rawWeights.cloud_fish || 0) * 0.3));
+    rawWeights.lotus_fish = Math.max(5, Math.round((rawWeights.lotus_fish || 0) * 0.4));
+    rawWeights.crystal_fairy_fish = (rawWeights.crystal_fairy_fish || 0) + 18;
+    rawWeights.golden_dragon_fish = (rawWeights.golden_dragon_fish || 0) + 16;
+    rawWeights.galaxy_star_fish = (rawWeights.galaxy_star_fish || 0) + 14;
+    rawWeights.rainbow_fish = (rawWeights.rainbow_fish || 0) + 18;
+    rawWeights.sun_spot_fish = (rawWeights.sun_spot_fish || 0) + 15;
+  }
 
   // Cần xịn tăng nhẹ cơ hội cá lớn, giữ cá hiếm thật sự quý và bất ngờ
   if (rod.tier === 2) {
@@ -684,6 +812,15 @@ export function rollFishSpeciesAndWeight({
     }
     if (rawWeights.rainbow_fish > 0) {
       rawWeights.rainbow_fish = Math.min(10, Math.round(rawWeights.rainbow_fish * (1 + (rod.tier - 2) * 0.2)));
+    }
+    if (rawWeights.crystal_fairy_fish > 0) {
+      rawWeights.crystal_fairy_fish = Math.min(12, Math.round(rawWeights.crystal_fairy_fish * (1 + (rod.tier - 2) * 0.2)));
+    }
+    if (rawWeights.golden_dragon_fish > 0) {
+      rawWeights.golden_dragon_fish = Math.min(12, Math.round(rawWeights.golden_dragon_fish * (1 + (rod.tier - 2) * 0.2)));
+    }
+    if (rawWeights.galaxy_star_fish > 0) {
+      rawWeights.galaxy_star_fish = Math.min(10, Math.round(rawWeights.galaxy_star_fish * (1 + (rod.tier - 2) * 0.25)));
     }
   }
 

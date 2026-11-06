@@ -14,6 +14,7 @@ import { runBadgeSystemTests } from './badgeSystem.test.js';
 import { runFashionSystemTests } from './fashionSystem.test.js';
 import { runBackpackSystemTests } from './backpackSystem.test.js';
 import { runVirtualJoystickTests } from './virtualJoystick.test.js';
+import { runFishingSkillAndHarderFishTests } from './fishingSkillAndHarderFish.test.js';
 
 console.log('====================================================');
 console.log('  CHẠY TẤT CẢ UNIT TESTS (GIAI ĐOẠN 2 ĐẾN 6: REBUILD)');
@@ -50,8 +51,10 @@ try {
   runBackpackSystemTests();
   console.log('');
   runVirtualJoystickTests();
+  console.log('');
+  runFishingSkillAndHarderFishTests();
   console.log('\n====================================================');
-  console.log('  TẤT CẢ 15/15 BỘ UNIT TESTS ĐÃ VƯỢT QUA!   ');
+  console.log('  TẤT CẢ 16/16 BỘ UNIT TESTS ĐÃ VƯỢT QUA!   ');
   console.log('====================================================');
 } catch (err) {
   console.error('\n❌ TEST THẤT BẠI:', err);
