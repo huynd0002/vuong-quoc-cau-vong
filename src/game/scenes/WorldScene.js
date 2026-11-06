@@ -1013,18 +1013,38 @@ export class WorldScene extends Phaser.Scene {
       }
     });
 
-    // 6. Hiệu ứng khi Bé Sâu bước vào Cổng Dịch Chuyển Cầu Vồng (đồng bộ ẩn nhân vật và phụ kiện)
+    // 6. Hiệu ứng khi Bé Sâu bước vào Cổng Dịch Chuyển Cầu Vồng (VFX Implosion & Hút nhân vật vào cổng)
     this.addManagedListener('game:portal-warp-start', (e) => {
       const { portalX, portalY } = e.detail || {};
       this.isExploring = false;
+      const targetX = portalX !== undefined ? portalX : (this.teleportPortal ? this.teleportPortal.x : this.hero?.getX() || 640);
+      const targetY = portalY !== undefined ? portalY : (this.teleportPortal ? this.teleportPortal.y : this.hero?.getY() || 360);
+
+      // Kích hoạt hiệu ứng VFX explosions/implosion rực rỡ tại tâm cổng thần kỳ
+      this.playPortalImplosionVFX(targetX, targetY);
+
       if (this.hero) {
-        const targetX = portalX !== undefined ? portalX : (this.teleportPortal ? this.teleportPortal.x : this.hero.getX());
-        const targetY = portalY !== undefined ? (portalY + 15) : (this.teleportPortal ? this.teleportPortal.y + 15 : this.hero.getY());
         if (typeof this.hero.onPortalWarpStart === 'function') {
-          this.hero.onPortalWarpStart({ targetX, targetY, duration: 900 });
+          this.hero.onPortalWarpStart({ targetX, targetY: targetY + 10, duration: 850 });
         } else {
           this.hero.stop();
         }
+      }
+
+      // Nếu có bạn thú cưng đi cùng (Pet Dog / Bunny), cũng bị hút theo vào Cổng Thần Kỳ
+      if (this.pet && this.pet.sprite && this.pet.sprite.visible) {
+        this.tweens.add({
+          targets: [this.pet.sprite, this.pet.shadow].filter(Boolean),
+          x: targetX,
+          y: targetY,
+          scaleX: 0,
+          scaleY: 0,
+          angle: 720,
+          alpha: 0,
+          duration: 800,
+          delay: 80,
+          ease: 'Quad.easeIn'
+        });
       }
     });
 
@@ -1088,6 +1108,65 @@ export class WorldScene extends Phaser.Scene {
       const station = this.mapConfig?.petStations?.find(s => s.type === type || (type === 'potty' && s.type === 'toilet'));
       if (station) this.handlePetStationInteraction(station);
     });
+  }
+
+  /**
+   * Hiệu ứng VFX explosions/implosion (Sprite 51 frames + Xoáy sáng + Bụi sao ma thuật)
+   * Kích hoạt khi Bé Sâu bước qua Cổng Thần Kỳ và bị hút vào tâm vòng xoáy
+   */
+  playPortalImplosionVFX(x, y) {
+    if (!this.anims.exists('vfx_implosion_anim')) {
+      if (this.textures.exists('vfx_implosion_sheet')) {
+        this.anims.create({
+          key: 'vfx_implosion_anim',
+          frames: this.anims.generateFrameNumbers('vfx_implosion_sheet', { start: 0, end: 50 }),
+          frameRate: 30,
+          repeat: 0
+        });
+      }
+    }
+
+    if (this.anims.exists('vfx_implosion_anim')) {
+      // 1. Sprite VFX Implosion chính (51 frames pixel-art VFX)
+      const implosion = this.add.sprite(x, y - 6, 'vfx_implosion_sheet');
+      implosion.setDepth(26); // Nổi rõ rệt trên Hero (depth 10) và Cổng (depth 8)
+      implosion.setScale(1.25); // Phóng nhẹ để bao trọn Cổng 84px và ôm trọn nhân vật
+      implosion.play('vfx_implosion_anim');
+
+      // 2. Vòng xoáy ma thuật phát sáng bổ trợ (Aura Pulse Ring)
+      const pulseRing = this.add.circle(x, y - 4, 65, 0x9333ea, 0);
+      pulseRing.setStrokeStyle(3.5, 0xc084fc, 0.92).setDepth(24);
+      this.tweens.add({
+        targets: pulseRing,
+        scale: 0.08,
+        alpha: 1,
+        duration: 800,
+        ease: 'Quad.easeIn',
+        onComplete: () => pulseRing.destroy()
+      });
+
+      // 3. Hiệu ứng hạt bụi sáng xoáy vào tâm (Inward swirling sparks)
+      const sparkColors = [0xfacc15, 0x38bdf8, 0xf43f5e, 0xa855f7, 0xffffff];
+      for (let i = 0; i < 18; i++) {
+        const angle = (i / 18) * Math.PI * 2;
+        const dist = 75 + Math.random() * 30;
+        const spark = this.add.circle(x + Math.cos(angle) * dist, y + Math.sin(angle) * dist, 3, sparkColors[i % sparkColors.length], 0.95).setDepth(27);
+        this.tweens.add({
+          targets: spark,
+          x,
+          y: y - 6,
+          scale: 0.15,
+          alpha: 0,
+          duration: 650 + Math.random() * 200,
+          ease: 'Quad.easeIn',
+          onComplete: () => spark.destroy()
+        });
+      }
+
+      implosion.on('animationcomplete', () => {
+        implosion.destroy();
+      });
+    }
   }
 
   triggerEncounterPrompt(encounterData, isBoss = false) {
@@ -2011,32 +2090,47 @@ export class WorldScene extends Phaser.Scene {
     }
 
     if (st.type === 'fishing_pond') {
-      this.hero?.moveTo(st.x - 45, st.y, () => {
-        if (!this.sys.isActive() || !this.isExploring) return;
-        window.dispatchEvent(new CustomEvent('game:portal-teleport', {
-          detail: { targetMapId: 'map_fishing_pond', targetMapName: 'Hồ Câu Lá Sen' }
-        }));
-      });
+      const portal = this.portals?.find(p => p.targetMapId === 'map_fishing_pond' || p.data?.id?.includes('fishing'));
+      if (portal) {
+        portal.handleInteract();
+      } else {
+        this.hero?.moveTo(st.x - 45, st.y, () => {
+          if (!this.sys.isActive() || !this.isExploring) return;
+          window.dispatchEvent(new CustomEvent('game:portal-warp-start', {
+            detail: { portalX: st.x, portalY: st.y, targetMapId: 'map_fishing_pond', targetMapName: 'Hồ Câu Lá Sen' }
+          }));
+        });
+      }
       return;
     }
 
     if (st.type === 'rainbow_market') {
-      this.hero?.moveTo(st.x, st.y - 30, () => {
-        if (!this.sys.isActive() || !this.isExploring) return;
-        window.dispatchEvent(new CustomEvent('game:portal-teleport', {
-          detail: { targetMapId: 'map_rainbow_market', targetMapName: 'Chợ Cầu Vồng' }
-        }));
-      });
+      const portal = this.portals?.find(p => p.targetMapId === 'map_rainbow_market' || p.data?.id?.includes('market'));
+      if (portal) {
+        portal.handleInteract();
+      } else {
+        this.hero?.moveTo(st.x, st.y - 30, () => {
+          if (!this.sys.isActive() || !this.isExploring) return;
+          window.dispatchEvent(new CustomEvent('game:portal-warp-start', {
+            detail: { portalX: st.x, portalY: st.y, targetMapId: 'map_rainbow_market', targetMapName: 'Chợ Cầu Vồng' }
+          }));
+        });
+      }
       return;
     }
 
     if (st.type === 'fashion_street') {
-      this.hero?.moveTo(st.x, st.y - 30, () => {
-        if (!this.sys.isActive() || !this.isExploring) return;
-        window.dispatchEvent(new CustomEvent('game:portal-teleport', {
-          detail: { targetMapId: 'map_fashion_street', targetMapName: 'Phố Thời Trang Cầu Vồng' }
-        }));
-      });
+      const portal = this.portals?.find(p => p.targetMapId === 'map_fashion_street' || p.data?.id?.includes('fashion'));
+      if (portal) {
+        portal.handleInteract();
+      } else {
+        this.hero?.moveTo(st.x, st.y - 30, () => {
+          if (!this.sys.isActive() || !this.isExploring) return;
+          window.dispatchEvent(new CustomEvent('game:portal-warp-start', {
+            detail: { portalX: st.x, portalY: st.y, targetMapId: 'map_fashion_street', targetMapName: 'Phố Thời Trang Cầu Vồng' }
+          }));
+        });
+      }
       return;
     }
 

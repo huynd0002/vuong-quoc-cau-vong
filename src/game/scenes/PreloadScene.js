@@ -86,6 +86,7 @@ import propPetToiletUrl from '../../../assets/props/prop_pet_toilet.png?url';
 import propBallUrl from '../../../assets/props/prop_ball.png?url';
 import propBallSheetUrl from '../../../assets/props/prop_ball_sheet.png?url';
 import portalSheetUrl from '../../../assets/props/portal/portal_sheet.png?url';
+import implosionSheetUrl from '../../../assets/props/portal/implosion_sheet.png?url';
 
 // Phụ Kiện Nhân Vật Thời Trang Mua Bằng Sao (Chibi Accessories)
 import accRainbowCrownUrl from '../../../assets/fashion/accessories/acc_rainbow_crown.png?url';
@@ -238,8 +239,9 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('butterfly_rainbow', butterflyRainbowUrl);
     this.load.spritesheet('prop_ball_sheet', propBallSheetUrl, { frameWidth: 72, frameHeight: 72 });
 
-    // 4. Tải Cổng Dịch Chuyển Không Gian Cầu Vồng (8 Frames Animation)
+    // 4. Tải Cổng Dịch Chuyển Không Gian Cầu Vồng (8 Frames Animation) & Hiệu Ứng Implosion (51 Frames)
     this.load.spritesheet('teleport_portal_sheet', portalSheetUrl, { frameWidth: 256, frameHeight: 256 });
+    this.load.spritesheet('vfx_implosion_sheet', implosionSheetUrl, { frameWidth: 208, frameHeight: 184 });
 
     // 5. Tải Boss Rồng Thần Cầu Vồng (Walk, Idle, Skill Spritesheets)
     this.load.image('boss_dragon', bossDragonUrl);

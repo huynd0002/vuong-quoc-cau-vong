@@ -878,21 +878,24 @@ export class Hero {
     }
   }
 
-  onPortalWarpStart({ targetX, targetY, duration = 900 } = {}) {
+  onPortalWarpStart({ targetX, targetY, duration = 850 } = {}) {
     this.stop();
     const destX = targetX !== undefined ? targetX : this.getX();
     const destY = targetY !== undefined ? targetY : this.getY();
 
+    // Hiệu ứng hút xoáy vào tâm Cổng Thần Kỳ (Implosion Vortex Pull):
+    // Bé Sâu quay tròn xoáy ốc (angle 720), thu nhỏ dần về 0 và biến mất tại tâm điểm
     if (this.sprite) {
       this.scene.tweens.add({
         targets: this.sprite,
         x: destX,
-        y: destY - 20,
-        scaleX: this.sprite.scaleX * 0.45,
-        scaleY: this.sprite.scaleY * 0.45,
+        y: destY - 6,
+        scaleX: 0,
+        scaleY: 0,
+        angle: 720,
         alpha: 0,
         duration,
-        ease: 'Cubic.easeInOut'
+        ease: 'Quad.easeIn'
       });
     }
 
@@ -900,12 +903,12 @@ export class Hero {
       this.scene.tweens.add({
         targets: this.shadow,
         x: destX,
-        y: destY - 20,
-        scaleX: this.shadow.scaleX * 0.45,
-        scaleY: this.shadow.scaleY * 0.45,
+        y: destY - 4,
+        scaleX: 0,
+        scaleY: 0,
         alpha: 0,
         duration,
-        ease: 'Cubic.easeInOut'
+        ease: 'Quad.easeIn'
       });
     }
 
@@ -913,21 +916,27 @@ export class Hero {
       this.scene.tweens.add({
         targets: this.accessorySprite,
         x: destX,
-        y: destY - 20 - 30,
-        scaleX: this.accessorySprite.scaleX * 0.45,
-        scaleY: this.accessorySprite.scaleY * 0.45,
+        y: destY - 6,
+        scaleX: 0,
+        scaleY: 0,
+        angle: 720,
         alpha: 0,
         duration,
-        ease: 'Cubic.easeInOut'
+        ease: 'Quad.easeIn'
       });
     }
 
     if (this.headBadgeContainer) {
       this.scene.tweens.add({
         targets: this.headBadgeContainer,
+        x: destX,
+        y: destY - 6,
+        scaleX: 0,
+        scaleY: 0,
+        angle: 720,
         alpha: 0,
-        duration: Math.min(600, duration),
-        ease: 'Cubic.easeInOut'
+        duration: Math.min(650, duration),
+        ease: 'Quad.easeIn'
       });
     }
   }
@@ -936,12 +945,14 @@ export class Hero {
     this.isMoving = false;
     this.restoreDisplaySize();
     if (this.sprite) {
+      this.sprite.setAngle(0);
       this.sprite.setAlpha(1);
     }
     if (this.shadow) {
       this.shadow.setAlpha(1);
     }
     if (this.accessorySprite) {
+      this.accessorySprite.setAngle(0);
       this.accessorySprite.setAlpha(1);
       const config = ACCESSORY_RENDER_CONFIG[this.accessoryId];
       if (config) {
@@ -950,6 +961,8 @@ export class Hero {
       this.updateAccessory();
     }
     if (this.headBadgeContainer) {
+      this.headBadgeContainer.setAngle(0);
+      this.headBadgeContainer.setScale(1);
       this.headBadgeContainer.setAlpha(1);
     }
   }
