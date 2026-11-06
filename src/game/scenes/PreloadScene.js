@@ -296,6 +296,11 @@ export class PreloadScene extends Phaser.Scene {
       if (this.hasTransitioned) return;
       this.hasTransitioned = true;
       if (this.preloadWatchdog) clearTimeout(this.preloadWatchdog);
+      try {
+        if (this.load.isLoading()) {
+          this.load.stop();
+        }
+      } catch {}
       window.dispatchEvent(new CustomEvent('game:load-complete'));
       if (this.sys && this.sys.isActive()) {
         this.scene.start('WorldScene', { mapId: 'map_pet_farm' });

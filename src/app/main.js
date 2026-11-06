@@ -1211,20 +1211,32 @@ try {
 }
 window.__PHASER_GAME__ = game;
 
-// Watchdog an toàn: Đảm bảo WorldScene luôn hiển thị và không bao giờ bị đơ màn hình xanh
-setTimeout(() => {
-  const ws = window.__worldScene || game?.scene?.getScene('WorldScene');
-  if (!ws || !ws.sys || !ws.sys.isActive()) {
-    console.warn('[Phaser Watchdog] WorldScene chưa hoạt động sau 2.2s, cưỡng chế kích hoạt thế giới...');
-    try {
-      if (game?.scene && !game.scene.isActive('WorldScene')) {
+// Watchdog an toàn đa tầng: Đảm bảo WorldScene luôn hiển thị và canvas luôn hoạt động
+const ensureWorldSceneActive = () => {
+  try {
+    if (game?.scale) {
+      game.scale.refresh();
+    }
+    const canvas = game?.canvas || document.querySelector('#game-root canvas');
+    if (canvas && !document.querySelector('#game-root canvas')) {
+      document.getElementById('game-root')?.appendChild(canvas);
+    }
+    const ws = window.__worldScene || game?.scene?.getScene('WorldScene');
+    if (!ws || !ws.sys || !ws.sys.isActive()) {
+      console.warn('[Phaser Watchdog] Kích hoạt WorldScene khẩn cấp...');
+      if (game?.scene) {
+        if (game.scene.isActive('PreloadScene')) {
+          game.scene.stop('PreloadScene');
+        }
         game.scene.start('WorldScene', { mapId: 'map_pet_farm' });
       }
-    } catch (e) {
-      console.error('[Phaser Watchdog] Không thể khởi động WorldScene tự động:', e);
     }
+  } catch (e) {
+    console.error('[Phaser Watchdog] Lỗi kích hoạt thế giới:', e);
   }
-}, 2200);
+};
+setTimeout(ensureWorldSceneActive, 1800);
+setTimeout(ensureWorldSceneActive, 3200);
 
 // Khắc phục triệt để việc mất hình trên iPad / Safari: Quản lý phục hồi WebGL Context & Visibility
 const setupPhaserCanvasRecovery = () => {

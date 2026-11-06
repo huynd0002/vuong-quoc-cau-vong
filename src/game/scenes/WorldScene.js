@@ -120,6 +120,8 @@ export class WorldScene extends Phaser.Scene {
     this.mapConfig = mapConfig;
     const saveState = saveAdapter.load();
 
+    try {
+
     // Tự động phát nhạc nền phù hợp với từng vùng đất (BGM)
     if (window.__audioService) {
       window.__audioService.playMapMusic(this.currentMapId);
@@ -813,11 +815,26 @@ export class WorldScene extends Phaser.Scene {
     this.initEventListeners();
 
     this.setWorldScale();
-
-    // Báo hiệu bản đồ đã sẵn sàng
-    window.dispatchEvent(new CustomEvent('game:map-ready', {
-      detail: { mapConfig }
-    }));
+    } catch (sceneErr) {
+      console.error('[WorldScene] Lỗi khi tạo cảnh:', sceneErr);
+      try {
+        this.drawFallbackBackground();
+        if (!this.hero) {
+          const spawn = this.mapConfig?.heroSpawn || { x: 380, y: 510 };
+          this.hero = new Hero(this, spawn.x, spawn.y);
+        }
+      } catch (fbErr) {
+        console.error('[WorldScene] Lỗi fallback khẩn cấp:', fbErr);
+      }
+    } finally {
+      try {
+        this.setWorldScale?.();
+      } catch {}
+      // Báo hiệu bản đồ đã sẵn sàng 100% để UI / HUD luôn được kích hoạt
+      window.dispatchEvent(new CustomEvent('game:map-ready', {
+        detail: { mapConfig: this.mapConfig || getMapConfig(this.currentMapId) }
+      }));
+    }
   }
 
   initEventListeners() {

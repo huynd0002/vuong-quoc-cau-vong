@@ -124,8 +124,12 @@ export class GameLoadingScreen {
       this.finish();
     };
 
+    this.onMapReady = () => {
+      this.finish();
+    };
     window.addEventListener('game:load-progress', this.onLoadProgress);
     window.addEventListener('game:load-complete', this.onLoadComplete);
+    window.addEventListener('game:map-ready', this.onMapReady);
   }
 
   startLoop() {
@@ -160,16 +164,16 @@ export class GameLoadingScreen {
       }
     }, 1200);
 
-    // 3. Fallback an toàn siêu tốc: Tự động hoàn thành nhanh nếu không gặp lỗi
+    // 3. Fallback an toàn: Cho phép thời gian tải tài nguyên thực tế, tối đa 2.8s
     setTimeout(() => {
-      if (this.targetProgress < 65) this.setProgress(65);
-    }, 250);
+      if (this.targetProgress < 50) this.setProgress(50);
+    }, 350);
     setTimeout(() => {
-      if (this.targetProgress < 90) this.setProgress(90);
-    }, 600);
+      if (this.targetProgress < 80) this.setProgress(80);
+    }, 1000);
     setTimeout(() => {
       if (!this.isDone) this.finish();
-    }, 1200);
+    }, 2800);
   }
 
   setProgress(percent) {
@@ -195,6 +199,7 @@ export class GameLoadingScreen {
     clearInterval(this.tipInterval);
     window.removeEventListener('game:load-progress', this.onLoadProgress);
     window.removeEventListener('game:load-complete', this.onLoadComplete);
+    window.removeEventListener('game:map-ready', this.onMapReady);
 
     this.updateBarUI(100);
 
