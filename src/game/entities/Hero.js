@@ -1130,6 +1130,72 @@ export class Hero {
     return vfxSprite;
   }
 
+  /**
+   * Hiệu ứng VFX explosions/cartoon-pow (33 frames pixel-art comic burst)
+   * Ngôi sao nổ truyện tranh rực rỡ và dòng chữ POW! bung tỏa trên đầu bé khi câu được cá to, kèm rung nhẹ.
+   */
+  playCartoonPowVFX(customX = null, customY = null) {
+    if (!this.scene?.add) return null;
+
+    if (!this.scene.anims.exists('vfx_cartoon_pow_anim') && this.scene.textures.exists('vfx_cartoon_pow_sheet')) {
+      this.scene.anims.create({
+        key: 'vfx_cartoon_pow_anim',
+        frames: this.scene.anims.generateFrameNumbers('vfx_cartoon_pow_sheet', { start: 0, end: 32 }),
+        frameRate: 30,
+        repeat: 0
+      });
+    }
+
+    if (!this.scene.anims.exists('vfx_cartoon_pow_anim')) return null;
+
+    const feetOffsetY = this.skin === 'knight' ? 33 : 38;
+    // Đỉnh đầu nhân vật: đặt tâm vụ nổ POW! ngay phía trên đỉnh đầu bé (~62px)
+    const vfxOffsetY = feetOffsetY - 100;
+    const startX = customX !== null ? customX : this.getX();
+    const startY = customY !== null ? customY : this.getY();
+
+    // Sprite VFX Cartoon POW (33 frames comic explosion)
+    // Pivot [92, 72] trên kích thước [184, 144] -> origin (92/184, 72/144) = (0.5, 0.5)
+    const vfxSprite = this.scene.add.sprite(startX, startY + vfxOffsetY, 'vfx_cartoon_pow_sheet');
+    vfxSprite.setOrigin(0.5, 0.5);
+    vfxSprite.setScale(1.25);
+    vfxSprite.setDepth(Math.floor(startY + 99));
+    vfxSprite.play('vfx_cartoon_pow_anim');
+
+    // Rung nhẹ nhân vật với hiệu ứng giật nảy vui nhộn kiểu truyện tranh
+    if (this.sprite) {
+      this.scene.tweens.add({
+        targets: [this.sprite, this.accessorySprite].filter(Boolean),
+        x: '+=4',
+        duration: 35,
+        yoyo: true,
+        repeat: 6,
+        ease: 'Sine.easeInOut'
+      });
+    }
+
+    // Bám theo vị trí nhân vật nếu bé đang di chuyển
+    const followTimer = this.scene.time.addEvent({
+      delay: 16,
+      repeat: 75, // ~1.2s
+      callback: () => {
+        if (!vfxSprite || !vfxSprite.active) {
+          followTimer.remove();
+          return;
+        }
+        vfxSprite.setPosition(this.getX(), this.getY() + vfxOffsetY);
+        vfxSprite.setDepth(Math.floor(this.getY() + 99));
+      }
+    });
+
+    vfxSprite.on('animationcomplete', () => {
+      followTimer.remove();
+      vfxSprite.destroy();
+    });
+
+    return vfxSprite;
+  }
+
   destroy() {
     this.clearHeadBadge();
     if (this.idleTween) this.idleTween.stop();

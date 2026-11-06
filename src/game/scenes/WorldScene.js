@@ -4045,7 +4045,7 @@ export class WorldScene extends Phaser.Scene {
       sp.id === 'crystal_fairy_fish' ||
       sp.id === 'galaxy_star_fish'
     );
-    const isBigFish = (caughtFish.weightG >= 500);
+    const isBigFish = (caughtFish.weightG >= 500) || isRareFish || sp.sizeTier === 'large' || sp.sizeTier === 'special';
 
     // Hiệu ứng tia nước tung tóe và Bé nhảy mừng trên cầu gỗ
     this.spawnStationParticles(castX, castY, isRareFish ? ['✨', '🌟', '🌈', '💫', '⭐', '🪄', '🔮'] : ['💦', '🎉', '⭐', '🪷', '🌈'], 0x38bdf8);
@@ -4058,6 +4058,13 @@ export class WorldScene extends Phaser.Scene {
         duration: 180,
         ease: 'Back.easeOut'
       });
+    }
+
+    // Hiệu ứng explosions/cartoon-pow khi câu được cá to: xuất hiện trên đầu nhân vật và rung nhẹ màn hình!
+    if (isBigFish) {
+      this.hero?.playCartoonPowVFX?.();
+      this.cameras?.main?.shake?.(260, 0.0035);
+      window.__audioService?.playChime?.(1020, 0.22);
     }
 
     // 3. Vinh danh Danh Hiệu khi câu cá tại vị trí khoanh đỏ (kèm âm thanh chúc mừng & VFX rung ánh sáng)

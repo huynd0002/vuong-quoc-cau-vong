@@ -89,6 +89,7 @@ import portalSheetUrl from '../../../assets/props/portal/portal_sheet.png?url';
 import implosionSheetUrl from '../../../assets/props/portal/implosion_sheet.png?url';
 import vfxLevelUpSheetUrl from '../../../assets/ui/vfx_level_up_sheet.png?url';
 import vfxExclamationSheetUrl from '../../../assets/ui/vfx_exclamation_sheet.png?url';
+import vfxCartoonPowSheetUrl from '../../../assets/ui/vfx_cartoon_pow_sheet.png?url';
 
 // Phụ Kiện Nhân Vật Thời Trang Mua Bằng Sao (Chibi Accessories)
 import accRainbowCrownUrl from '../../../assets/fashion/accessories/acc_rainbow_crown.png?url';
@@ -246,6 +247,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.spritesheet('vfx_implosion_sheet', implosionSheetUrl, { frameWidth: 208, frameHeight: 184 });
     this.load.spritesheet('vfx_level_up_sheet', vfxLevelUpSheetUrl, { frameWidth: 176, frameHeight: 138 });
     this.load.spritesheet('vfx_exclamation_sheet', vfxExclamationSheetUrl, { frameWidth: 84, frameHeight: 104 });
+    this.load.spritesheet('vfx_cartoon_pow_sheet', vfxCartoonPowSheetUrl, { frameWidth: 184, frameHeight: 144 });
 
     // 5. Tải Boss Rồng Thần Cầu Vồng (Walk, Idle, Skill Spritesheets)
     this.load.image('boss_dragon', bossDragonUrl);

@@ -1337,7 +1337,7 @@ if (typeof window !== 'undefined' && /^https?:$/.test(window.location.protocol) 
   });
 }
 
-export const GAME_VERSION = '3.5.5';
+export const GAME_VERSION = '3.5.6';
 
 export function syncGameVersionDisplay() {
   const vText = `ver ${GAME_VERSION}`;
