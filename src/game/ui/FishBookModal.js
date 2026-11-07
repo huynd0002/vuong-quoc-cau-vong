@@ -58,6 +58,10 @@ export class FishBookModal {
     }
   }
 
+  close() {
+    return this.hide();
+  }
+
   _speak(text) {
     if (!text) return;
     if (this.audioService && typeof this.audioService.speak === 'function') {

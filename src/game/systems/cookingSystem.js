@@ -77,6 +77,7 @@ export class CookingSystem {
   completeHandWash() {
     return this.mutate(state => {
       state.handsWashed = true;
+      state.handWash8StepsDone = true;
       return { ok: true };
     });
   }

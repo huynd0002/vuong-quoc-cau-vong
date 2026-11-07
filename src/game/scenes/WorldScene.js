@@ -244,6 +244,38 @@ export class WorldScene extends Phaser.Scene {
     };
     this.addManagedListener('game:badge-unequipped', this.onBadgeUnequipped);
 
+    this.onBadgeUnlocked = (e) => {
+      const badge = e.detail?.badge;
+      if (badge && this.hero) {
+        this.hero.setHeadBadge(badge);
+        if (typeof this.hero.playLevelUpVFX === 'function') {
+          this.hero.playLevelUpVFX();
+        }
+        const heroX = this.hero.getX?.() ?? 688;
+        const heroY = this.hero.getY?.() ?? 360;
+        if (this.hero.sprite) {
+          this.tweens?.add?.({
+            targets: this.hero.sprite,
+            y: '-=24',
+            yoyo: true,
+            duration: 200,
+            repeat: 2,
+            ease: 'Quad.easeInOut'
+          });
+        }
+        if (typeof this.spawnStationParticles === 'function') {
+          this.spawnStationParticles(heroX, heroY - 45, ['✨', '⭐', '🎉', '🌟', '👑'], 0xfacc15);
+        }
+      }
+      if (this.pet && typeof this.pet.celebrate === 'function') {
+        this.pet.celebrate(2500);
+      }
+      if (this.cameras?.main) {
+        this.cameras.main.flash?.(200, 255, 255, 220, false);
+      }
+    };
+    this.addManagedListener('game:badge-unlocked', this.onBadgeUnlocked);
+
     // Hiển thị Phụ Kiện trên người nhân vật nếu đã đeo
     const fashionSys = window.__fashionSystem;
     const initialAccId = fashionSys?.getState?.()?.currentAccessory || saveState?.fashion?.currentAccessory;
@@ -4157,6 +4189,8 @@ export class WorldScene extends Phaser.Scene {
     // Ẩn thanh Audition và cần câu
     this.stopOnMapFishing(false);
     window.__audioService?.playFishCatch?.();
+    window.dispatchEvent(new CustomEvent('game:fish-caught', { detail: { fish: caughtFish } }));
+    window.dispatchEvent(new CustomEvent('game:check-badges'));
 
     // Thực thể cá trong hồ văng từ mặt nước (castX, castY) lên sàn cầu gỗ (heroX - 28, heroY + 8) và giãy dụa!
     const landX = Math.max(625, heroX - 26);
@@ -4354,7 +4388,7 @@ export class WorldScene extends Phaser.Scene {
     let unlockedBadge = null;
     if (window.__badgeSystem) {
       const newlyUnlocked = window.__badgeSystem.checkAllBadges(null, { notify: false, autoEquipIfNone: true });
-      const fishingBadge = newlyUnlocked.find(b => b.category === 'fishing');
+      const fishingBadge = newlyUnlocked.find(b => b.id.includes('fish') || b.id === 'badge_first_catch' || b.id === 'badge_rainbow_angler') || newlyUnlocked[0];
       if (fishingBadge) {
         unlockedBadge = fishingBadge;
       }

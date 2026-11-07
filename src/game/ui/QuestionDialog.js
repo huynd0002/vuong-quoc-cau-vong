@@ -240,9 +240,13 @@ export class QuestionDialog {
       }
 
       // Lưu lại tiến trình
-      if (this.saveAdapter && this.combatSystem.progressionSystem) {
+      if (this.combatSystem?.progressionSystem) {
+        this.combatSystem.progressionSystem.recordLearningAnswer?.(this.currentQuestion?.skillKey || 'math', true);
+      }
+      if (this.saveAdapter && this.combatSystem?.progressionSystem) {
         this.saveAdapter.save(this.combatSystem.progressionSystem.state);
       }
+      window.dispatchEvent(new CustomEvent('game:check-badges'));
 
       // Phát sự kiện giải cứu
       if (result.isBoss) {

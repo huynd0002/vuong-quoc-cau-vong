@@ -2734,6 +2734,27 @@ export class BattleArenaModal {
   }
 
   executeHeroAttack() {
+    // Ghi nhận đáp đúng / hoàn thành thử thách học tập để mở khóa Danh Hiệu
+    try {
+      if (this.combatSystem?.progressionSystem) {
+        this.combatSystem.progressionSystem.recordLearningAnswer?.(this.currentQuestion?.skillKey || 'math', true);
+      }
+      const liveState = this.saveAdapter ? this.saveAdapter.load() : (window.__gameState || {});
+      if (liveState?.campaign) {
+        liveState.campaign.learningStats = liveState.campaign.learningStats || { totalAnswers: 0, firstTryCount: 0, skillsPracticed: {} };
+        liveState.campaign.learningStats.totalAnswers = (liveState.campaign.learningStats.totalAnswers || 0) + 1;
+        liveState.campaign.firstEncounterDone = true;
+        if (this.saveAdapter) this.saveAdapter.save(liveState);
+      }
+      if (window.__gameState?.campaign) {
+        window.__gameState.campaign.learningStats = window.__gameState.campaign.learningStats || { totalAnswers: 0, firstTryCount: 0, skillsPracticed: {} };
+        window.__gameState.campaign.learningStats.totalAnswers = (window.__gameState.campaign.learningStats.totalAnswers || 0) + 1;
+      }
+    } catch (err) {}
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('game:check-badges'));
+    }
+
     if (this.audioService) this.audioService.playAttack();
 
     // 1. Bé Sâu tung chiêu lunge & Phát sáng hào quang Skill Glow (Yêu cầu 2)

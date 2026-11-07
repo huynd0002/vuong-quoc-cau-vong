@@ -54,6 +54,7 @@ const petSystem = new PetSystem(gameState.pet);
 const combatSystem = new CombatSystem({ progressionSystem, petSystem });
 const badgeSystem = new BadgeSystem(saveAdapter, gameState, audioService);
 window.__badgeSystem = badgeSystem;
+window.__gameState = gameState;
 
 const cookingSystem = new CookingSystem(saveAdapter, (_state, saved) => {
   Object.assign(gameState.player, saved.player);
@@ -246,6 +247,26 @@ window.addEventListener('game:boss-resolved', () => {
   badgeSystem.checkAllBadges(gameState);
 });
 
+window.addEventListener('game:pet-updated', () => {
+  badgeSystem.checkAllBadges(gameState);
+});
+
+window.addEventListener('game:hands-washed', () => {
+  badgeSystem.checkAllBadges(gameState);
+});
+
+window.addEventListener('game:fish-caught', () => {
+  badgeSystem.checkAllBadges(gameState);
+});
+
+window.addEventListener('game:dish-cooked', () => {
+  badgeSystem.checkAllBadges(gameState);
+});
+
+window.addEventListener('game:stars-changed', () => {
+  badgeSystem.checkAllBadges(gameState);
+});
+
 window.addEventListener('game:open-fishing-station', (e) => {
   const st = e.detail?.station;
   if (!st) return;
@@ -321,7 +342,18 @@ function returnFarmMapDirect() {
  kitchenStationModal = new KitchenStationModal({
   audioService,
   saveAdapter,
-  onHandWashComplete: () => cookingSystem.completeHandWash(),
+  onHandWashComplete: () => {
+    cookingSystem.completeHandWash();
+    try {
+      const s = saveAdapter.load();
+      if (s?.cooking) {
+        s.cooking.handsWashed = true;
+        s.cooking.handWash8StepsDone = true;
+        saveAdapter.save(s);
+      }
+    } catch (e) {}
+    badgeSystem.checkAllBadges(gameState);
+  },
   onOpenFridge: () => {
     const isWashed = Boolean(cookingSystem.getState()?.handsWashed);
     if (!isWashed) {
@@ -1300,7 +1332,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.6.8';
+export const GAME_VERSION = '3.6.9';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {

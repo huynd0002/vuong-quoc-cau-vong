@@ -34,7 +34,12 @@ export const BADGES = Object.freeze([
     checkUnlocked: (state) => {
       const learning = state?.campaign?.learningStats || {};
       const totalAns = learning.totalAnswers || 0;
-      return totalAns >= 1 || Boolean(state?.fishing?.milestones?.firstScaleGame);
+      const rescued = Object.keys(state?.campaign?.rescuedFriends || {}).length;
+      const completed = (state?.campaign?.completedMaps || []).length;
+      const stars = state?.player?.stars || 0;
+      const exp = state?.player?.exp || 0;
+      return totalAns >= 1 || rescued >= 1 || completed >= 1 || stars >= 1 || exp >= 1 ||
+        Boolean(state?.fishing?.milestones?.firstScaleGame) || Boolean(state?.campaign?.firstEncounterDone);
     }
   },
   {
@@ -53,7 +58,8 @@ export const BADGES = Object.freeze([
     checkUnlocked: (state) => {
       const unlocked = state?.player?.unlockedBadges || [];
       if (!unlocked.includes('badge_math_genius')) return false;
-      return Boolean(state?.cooking?.handWash8StepsDone);
+      const cooking = state?.cooking || {};
+      return Boolean(cooking.handsWashed || cooking.handWash8StepsDone || cooking.hygieneDone || (cooking.cookedDishesCount || 0) >= 1 || (cooking.cookedHistory || []).length >= 1);
     }
   },
   {
@@ -67,12 +73,13 @@ export const BADGES = Object.freeze([
     category: 'tier_starter',
     categoryLabel: '🏅 Bậc 3 / 20',
     desc: 'Bé biết yêu thương, chăm sóc cún cưng ăn thật no và tiếp thêm năng lượng!',
-    goalHint: 'Đã đạt Bậc 2 → Mở chăm sóc thú cưng và cho bé cún ăn no đạt trên 80% nhé!',
+    goalHint: 'Đã đạt Bậc 2 → Mở chăm sóc thú cưng và cho bé cún ăn no nhé!',
     voiceDesc: 'Bậc ba! Bạn Nhỏ Chu Đáo! Thú cưng được ăn no ngon miệng đang vẫy đuôi mừng rỡ!',
     checkUnlocked: (state) => {
       const unlocked = state?.player?.unlockedBadges || [];
       if (!unlocked.includes('badge_clean_hands')) return false;
-      return (state?.pet?.hunger || 0) >= 80;
+      const pet = state?.pet || {};
+      return (pet.hunger || 0) >= 40 || Boolean(pet.lastFedAt) || (pet.fedCount || 0) >= 1 || (pet.hunger || 0) > 0;
     }
   },
   {
@@ -86,12 +93,13 @@ export const BADGES = Object.freeze([
     category: 'tier_starter',
     categoryLabel: '🏅 Bậc 4 / 20',
     desc: 'Bé đã tắm rửa sạch bóng và xịt bọt xà phòng thơm tho cho thú cưng yêu quý!',
-    goalHint: 'Đã đạt Bậc 3 → Tắm bồn nước mát cho thú cưng đạt độ sạch trên 80% nha!',
+    goalHint: 'Đã đạt Bậc 3 → Tắm bồn nước mát cho thú cưng thật sạch sẽ thơm tho nha!',
     voiceDesc: 'Bậc bốn! Bé Tắm Mát Rượi! Thú cưng sạch sẽ thơm tho, bộ lông óng mượt tuyệt đẹp!',
     checkUnlocked: (state) => {
       const unlocked = state?.player?.unlockedBadges || [];
       if (!unlocked.includes('badge_pet_feeder')) return false;
-      return (state?.pet?.clean || 0) >= 80;
+      const pet = state?.pet || {};
+      return (pet.clean || 0) >= 40 || Boolean(pet.lastBathedAt) || (pet.bathedCount || 0) >= 1;
     }
   },
   {
@@ -141,7 +149,8 @@ export const BADGES = Object.freeze([
       const count = cooking.cookedDishesCount || 0;
       const history = (cooking.cookedHistory || []).length;
       const inv = (cooking.inventory || []).length;
-      return count >= 1 || history >= 1 || inv >= 1;
+      const dishes = (cooking.dishes || []).length;
+      return count >= 1 || history >= 1 || inv >= 1 || dishes >= 1 || Boolean(cooking.milestones?.firstCook);
     }
   },
   {
@@ -154,14 +163,16 @@ export const BADGES = Object.freeze([
     icon: '⭐',
     category: 'tier_growth',
     categoryLabel: '🏅 Bậc 7 / 20',
-    desc: 'Bé chăm chỉ tích lũy được kho tàng từ 15 Ngôi Sao sáng lấp lánh!',
-    goalHint: 'Đã đạt Bậc 6 → Vượt ải, làm việc tốt hoặc bán cá tích lũy đạt từ 15 Ngôi Sao trở lên!',
-    voiceDesc: 'Bậc bảy! Bé Tích Sao Ngoan! Kho tàng Ngôi Sao của bé lấp lánh như bầu trời đêm!',
+    desc: 'Bé chăm chỉ tích lũy được kho tàng từ 5 Ngôi Sao sáng lấp lánh!',
+    goalHint: 'Đã đạt Bậc 6 → Vượt ải, làm việc tốt hoặc bán cá tích lũy đạt từ 5 Ngôi Sao trở lên!',
+    voiceDesc: 'Bậc bảy! Bé Tích Sao Ngoan! Kho tàng 5 Ngôi Sao của bé lấp lánh như bầu trời đêm!',
     checkUnlocked: (state) => {
       const unlocked = state?.player?.unlockedBadges || [];
       if (!unlocked.includes('badge_little_chef')) return false;
-      const stars = state?.player?.stars || state?.fishing?.shells || 0;
-      return stars >= 15;
+      const stars = state?.player?.stars ?? 0;
+      const shells = state?.fishing?.shells ?? 0;
+      const totalStars = state?.player?.totalStarsEarned ?? 0;
+      return stars >= 5 || shells >= 5 || totalStars >= 5;
     }
   },
   {
@@ -181,7 +192,7 @@ export const BADGES = Object.freeze([
       const unlocked = state?.player?.unlockedBadges || [];
       if (!unlocked.includes('badge_star_collector')) return false;
       const fishing = state?.fishing || {};
-      return Boolean(fishing.milestones?.firstMarketSale) || (fishing.totalSalesCount || 0) >= 1;
+      return Boolean(fishing.milestones?.firstMarketSale) || (fishing.totalSalesCount || 0) >= 1 || (fishing.salesCount || 0) >= 1 || Boolean(state?.market?.visited);
     }
   },
   {
@@ -201,7 +212,9 @@ export const BADGES = Object.freeze([
       const unlocked = state?.player?.unlockedBadges || [];
       if (!unlocked.includes('badge_market_vip')) return false;
       const maps = state?.campaign?.unlockedMaps || [];
-      return maps.length >= 2;
+      const visited = state?.campaign?.visitedMaps || [];
+      const completed = state?.campaign?.completedMaps || [];
+      return maps.length >= 2 || visited.length >= 2 || completed.length >= 1 || Boolean(state?.campaign?.hasTeleported);
     }
   },
   {
@@ -221,7 +234,7 @@ export const BADGES = Object.freeze([
       const unlocked = state?.player?.unlockedBadges || [];
       if (!unlocked.includes('badge_world_explorer')) return false;
       const pet = state?.pet || {};
-      return (pet.level || 1) >= 2 || (pet.affinity || 1) >= 2 || (pet.affection || 0) >= 25;
+      return (pet.level || 1) >= 2 || (pet.affinity || 1) >= 2 || (pet.affection || 0) >= 10 || (pet.exp || 0) >= 10;
     }
   },
 
