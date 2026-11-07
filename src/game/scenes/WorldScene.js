@@ -88,10 +88,18 @@ export class WorldScene extends Phaser.Scene {
   init(data) {
     if (data && data.mapId) {
       this.currentMapId = data.mapId;
+      if (data.spawnPoint) {
+        this.overrideSpawnPoint = data.spawnPoint;
+      }
     } else {
       const state = saveAdapter.load();
       this.currentMapId = state?.campaign?.currentMapId || 'map_pet_farm';
     }
+  }
+
+  switchMap(mapId, spawnPoint = null) {
+    if (!mapId) return;
+    this.scene.start('WorldScene', { mapId, spawnPoint });
   }
 
   addManagedListener(eventName, handler) {
@@ -107,15 +115,36 @@ export class WorldScene extends Phaser.Scene {
   }
 
   isWorldPointer(pointer) {
-    // DOM care/HUD controls overlay the canvas. Their pointer coordinates must
-    // never also select an unrelated station underneath the button.
+    // Không cho tương tác di chuyển ngoài map nếu đang mở modal
+    const activeModal = document.querySelector(
+      '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden])'
+    );
+    if (activeModal) return false;
+
+    // Không di chuyển nhân vật khi đang bị khóa đứng yên câu cá
+    if (this.isFishingSpotLocked) return false;
+
     const target = pointer?.event?.target;
-    return this.isExploring && (!target || target === this.game.canvas);
+    if (target) {
+      // Chặn nếu chạm vào các nút điều khiển HTML HUD bên ngoài
+      const isUiControl = target.closest(
+        'button, a, input, select, textarea, ' +
+        '.top-bar, .control-bar, .virtual-joystick-zone, ' +
+        '.floating-bag-btn, .interactive-e-action-btn, .dock-stop-fishing-btn, ' +
+        '.pet-farm-growth-panel'
+      );
+      if (isUiControl) return false;
+    }
+    return true;
   }
 
   create() {
     window.__worldScene = this;
     window.__currentMapId = this.currentMapId;
+    this.isExploring = true;
+    this.isFishingSpotLocked = false;
+    this.onMapFishingState = null;
+    this.activeProximityInteractStation = null;
     const mapConfig = getMapConfig(this.currentMapId);
     this.mapConfig = mapConfig;
     const saveState = saveAdapter.load();
@@ -230,13 +259,15 @@ export class WorldScene extends Phaser.Scene {
 
     // 3. Khởi tạo Hero (Bé Sâu / Bé Sâu Hiệp Sĩ Nâng Cấp)
     try {
-      const spawn = mapConfig.heroSpawn || { x: 380, y: 510 };
+      const spawn = this.overrideSpawnPoint || mapConfig.heroSpawn || { x: 380, y: 510 };
+      this.overrideSpawnPoint = null;
       const initialSkin = saveState?.player?.selectedSkin || (saveState?.player?.level >= 2 ? 'knight' : 'default');
       this.hero = new Hero(this, spawn.x, spawn.y, { skin: initialSkin });
       this.hero.restoreDisplaySize();
     } catch (heroErr) {
       console.error('[WorldScene] Lỗi khởi tạo Hero (đang dùng fallback khẩn cấp):', heroErr);
-      const spawn = mapConfig.heroSpawn || { x: 380, y: 510 };
+      const spawn = this.overrideSpawnPoint || mapConfig.heroSpawn || { x: 380, y: 510 };
+      this.overrideSpawnPoint = null;
       this.hero = new Hero(this, spawn.x, spawn.y, { skin: 'default' });
     }
 
@@ -654,6 +685,16 @@ export class WorldScene extends Phaser.Scene {
         this.dockStartFishingBtnEl.remove();
         this.dockStartFishingBtnEl = null;
       }
+      if (this._onGlobalKeyE) {
+        window.removeEventListener('keydown', this._onGlobalKeyE);
+        this._onGlobalKeyE = null;
+      }
+      const interactEBtn = document.getElementById('btn-interactive-e');
+      if (interactEBtn) interactEBtn.hidden = true;
+      const stopFishingBtn = document.getElementById('btn-stop-fishing-dock');
+      if (stopFishingBtn) stopFishingBtn.style.display = 'none';
+      this.isFishingSpotLocked = false;
+      this.activeProximityInteractStation = null;
       if (this._onBasketFullNotice) {
         window.removeEventListener('game:basket-full-notice', this._onBasketFullNotice);
         this._onBasketFullNotice = null;
@@ -763,6 +804,39 @@ export class WorldScene extends Phaser.Scene {
     this.wasd = this.input?.keyboard ? this.input.keyboard.addKeys('W,A,S,D') : {
       W: dummyKey, A: dummyKey, S: dummyKey, D: dummyKey
     };
+    this.keyE = this.input?.keyboard ? this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E) : dummyKey;
+
+    // Lắng nghe phím 'E' toàn cục để kích hoạt trạm đang đứng gần
+    this._onGlobalKeyE = (e) => {
+      if ((e.key === 'e' || e.key === 'E') && !e.repeat) {
+        this.triggerActiveProximityInteraction();
+      }
+    };
+    window.addEventListener('keydown', this._onGlobalKeyE);
+
+    // Gắn sự kiện cho nút tương tác [⚡ E] trên màn hình cảm ứng & iPad
+    const interactEBtn = document.getElementById('btn-interactive-e');
+    if (interactEBtn) {
+      const handleEClick = (ev) => {
+        ev?.preventDefault?.();
+        ev?.stopPropagation?.();
+        this.triggerActiveProximityInteraction();
+      };
+      interactEBtn.onclick = handleEClick;
+      interactEBtn.ontouchend = handleEClick;
+    }
+
+    // Gắn sự kiện cho nút Dừng câu cá [🛑 Không câu nữa]
+    const stopFishingBtn = document.getElementById('btn-stop-fishing-dock');
+    if (stopFishingBtn) {
+      const handleStopClick = (ev) => {
+        ev?.preventDefault?.();
+        ev?.stopPropagation?.();
+        this.exitFishingSpot('manual_stop');
+      };
+      stopFishingBtn.onclick = handleStopClick;
+      stopFishingBtn.ontouchend = handleStopClick;
+    }
 
     // 9. Điều khiển cảm ứng (Tap/Click to move)
     this.input.on('pointerdown', (pointer) => {
@@ -866,24 +940,26 @@ export class WorldScene extends Phaser.Scene {
         }
       }
 
-      const nearStation = this.petStationContainers && this.petStationContainers.some(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 85);
-      const nearKitchenStation = this.kitchenStationContainers && this.kitchenStationContainers.some(st => {
-        if (st.data.type === 'pantry') {
-          return (point.x >= 305 && point.x <= 455 && point.y >= 80 && point.y <= 360) ||
-                 Math.hypot(point.x - st.data.x, point.y - st.data.y) < 85;
-        }
-        if (st.data.type === 'prep') {
-          return (point.x >= 525 && point.x <= 685 && point.y >= 70 && point.y <= 210) ||
-                 Math.hypot(point.x - st.data.x, point.y - st.data.y) < 85;
-        }
-        if (st.data.type === 'cook') {
-          return (point.x >= 650 && point.x <= 1120 && point.y >= 100 && point.y <= 360) ||
-                 Math.hypot(point.x - st.data.x, point.y - st.data.y) < 140;
-        }
-        return Math.hypot(point.x - st.data.x, point.y - st.data.y) < 110;
-      });
+      // Nếu bấm trực tiếp vào quái vật thì kích hoạt thử thách chiến đấu
+      const directClickedMonster = this.monsters.find(m => m.sprite?.active && Math.hypot(point.x - m.sprite.x, point.y - m.sprite.y) < 50);
+      if (directClickedMonster && !directClickedMonster.isRescued) {
+        this.triggerEncounterPrompt(directClickedMonster.data, false);
+        return;
+      }
+      if (this.boss && this.boss.isAppeared && !this.boss.isRescued && this.boss.sprite?.active && Math.hypot(point.x - this.boss.sprite.x, point.y - this.boss.sprite.y) < 65) {
+        const phaseConfig = this.boss.data.phases ? this.boss.data.phases[this.boss.phase - 1] : null;
+        const questionId = phaseConfig ? phaseConfig.questionId : this.boss.data.questionId;
+        this.triggerEncounterPrompt({
+          ...this.boss.data,
+          questionId,
+          name: phaseConfig ? phaseConfig.name : this.boss.data.name
+        }, true);
+        return;
+      }
 
-      if (nearMonster || nearBoss || nearPuzzle || nearProp || nearStation || nearKitchenStation) return;
+      // Tối ưu iPad/Touch: Không chặn di chuyển khi bấm gần trạm hoặc vật thể!
+      // Bấm vào bất kỳ đâu trên mặt đất đều cho nhân vật di chuyển êm dịu tới đó
+      if (this.isFishingSpotLocked) return;
 
       let targetX = point.x;
       let targetY = point.y;
@@ -2020,6 +2096,13 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
+    // Khi bị khóa đứng yên câu cá: cấm tuyệt đối di chuyển
+    if (this.isFishingSpotLocked) {
+      dirX = 0;
+      dirY = 0;
+      if (this.hero.isMoving) this.hero.stop();
+    }
+
     if (dirX !== 0 || dirY !== 0) {
       const len = Math.hypot(dirX, dirY);
       const moveFactor = jDist > 0.12 ? Math.min(1, Math.max(0.35, jDist)) : 1;
@@ -2127,8 +2210,9 @@ export class WorldScene extends Phaser.Scene {
           this.pondFishes[i]?.update?.(delta);
         }
       }
-      this.updateDockFishingProximityButton(heroX, heroY);
+      this.updateDockFishingAutoFlow(heroX, heroY);
     }
+    this.updateProximityInteractionE(heroX, heroY);
 
     if (this.petBathWaterEffect) {
       this.petBathWaterEffect.update(time, delta);
@@ -3378,10 +3462,18 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Kẹp toạ độ người chơi hoàn toàn ra ngoài vùng nước đỏ Hồ Câu Lá Sen (nhưng cho phép đi trên cầu gỗ ra vòng tròn xanh 668, 426)
+   * Cho phép đi trên cầu gỗ và bến câu Hồ Câu Lá Sen (688, 360 - chân 398)
    */
   isPointOnPondDock(x, y, zone) {
     if (!zone) return false;
+    // Bến câu chỉ định (688, 360 - chân 398) và toàn bộ mặt sàn cầu gỗ
+    if (Math.hypot(x - 688, y - 398) <= 95 || (x >= 600 && x <= 860 && y >= 250 && y <= 450)) {
+      return true;
+    }
+    const d = zone.walkableDockRect;
+    if (d && x >= d.xMin && x <= d.xMax && y >= d.yMin && y <= d.yMax) {
+      return true;
+    }
     const poly = zone.dockPoly;
     if (poly && poly.length >= 3) {
       let inside = false;
@@ -3391,20 +3483,19 @@ export class WorldScene extends Phaser.Scene {
         const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
       }
-      return inside;
-    }
-    if (zone.walkableDockRect) {
-      const d = zone.walkableDockRect;
-      return x >= d.xMin && x <= d.xMax && y >= d.yMin && y <= d.yMax;
+      if (inside) return true;
     }
     return false;
   }
 
   /**
-   * Kẹp toạ độ người chơi hoàn toàn ra ngoài vùng nước Hồ Câu Lá Sen (nhưng cho phép đi trên cầu gỗ ra điểm câu 702, 348)
+   * Kẹp toạ độ người chơi hoàn toàn ra ngoài vùng nước Hồ Câu Lá Sen (nhưng cho phép đứng vững tại bến câu)
    */
   clampOutOfFishingPondWater(x, y, zone, allowDock = true) {
     if (!zone) return { x, y };
+    if (this.isFishingSpotLocked) {
+      return { x: 688, y: 360 };
+    }
     const footOffset = 38;
     const checkY = y + footOffset;
 
@@ -3542,7 +3633,7 @@ export class WorldScene extends Phaser.Scene {
     });
 
     // Khởi tạo nút DOM "🎣 Bắt đầu câu cá"
-    this.mountDockStartFishingButton(dockStation);
+    this.setupDockFishingControls();
 
     stations.forEach((st) => {
       // Ẩn hoàn toàn 2 nhãn câu cá màu xanh trên map (station_lotus_dock, station_sunny_dock)
@@ -3600,88 +3691,281 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Tạo nút bấm "🎣 Bắt đầu câu cá" chỉ hiển thị khi bé đứng trong vòng tròn xanh dương trên cầu gỗ (668, 426)
+   * Khởi tạo điều khiển bến câu cá (v3.7.5: Bỏ nút "Bắt đầu", dùng nút "Không câu nữa" và tự động khóa vị trí)
    */
-  mountDockStartFishingButton(dockStation) {
-    if (this.dockStartFishingBtnEl) {
-      this.dockStartFishingBtnEl.remove();
-      this.dockStartFishingBtnEl = null;
-    }
+  setupDockFishingControls() {
     const oldBtn = document.getElementById('btn-start-fishing-dock');
     if (oldBtn) oldBtn.remove();
+    this.dockStartFishingBtnEl = null;
 
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.id = 'btn-start-fishing-dock';
-    btn.className = 'dock-start-fishing-btn';
-    btn.style.display = 'none';
-    btn.innerHTML = `
-      <span class="dock-start-fishing-icon">🎣</span>
-      <span class="dock-start-fishing-label">Bắt đầu câu cá</span>
-    `;
-    const handleStartFishing = (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      const curFishing = window.__fishingSystem?.getState?.() || {};
-      if ((curFishing.basket?.length || 0) >= 6) {
-        this.showBasketFullNoticeModal();
-        return;
-      }
-      this.startOnMapFishing(dockStation);
-    };
-    btn.addEventListener('click', handleStartFishing);
-    btn.addEventListener('pointerdown', handleStartFishing);
-    btn.addEventListener('touchstart', handleStartFishing, { passive: false });
-
-    // Xoá bỏ hoàn toàn phần nút Skill thêm cá theo yêu cầu người chơi
-    const oldSkillBtn = document.getElementById('btn-fishing-skill-dock');
-    if (oldSkillBtn) oldSkillBtn.remove();
-    this.dockFishingSkillBtnEl = null;
-
-    const gameRoot = document.getElementById('game-root') || document.body;
-    gameRoot.appendChild(btn);
-    this.dockStartFishingBtnEl = btn;
-
-    if (this.hero) {
-      this.updateDockFishingProximityButton(this.hero.getX(), this.hero.getY());
+    const stopBtn = document.getElementById('btn-stop-fishing-dock');
+    if (stopBtn) {
+      stopBtn.onclick = (ev) => {
+        ev?.preventDefault?.();
+        ev?.stopPropagation?.();
+        this.exitFishingSpot('manual_stop');
+      };
+      stopBtn.ontouchend = (ev) => {
+        ev?.preventDefault?.();
+        ev?.stopPropagation?.();
+        this.exitFishingSpot('manual_stop');
+      };
+      stopBtn.style.display = (this.isFishingSpotLocked || this.onMapFishingState) ? 'inline-flex' : 'none';
     }
   }
 
   /**
-   * Kiểm tra khoảng cách của bé tới vòng tròn xanh trên cầu gỗ (668, 384..426):
-   * Chỉ khi bé đứng trong vùng khoanh xanh (<= 78px) và chưa quăng cần thì mới hiện button "🎣 Bắt đầu câu cá"
+   * Tự động khóa vị trí nhân vật khi đứng vào bến câu (688, 360) và tự động câu cá luôn (v3.7.5)
    */
-  updateDockFishingProximityButton(heroX, heroY) {
-    if (!this.dockStartFishingBtnEl) return;
-    if (this.currentMapId !== 'map_fishing_pond' || this.onMapFishingState) {
-      this.dockStartFishingBtnEl.style.display = 'none';
-      if (this.dockFishingSkillBtnEl) this.dockFishingSkillBtnEl.style.display = 'none';
+  updateDockFishingAutoFlow(heroX, heroY) {
+    if (this.currentMapId !== 'map_fishing_pond') {
+      const stopBtn = document.getElementById('btn-stop-fishing-dock');
+      if (stopBtn) stopBtn.style.display = 'none';
       return;
     }
-    const dist = Math.hypot(heroX - 688, heroY - 360);
-    const isOnDock = (heroX >= 615 && heroX <= 830 && heroY >= 290 && heroY <= 425) || dist <= 85;
-    this.dockStartFishingBtnEl.style.display = isOnDock ? 'inline-flex' : 'none';
-    if (this.dockFishingSkillBtnEl) {
-      this.dockFishingSkillBtnEl.style.display = 'none';
+
+    const dockX = 688;
+    const dockY = 360;
+    const dist = Math.hypot(heroX - dockX, heroY - dockY);
+
+    const stopBtn = document.getElementById('btn-stop-fishing-dock');
+    if (stopBtn) {
+      stopBtn.style.display = (this.isFishingSpotLocked || this.onMapFishingState) ? 'inline-flex' : 'none';
     }
-    if (isOnDock) {
-      this.dockStartFishingBtnEl.style.left = '50%';
-      this.dockStartFishingBtnEl.style.top = '34%';
-      const curFishing = window.__fishingSystem?.getState?.() || {};
-      const isBasketFull = (curFishing.basket?.length || 0) >= 6;
-      if (isBasketFull) {
-        this.dockStartFishingBtnEl.classList.add('basket-full-btn');
-        this.dockStartFishingBtnEl.innerHTML = `
-          <span class="dock-start-fishing-icon">🧺</span>
-          <span class="dock-start-fishing-label">Túi đầy rồi (6/6) · Đi đổi cá nhé!</span>
-        `;
+
+    // Nếu vừa mới thoát hoặc hụt cá: kiểm tra cooldown hoặc bước ra xa (>70px)
+    if (this.fishingSpotCooldownUntil) {
+      if (Date.now() > this.fishingSpotCooldownUntil || dist > 70) {
+        this.fishingSpotCooldownUntil = null;
       } else {
-        this.dockStartFishingBtnEl.classList.remove('basket-full-btn');
-        this.dockStartFishingBtnEl.innerHTML = `
-          <span class="dock-start-fishing-icon">🎣</span>
-          <span class="dock-start-fishing-label">Bắt đầu câu cá</span>
-        `;
+        return;
       }
+    }
+
+    // Khi bé đi vào đúng vị trí bến câu (dist <= 48px) và chưa câu: TỰ ĐỘNG KHÓA VÀ BẮT ĐẦU CÂU LUÔN!
+    if (dist <= 48 && !this.isFishingSpotLocked && !this.onMapFishingState && this.isExploring) {
+      const curFishing = window.__fishingSystem?.getState?.() || {};
+      if ((curFishing.basket?.length || 0) >= 6) {
+        this.showBasketFullNoticeModal();
+        this.exitFishingSpot('basket_full');
+        return;
+      }
+
+      this.isFishingSpotLocked = true;
+      this.hero.setPosition(dockX, dockY);
+      this.hero.stop();
+      this.hero.facing = 'left';
+      if (this.hero.sprite) {
+        this.hero.sprite.setFlipX(false);
+        const idleLeftKey = `${this.hero.getAnimPrefix()}_idle_left`;
+        if (this.anims.exists(idleLeftKey)) this.hero.sprite.play(idleLeftKey, true);
+      }
+      this.hero.updateShadow?.();
+
+      if (stopBtn) stopBtn.style.display = 'inline-flex';
+
+      const dockStation = (this.mapConfig?.fishingStations || []).find(s => s.id === 'station_lotus_dock') || {
+        id: 'station_lotus_dock',
+        dockId: 'lotus_dock',
+        x: dockX,
+        y: dockY,
+        castTarget: { x: 485, y: 445 }
+      };
+      this.startOnMapFishing(dockStation);
+    }
+  }
+
+  /**
+   * Thoát khỏi bến câu cá: mở khóa nhân vật và tự động bước lùi nhẹ ra lối đi (v3.7.5)
+   */
+  exitFishingSpot(reason = 'manual') {
+    this.stopOnMapFishing(true);
+    this.isFishingSpotLocked = false;
+    this.fishingSpotCooldownUntil = Date.now() + 2500;
+
+    const stopBtn = document.getElementById('btn-stop-fishing-dock');
+    if (stopBtn) stopBtn.style.display = 'none';
+
+    if (!this.hero || !this.hero.sprite) return;
+
+    // Tự động bước lùi nhẹ ra khỏi bến câu về phía cầu gỗ (768, 360)
+    const stepBackX = 768;
+    const stepBackY = 360;
+    this.hero.facing = 'right';
+    if (this.hero.sprite) {
+      this.hero.sprite.setFlipX(true);
+      const walkKey = `${this.hero.getAnimPrefix()}_walk_right`;
+      if (this.anims.exists(walkKey)) this.hero.sprite.play(walkKey, true);
+    }
+
+    this.tweens.killTweensOf([this.hero.sprite, this.hero.shadow].filter(Boolean));
+    this.tweens.add({
+      targets: [this.hero.sprite, this.hero.shadow].filter(Boolean),
+      x: stepBackX,
+      y: stepBackY,
+      duration: 450,
+      ease: 'Power1.easeOut',
+      onComplete: () => {
+        if (this.hero?.sprite?.active) {
+          this.hero.setPosition(stepBackX, stepBackY);
+          this.hero.stop();
+          this.hero.facing = 'down';
+          this.hero.updateShadow?.();
+        }
+      }
+    });
+
+    if (reason === 'manual_stop') {
+      this.spawnFloatingPopup(this.hero.getX(), this.hero.getY() - 50, '🛑 Đã dừng câu cá', '#ef4444');
+    } else if (reason.includes('miss')) {
+      this.spawnFloatingPopup(this.hero.getX(), this.hero.getY() - 50, '💦 Hụt rồi! Bước vào lại để câu tiếp nhé!', '#38bdf8');
+    }
+  }
+
+  /**
+   * Cập nhật nút bấm tương tác [⚡ E] trên màn hình cảm ứng & iPad khi đứng đúng vùng chọn (v3.7.5)
+   */
+  updateProximityInteractionE(heroX, heroY) {
+    const eBtn = document.getElementById('btn-interactive-e');
+    const eLabel = document.getElementById('interactive-e-label');
+    if (!eBtn || !eLabel) return;
+
+    // Không hiển thị nếu đang câu cá hoặc có modal đang mở
+    if (this.isFishingSpotLocked || this.onMapFishingState || !this.isExploring) {
+      eBtn.hidden = true;
+      this.activeProximityInteractStation = null;
+      return;
+    }
+
+    let nearestInteractable = null;
+    let minDistance = 75;
+
+    // 1. Bản đồ Bếp Cầu Vồng (map_kitchen)
+    if (this.currentMapId === 'map_kitchen' && Array.isArray(this.mapConfig?.kitchenStations)) {
+      for (const st of this.mapConfig.kitchenStations) {
+        let sx = st.x;
+        let sy = st.y;
+        let label = 'Mở';
+        let radius = 70;
+
+        if (st.type === 'pantry') {
+          sx = 398; sy = 291; label = 'Mở Tủ Lạnh 🍎'; radius = 75;
+        } else if (st.type === 'prep') {
+          sx = 605; sy = 131; label = 'Rửa Tay 🧼'; radius = 75;
+        } else if (st.type === 'cook') {
+          sx = 940; sy = 290; label = 'Vào Bếp Nấu 🍳'; radius = 90;
+        } else if (st.type === 'dining') {
+          sx = 905; sy = 570; label = 'Bàn Ăn 🍰'; radius = 75;
+        }
+
+        const d = Math.hypot(heroX - sx, heroY - sy);
+        if (d <= radius && d < minDistance) {
+          minDistance = d;
+          nearestInteractable = {
+            label,
+            action: () => this.handleKitchenStationInteraction(st)
+          };
+        }
+      }
+    }
+
+    // 2. Bản đồ Nông Trại Thú Cưng (map_pet_farm)
+    if (this.currentMapId === 'map_pet_farm' && Array.isArray(this.mapConfig?.petStations)) {
+      for (const st of this.mapConfig.petStations) {
+        let label = 'Chăm Sóc';
+        if (st.type === 'water') label = 'Uống Nước 💧';
+        else if (st.type === 'bath') label = 'Tắm Cho Cún 🛁';
+        else if (st.type === 'sleep') label = 'Đi Ngủ 💤';
+        else if (st.type === 'potty') label = 'Đi Vệ Sinh 🚽';
+
+        const d = Math.hypot(heroX - st.x, heroY - st.y);
+        const radius = st.type === 'water' ? 85 : 75;
+        if (d <= radius && d < minDistance) {
+          minDistance = d;
+          nearestInteractable = {
+            label,
+            action: () => this.handlePetStationInteraction(st)
+          };
+        }
+      }
+    }
+
+    // 3. Bản đồ Hồ Câu Lá Sen (map_fishing_pond)
+    if (this.currentMapId === 'map_fishing_pond' && Array.isArray(this.mapConfig?.fishingStations)) {
+      const bookSt = this.mapConfig.fishingStations.find(s => s.type === 'fish_book');
+      if (bookSt) {
+        const d = Math.hypot(heroX - bookSt.x, heroY - bookSt.y);
+        if (d <= 75 && d < minDistance) {
+          minDistance = d;
+          nearestInteractable = {
+            label: 'Sổ Huy Hiệu 🏅',
+            action: () => this.handleFishingStationInteraction(bookSt)
+          };
+        }
+      }
+    }
+
+    // 4. Bản đồ Chợ Cầu Vồng (map_rainbow_market)
+    if (this.currentMapId === 'map_rainbow_market' && Array.isArray(this.mapConfig?.marketStations)) {
+      for (const st of this.mapConfig.marketStations) {
+        const d = Math.hypot(heroX - st.x, heroY - st.y);
+        if (d <= 80 && d < minDistance) {
+          minDistance = d;
+          nearestInteractable = {
+            label: st.name || 'Gian Hàng 🛍️',
+            action: () => this.handleMarketStationInteraction(st)
+          };
+        }
+      }
+    }
+
+    // 5. Bản đồ Phố Thời Trang (map_fashion_street)
+    if (this.currentMapId === 'map_fashion_street' && Array.isArray(this.mapConfig?.fashionStations)) {
+      for (const st of this.mapConfig.fashionStations) {
+        const d = Math.hypot(heroX - st.x, heroY - st.y);
+        if (d <= 80 && d < minDistance) {
+          minDistance = d;
+          nearestInteractable = {
+            label: st.name || 'Thời Trang 👒',
+            action: () => this.handleFashionStationInteraction(st)
+          };
+        }
+      }
+    }
+
+    // 6. Cổng dịch chuyển (Portals)
+    const portals = this.portals || (this.teleportPortal ? [this.teleportPortal] : []);
+    for (const portal of portals) {
+      if (!portal?.x) continue;
+      const d = Math.hypot(heroX - portal.x, heroY - portal.y);
+      if (d <= 70 && d < minDistance) {
+        minDistance = d;
+        nearestInteractable = {
+          label: portal.targetMapName ? `Vào ${portal.targetMapName} 🌀` : 'Vào Cổng 🌀',
+          action: () => portal.handleInteract?.()
+        };
+      }
+    }
+
+    if (nearestInteractable) {
+      eLabel.textContent = nearestInteractable.label;
+      eBtn.hidden = false;
+      this.activeProximityInteractStation = nearestInteractable;
+    } else {
+      eBtn.hidden = true;
+      this.activeProximityInteractStation = null;
+    }
+  }
+
+  /**
+   * Kích hoạt tương tác trạm khi bấm nút [⚡ E] hoặc gõ phím E (v3.7.5)
+   */
+  triggerActiveProximityInteraction() {
+    if (!this.activeProximityInteractStation) return;
+    window.__audioService?.playChime?.(680, 0.15);
+    const act = this.activeProximityInteractStation.action;
+    if (typeof act === 'function') {
+      act();
     }
   }
 
@@ -3715,9 +3999,18 @@ export class WorldScene extends Phaser.Scene {
     const curDist = Math.hypot(this.hero.getX() - dockX, this.hero.getY() - dockY);
     this.activeFishingStationVisit = st.id;
 
-    // Nếu đã ở bến câu (trong khoảng cách 85px): BẤM LÀ BẮT ĐẦU CÂU CÁ NGAY LẬP TỨC!
+    // Nếu đã ở bến câu (trong khoảng cách 85px): TỰ ĐỘNG KHÓA VÀ CÂU CÁ NGAY!
     if (curDist <= 85) {
-      this.updateDockFishingProximityButton(this.hero.getX(), this.hero.getY());
+      this.hero.setPosition(dockX, dockY);
+      this.hero.facing = 'left';
+      this.hero.isMoving = false;
+      if (this.hero.sprite) {
+        this.hero.sprite.setFlipX(false);
+        const idleLeftKey = `${this.hero.getAnimPrefix()}_idle_left`;
+        if (this.anims.exists(idleLeftKey)) this.hero.sprite.play(idleLeftKey, true);
+      }
+      this.hero.updateShadow?.();
+      this.isFishingSpotLocked = true;
       if (!this.onMapFishingState) {
         this.startOnMapFishing(st, customCastTarget);
       }
@@ -3733,6 +4026,7 @@ export class WorldScene extends Phaser.Scene {
     const arriveAtDock = () => {
       this.hero.speed = originalSpeed;
       if (this.activeFishingStationVisit !== st.id || !this.sys.isActive()) return;
+      this.hero.setPosition(dockX, dockY);
       this.hero.facing = 'left';
       this.hero.isMoving = false;
       if (this.hero.sprite) {
@@ -3742,7 +4036,10 @@ export class WorldScene extends Phaser.Scene {
           this.hero.sprite.play(idleLeftKey, true);
         }
       }
-      this.updateDockFishingProximityButton(this.hero.getX(), this.hero.getY());
+      this.hero.updateShadow?.();
+      // Khóa đứng im nhân vật và tự động câu cá luôn
+      this.isFishingSpotLocked = true;
+      this.startOnMapFishing(st, customCastTarget);
     };
 
     if (startX < 610) {
@@ -3806,7 +4103,7 @@ export class WorldScene extends Phaser.Scene {
     }
     this.onMapFishingState = null;
     if (this.hero) {
-      this.updateDockFishingProximityButton(this.hero.getX(), this.hero.getY());
+      this.updateDockFishingAutoFlow(this.hero.getX(), this.hero.getY());
     }
   }
 
@@ -4092,7 +4389,7 @@ export class WorldScene extends Phaser.Scene {
       if (!this.sys?.isActive() || !this.onMapFishingState) return;
       const biteRes = fishingSystem.commitRealBite(true);
       if (!biteRes.ok) {
-        this.stopOnMapFishing(false);
+        this.exitFishingSpot('bite_failed');
         return;
       }
 
@@ -4377,7 +4674,7 @@ export class WorldScene extends Phaser.Scene {
       }
 
       window.__fishingSystem?.recordTurnMiss?.('escaped');
-      this.stopOnMapFishing(false);
+      this.exitFishingSpot('miss_escaped');
     }, totalDurationMs);
   }
 
@@ -4481,7 +4778,7 @@ export class WorldScene extends Phaser.Scene {
     });
     el.querySelector('#btn-onmap-cancel')?.addEventListener('click', (ev) => {
       ev.stopPropagation();
-      this.stopOnMapFishing(false);
+      this.exitFishingSpot('manual_stop');
     });
 
     this.onMapFishingKeyHandler = (ev) => {
@@ -4489,7 +4786,7 @@ export class WorldScene extends Phaser.Scene {
         ev.preventDefault();
         this.handleVerticalAuditionPull();
       } else if (ev.code === 'Escape') {
-        this.stopOnMapFishing(false);
+        this.exitFishingSpot('manual_stop');
       }
     };
     window.addEventListener('keydown', this.onMapFishingKeyHandler);
@@ -4578,7 +4875,7 @@ export class WorldScene extends Phaser.Scene {
         }
 
         window.__fishingSystem?.recordTurnMiss?.('escaped_timeout_10s');
-        this.stopOnMapFishing(false);
+        this.exitFishingSpot('miss_timeout_10s');
       }
     }, totalMs);
   }
@@ -4757,7 +5054,7 @@ export class WorldScene extends Phaser.Scene {
         window.__fishingSystem?.recordTurnMiss?.('escaped');
 
         setTimeout(() => {
-          this.stopOnMapFishing(false);
+          this.exitFishingSpot('miss_retries');
         }, 420);
       }
     }
@@ -4986,6 +5283,25 @@ export class WorldScene extends Phaser.Scene {
       // Cá nhỏ bay vào túi siêu nhanh trong 600ms
       triggerFlyToBag(600, 1150);
     }
+
+    // Tự động câu bạn cá tiếp theo nếu bé vẫn muốn câu, hoặc bước lùi nếu túi đầy (v3.7.5)
+    setTimeout(() => {
+      if (!this.sys?.isActive() || !this.isFishingSpotLocked) return;
+      const curFishing = window.__fishingSystem?.getState?.() || {};
+      if ((curFishing.basket?.length || 0) >= 6) {
+        this.showBasketFullNoticeModal();
+        this.exitFishingSpot('basket_full');
+      } else {
+        const dockStation = (this.mapConfig?.fishingStations || []).find(s => s.id === 'station_lotus_dock') || {
+          id: 'station_lotus_dock',
+          dockId: 'lotus_dock',
+          x: 688,
+          y: 360,
+          castTarget: { x: 485, y: 445 }
+        };
+        this.startOnMapFishing(dockStation);
+      }
+    }, isRareFish ? 3200 : 1400);
   }
 
   /**

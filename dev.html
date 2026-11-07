@@ -120,6 +120,9 @@
           <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Bật âm thanh">
             <img src="/assets/ui/custom_kids_ui/btn_sound_on.png" class="sound-toggle-img" alt="🔊">
           </button>
+          <button class="stat-pill clickable-pill btn-quick-refresh" id="btn-quick-refresh" type="button" aria-label="Làm mới trò chơi" title="Làm mới trò chơi khi bị đứng (Phím tắt: F5)">
+            <span class="btn-refresh-icon">🔄</span> <span class="btn-refresh-text">Làm Mới</span>
+          </button>
         </div>
       </header>
 
@@ -150,8 +153,21 @@
             <span class="floating-bag-badge" id="floating-bag-badge" style="display:none;">0</span>
           </button>
 
+          <!-- NÚT TƯƠNG TÁC [E] TRÊN MÀN HÌNH CẢM ỨNG & IPAD -->
+          <button class="interactive-e-action-btn" id="btn-interactive-e" type="button" aria-label="Tương tác nhanh" hidden>
+            <span class="interactive-e-key">E</span>
+            <span class="interactive-e-icon">⚡</span>
+            <span class="interactive-e-label" id="interactive-e-label">Mở</span>
+          </button>
+
+          <!-- NÚT DỪNG CÂU CÁ Ở GÓC HỒ CÂU -->
+          <button class="dock-stop-fishing-btn" id="btn-stop-fishing-dock" type="button" aria-label="Không câu cá nữa" style="display:none;">
+            <span class="dock-stop-icon">🛑</span>
+            <span class="dock-stop-label">Không câu nữa</span>
+          </button>
+
           <!-- PHIÊN BẢN TRÒ CHƠI Ở GÓC PHẢI MÀN HÌNH (WATERMARK) -->
-          <div class="stage-version-watermark" id="stage-version-watermark" aria-label="Phiên bản trò chơi">ver 3.7.4</div>
+          <div class="stage-version-watermark" id="stage-version-watermark" aria-label="Phiên bản trò chơi">ver 3.7.5</div>
 
           <!-- VÒNG TRÒN TRẠNG THÁI THÚ CƯNG TRÊN NÔNG TRẠI (DẠNG %) -->
           <aside id="pet-farm-hud" class="pet-farm-hud" aria-label="Trạng thái thú cưng nông trại" hidden>
@@ -648,7 +664,7 @@
               <span class="progress-star" aria-hidden="true">✦</span>
               <span id="progress-copy">Vùng 1: Làng Quê Yên Bình</span>
             </div>
-            <span class="game-version-badge" id="game-version-badge" title="Phiên bản trò chơi">ver 3.7.4</span>
+            <span class="game-version-badge" id="game-version-badge" title="Phiên bản trò chơi">ver 3.7.5</span>
           </div>
         </footer>
       </section>

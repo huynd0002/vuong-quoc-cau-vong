@@ -481,6 +481,7 @@ export class Hero {
   }
 
   move(moveX, moveY, dirX, dirY) {
+    if (this.scene?.isFishingSpotLocked) return;
     // Mở rộng toàn bộ bản đồ, không bị giới hạn vùng di chuyển (toàn bộ khung 1280x720)
     let newX = Math.max(40, Math.min(1240, this.getX() + moveX));
     let newY = Math.max(65, Math.min(665, this.getY() + moveY));
@@ -563,6 +564,14 @@ export class Hero {
 
   isPointOnPondDock(x, y, zone) {
     if (!zone) return false;
+    // Khu vực bến câu chỉ định (688, 360 - chân 398) và toàn bộ mặt cầu gỗ
+    if (Math.hypot(x - 688, y - 398) <= 95 || (x >= 600 && x <= 860 && y >= 250 && y <= 450)) {
+      return true;
+    }
+    const d = zone.walkableDockRect;
+    if (d && x >= d.xMin && x <= d.xMax && y >= d.yMin && y <= d.yMax) {
+      return true;
+    }
     const poly = zone.dockPoly;
     if (poly && poly.length >= 3) {
       let inside = false;
@@ -572,11 +581,7 @@ export class Hero {
         const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
       }
-      return inside;
-    }
-    if (zone.walkableDockRect) {
-      const d = zone.walkableDockRect;
-      return x >= d.xMin && x <= d.xMax && y >= d.yMin && y <= d.yMax;
+      if (inside) return true;
     }
     return false;
   }
@@ -605,6 +610,7 @@ export class Hero {
   }
 
   moveTo(targetX, targetY, onComplete) {
+    if (this.scene?.isFishingSpotLocked) return;
     // Kiểm tra cấm mục tiêu rơi vào trong hồ nước ở Map 1 và Hồ Câu Lá Sen
     const isMap1 = this.scene?.currentMapId === 'map1' || !this.scene?.currentMapId;
     const isPondMap = this.scene?.currentMapId === 'map_fishing_pond';

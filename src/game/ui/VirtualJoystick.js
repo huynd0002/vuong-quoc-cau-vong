@@ -75,6 +75,16 @@ export class VirtualJoystick {
     this.baseEl.addEventListener('pointerup', this._boundOnPointerUp, { passive: false });
     this.baseEl.addEventListener('pointercancel', this._boundOnPointerUp, { passive: false });
 
+    // Tối ưu iPad/Touch: Lắng nghe pointerup/touchend toàn cục trên window
+    // Tránh tình trạng buông tay ngoài vòng tròn base làm kẹt cần gạt hoặc chặn tap-to-move
+    window.addEventListener('pointerup', this._boundOnPointerUp, { passive: false });
+    window.addEventListener('pointercancel', this._boundOnPointerUp, { passive: false });
+    this._boundWindowTouchEnd = () => {
+      if (this.activePointerId !== null) this.reset();
+    };
+    window.addEventListener('touchend', this._boundWindowTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', this._boundWindowTouchEnd, { passive: true });
+
     // Đảm bảo không bị kẹt khi thả tay ngoài màn hình hoặc mất focus
     window.addEventListener('blur', () => this.reset());
     document.addEventListener('visibilitychange', () => {
@@ -213,6 +223,12 @@ export class VirtualJoystick {
     this.reset();
     if (this.modalObserver) {
       this.modalObserver.disconnect();
+    }
+    window.removeEventListener('pointerup', this._boundOnPointerUp);
+    window.removeEventListener('pointercancel', this._boundOnPointerUp);
+    if (this._boundWindowTouchEnd) {
+      window.removeEventListener('touchend', this._boundWindowTouchEnd);
+      window.removeEventListener('touchcancel', this._boundWindowTouchEnd);
     }
     if (this.baseEl) {
       this.baseEl.removeEventListener('pointerdown', this._boundOnPointerDown);

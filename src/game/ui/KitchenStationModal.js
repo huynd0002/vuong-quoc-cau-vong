@@ -484,9 +484,20 @@ export class KitchenStationModal {
       hint.textContent = step.hint;
       if (scrubTitle) scrubTitle.textContent = step.meterTitle;
 
-      // Cập nhật hình ảnh bàn tay mượt mà
+      // Cập nhật hình ảnh bàn tay mượt mà (chống mất hình trên iPad/WebKit)
       if (handImg && HAND_STAGES[step.handStage]) {
         handImg.src = HAND_STAGES[step.handStage];
+        handImg.style.display = 'block';
+        handImg.style.visibility = 'visible';
+        handImg.style.opacity = '1';
+        handImg.onerror = () => {
+          // Tự động thử lại nếu iPad Safari gặp độ trễ nạp ảnh
+          setTimeout(() => {
+            if (handImg && HAND_STAGES[step.handStage]) {
+              handImg.src = HAND_STAGES[step.handStage];
+            }
+          }, 200);
+        };
       }
 
       // Cập nhật đạo cụ & nhãn

@@ -508,6 +508,18 @@ if (soundToggleBtn) {
 }
 audioService.updateSoundToggleUI();
 
+// Nút Làm Mới (Refresh) nhanh ở góc/topbar khi game bị đứng hình
+const quickRefreshBtn = document.getElementById('btn-quick-refresh');
+if (quickRefreshBtn) {
+  const doRefresh = (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    window.location.reload();
+  };
+  quickRefreshBtn.addEventListener('click', doRefresh);
+  quickRefreshBtn.addEventListener('touchend', doRefresh);
+}
+
 // 4. Khởi tạo giao diện DOM (HUD, Modals & Question Dialog)
 const hudController = new HudController({
   audioService,
@@ -1332,7 +1344,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.7.4';
+export const GAME_VERSION = '3.7.5';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {

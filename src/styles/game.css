@@ -9838,3 +9838,154 @@ html, body {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 6px 18px rgba(16, 185, 129, 0.6);
 }
+
+/* ==========================================================================
+   V3.7.5: NÚT REFRESH, NÚT TƯƠNG TÁC [E] VÀ NÚT DỪNG CÂU CÁ TRÊN IPAD / TOUCH
+   ========================================================================== */
+
+/* 1. Nút Refresh (Làm Mới) ở topbar */
+.btn-quick-refresh {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  border: 2px solid #bae6fd !important;
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.35) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  touch-action: manipulation;
+  z-index: 100;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.btn-quick-refresh:hover,
+.btn-quick-refresh:active {
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+}
+.btn-refresh-icon {
+  font-size: 16px;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.btn-quick-refresh:active .btn-refresh-icon {
+  transform: rotate(180deg);
+}
+
+/* 2. Nút bấm tương tác [⚡ E] trên màn hình cảm ứng & iPad */
+.interactive-e-action-btn {
+  position: absolute;
+  right: 28px;
+  bottom: 96px;
+  z-index: 25;
+  min-height: 56px;
+  padding: 8px 20px 8px 12px;
+  border-radius: 32px;
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  border: 3.5px solid #ffffff;
+  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.5), 0 0 18px rgba(245, 158, 11, 0.65);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  pointer-events: auto;
+  animation: pulse-interact-btn 1.4s infinite alternate ease-in-out;
+  transition: transform 0.15s ease, opacity 0.2s ease;
+}
+.interactive-e-action-btn[hidden] {
+  display: none !important;
+  pointer-events: none !important;
+}
+.interactive-e-action-btn:active {
+  transform: scale(0.95);
+}
+.interactive-e-key {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #c2410c;
+  font-size: 18px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  line-height: 1;
+}
+.interactive-e-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+.interactive-e-label {
+  font-family: 'Quicksand', 'Nunito', 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+@keyframes pulse-interact-btn {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.45);
+  }
+  100% {
+    transform: scale(1.07);
+    box-shadow: 0 10px 28px rgba(245, 158, 11, 0.75), 0 0 16px rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* 3. Nút Dừng câu cá ở góc Hồ Câu Lá Sen */
+.dock-stop-fishing-btn {
+  position: absolute;
+  top: 72px;
+  right: 24px;
+  z-index: 30;
+  min-height: 48px;
+  padding: 8px 18px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: 3px solid #ffffff;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.45);
+  color: #ffffff;
+  font-family: 'Quicksand', 'Nunito', 'Segoe UI', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  pointer-events: auto;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.dock-stop-fishing-btn:hover,
+.dock-stop-fishing-btn:active {
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+.dock-stop-icon {
+  font-size: 18px;
+}
+.dock-stop-label {
+  white-space: nowrap;
+}
+
+/* Ẩn nút E và nút Dừng Câu khi có Modal toàn màn hình */
+.scene-stage:has(.game-modal:not([hidden])) .interactive-e-action-btn,
+.scene-stage:has(.battle-arena-modal:not([hidden])) .interactive-e-action-btn,
+.scene-stage:has(#battle-arena-modal:not([hidden])) .interactive-e-action-btn,
+.scene-stage:has(#fishing-modal:not([hidden])) .interactive-e-action-btn,
+.scene-stage:has(#kitchen-modal:not([hidden])) .interactive-e-action-btn,
+.scene-stage:has(#kitchen-station-modal:not([hidden])) .interactive-e-action-btn,
+.scene-stage:has(#pet-modal:not([hidden])) .interactive-e-action-btn,
+.scene-stage:has(#backpack-modal:not([hidden])) .interactive-e-action-btn {
+  display: none !important;
+  pointer-events: none !important;
+}
+
