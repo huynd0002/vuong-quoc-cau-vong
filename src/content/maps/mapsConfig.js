@@ -832,6 +832,16 @@ export const SPECIAL_MAPS_CONFIG = {
     },
     "extraPortals": [
       {
+        "id": "portal_farm_to_kitchen",
+        "name": "Bếp Cầu Vồng",
+        "x": 740,
+        "y": 305,
+        "targetMapId": "map_kitchen",
+        "targetMapName": "Bếp Cầu Vồng",
+        "isReturn": false,
+        "badgeText": "🍳 VÀO BẾP CẦU VỒNG 🍲"
+      },
+      {
         "id": "portal_farm_to_fishing",
         "name": "Hồ Câu Lá Sen",
         "x": 235,
@@ -918,8 +928,8 @@ export const SPECIAL_MAPS_CONFIG = {
         "id": "station_door",
         "name": "Cửa Ra Nông Trại",
         "type": "door",
-        "x": 180,
-        "y": 660,
+        "x": 205,
+        "y": 645,
         "icon": "🚪",
         "badge": "5. CỬA RA VÀO 🚪",
         "auraColor": 9133302,
@@ -929,12 +939,12 @@ export const SPECIAL_MAPS_CONFIG = {
     "returnPortal": {
       "id": "portal_kitchen_to_farm",
       "name": "Cửa Về Nông Trại",
-      "x": 220,
-      "y": 560,
+      "x": 205,
+      "y": 630,
       "targetMapId": "map_pet_farm",
       "targetMapName": "Nông Trại Thú Cưng",
       "isReturn": true,
-      "badgeText": "🚪 RA NÔNG TRẠI 🏡"
+      "badgeText": "🏡 NÔNG TRẠI THÚ CƯNG 🏡"
     }
   },
   "map_fishing_pond": {

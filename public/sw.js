@@ -5,7 +5,7 @@
 
 // rainbow-kingdom-cache-v1 (legacy support)
 const LEGACY_CACHE = 'rainbow-kingdom-cache-v1';
-const CACHE_NAME = 'rainbow-kingdom-cache-v3.6.5';
+const CACHE_NAME = 'rainbow-kingdom-cache-v3.6.6';
 
 const STATIC_ASSETS = [
   '/',

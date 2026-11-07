@@ -1888,8 +1888,13 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    // 6. TRẠM CỬA RA VÀO: Mở Pop-up hỏi trở về Nông Trại Thú Cưng ngay
+    // 6. TRẠM CỬA RA VÀO: Kích hoạt Cổng Dịch Chuyển trở về Nông Trại Thú Cưng
     if (st.type === 'door') {
+      const portal = this.portals?.find(p => p.targetMapId === 'map_pet_farm' || p.data?.id?.includes('farm'));
+      if (portal) {
+        portal.handleInteract();
+        return;
+      }
       window.dispatchEvent(new CustomEvent('game:open-kitchen-station-popup', { detail: { station: 'door' } }));
       return;
     }
@@ -2146,6 +2151,11 @@ export class WorldScene extends Phaser.Scene {
     if (!st) return;
 
     if (st.type === 'kitchen') {
+      const portal = this.portals?.find(p => p.targetMapId === 'map_kitchen' || p.data?.id?.includes('kitchen'));
+      if (portal) {
+        portal.handleInteract();
+        return;
+      }
       window.dispatchEvent(new CustomEvent('game:open-kitchen-station-popup', { detail: { station: 'hub' } }));
       return;
     }
