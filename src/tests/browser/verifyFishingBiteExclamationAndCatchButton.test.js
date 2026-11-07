@@ -82,7 +82,7 @@ const artifactDir = 'C:/Users/Admin/.gemini/antigravity/brain/b4d73263-dfb7-48f9
   await page.waitForFunction(() => {
     const ws = window.__worldScene;
     return ws?.onMapFishingState?.phase === 'bite_waiting';
-  }, { timeout: 4000 });
+  }, { timeout: 8000 });
   await page.waitForTimeout(250); // Để VFX Exclamation bung nảy rực rỡ trên đầu bé
 
   // Kiểm tra VFX exclamation đã được tạo
@@ -127,7 +127,7 @@ const artifactDir = 'C:/Users/Admin/.gemini/antigravity/brain/b4d73263-dfb7-48f9
     return parseFloat(document.getElementById('bite-timer-val')?.textContent || '0');
   });
   console.log('Thời gian còn lại sau 1s:', remainingSec);
-  assert.ok(remainingSec < 4.9 && remainingSec > 2.5, 'Thời gian đếm ngược 5s phải đang giảm dần');
+  assert.ok(remainingSec < 9.9 && remainingSec > 6.0, 'Thời gian đếm ngược 10s phải đang giảm dần');
 
   const shot2 = path.join(artifactDir, 'verified_fishing_catch_button_shaking.png');
   await page.screenshot({ path: shot2 });
@@ -172,7 +172,7 @@ const artifactDir = 'C:/Users/Admin/.gemini/antigravity/brain/b4d73263-dfb7-48f9
   });
   await page.waitForFunction(() => {
     return window.__worldScene?.onMapFishingState?.phase === 'bite_waiting';
-  }, { timeout: 4000 });
+  }, { timeout: 8000 });
 
   console.log('Đang đợi hết 5.2 giây để kiểm tra cá tự thoát...');
   await page.waitForTimeout(5400);

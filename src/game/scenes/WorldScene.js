@@ -3187,6 +3187,7 @@ export class WorldScene extends Phaser.Scene {
    */
   stopOnMapFishing(cancelTurn = true) {
     this.cleanupBiteCatchPrompt();
+    this.cleanupVerticalAuditionTimer();
     if (this.onMapFishingRaf) {
       cancelAnimationFrame(this.onMapFishingRaf);
       this.onMapFishingRaf = null;
@@ -3484,7 +3485,12 @@ export class WorldScene extends Phaser.Scene {
     const neededHits = 1;
     const zoneHeight = 38 + (equippedRodObj?.auditionZoneBonus || 0);
     const zoneTop = Math.max(12, Math.round(41 - zoneHeight / 2));
-    const biteTimeMs = equippedRodObj?.biteTimeMs || 650;
+    // Từ từ random thì cá mới cắn câu để bắt (2.2s - 4.4s) theo yêu cầu người dùng
+    const minBiteWait = 2200;
+    const maxBiteWait = 4400;
+    const randomBiteWait = minBiteWait + Math.random() * (maxBiteWait - minBiteWait);
+    const rodSpeedBonus = (equippedRodObj?.level || 1) * 180;
+    const biteTimeMs = Math.max(1800, Math.round(randomBiteWait - rodSpeedBonus));
     this.onMapFishingState = {
       phase: 'casting',
       turn,
@@ -3616,14 +3622,22 @@ export class WorldScene extends Phaser.Scene {
         }
         @keyframes biteRumbleShake {
           0% { transform: scale(1) translate(0, 0) rotate(0deg); }
-          12% { transform: scale(1.1) translate(-6px, 3px) rotate(-5deg); }
-          25% { transform: scale(1.12) translate(6px, -3px) rotate(5deg); }
-          38% { transform: scale(1.1) translate(-5px, -2px) rotate(-4deg); }
-          50% { transform: scale(1.14) translate(5px, 2px) rotate(4deg); }
-          62% { transform: scale(1.1) translate(-4px, 2px) rotate(-3deg); }
-          75% { transform: scale(1.12) translate(4px, -2px) rotate(3deg); }
-          88% { transform: scale(1.1) translate(-3px, 1px) rotate(-1deg); }
+          15% { transform: scale(1.025) translate(-1.5px, 0.8px) rotate(-0.8deg); }
+          30% { transform: scale(1.03) translate(1.5px, -0.8px) rotate(0.8deg); }
+          45% { transform: scale(1.025) translate(-1px, -0.6px) rotate(-0.5deg); }
+          60% { transform: scale(1.03) translate(1px, 0.6px) rotate(0.5deg); }
+          75% { transform: scale(1.02) translate(-0.8px, 0.5px) rotate(-0.3deg); }
+          90% { transform: scale(1.025) translate(0.8px, -0.5px) rotate(0.3deg); }
           100% { transform: scale(1) translate(0, 0) rotate(0deg); }
+        }
+        .bite-catch-word-shake {
+          display: inline-block;
+          animation: wordGentleShake 0.45s infinite ease-in-out;
+        }
+        @keyframes wordGentleShake {
+          0%, 100% { transform: translateY(0) scale(1); }
+          25% { transform: translateY(-1.5px) scale(1.03); }
+          75% { transform: translateY(1px) scale(0.98); }
         }
         @keyframes biteGlowRingPulse {
           0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.85), 0 10px 28px rgba(220, 38, 38, 0.65); }
@@ -3690,12 +3704,12 @@ export class WorldScene extends Phaser.Scene {
 
     container.innerHTML = `
       <button id="btn-onmap-fishing-catch" class="btn-bite-catch-shaking" type="button" aria-label="Bắt cá ngay">
-        <span style="font-size: 40px; line-height: 1;">🎣</span>
-        <span>BẮT!</span>
+        <span style="font-size: 38px; line-height: 1;">🎣</span>
+        <span class="bite-catch-word-shake">BẮT!</span>
       </button>
       <div class="bite-timer-label">
         <span>⏱️</span>
-        <span>Bấm nhanh: <strong id="bite-timer-val">5.0</strong>s</span>
+        <span>Bấm nhanh: <strong id="bite-timer-val">10.0</strong>s</span>
       </div>
       <div class="bite-timer-bar-wrap">
         <div id="bite-timer-bar-fill" class="bite-timer-bar-fill"></div>
@@ -3710,7 +3724,7 @@ export class WorldScene extends Phaser.Scene {
     const timerValEl = container.querySelector('#bite-timer-val');
     const timerBarEl = container.querySelector('#bite-timer-bar-fill');
 
-    const totalDurationMs = 5000;
+    const totalDurationMs = 10000; // 10s mà chưa bấm thì tự động huỷ
     const startTime = Date.now();
 
     // 2. Xử lý khi bé bấm nút "BẮT!"
@@ -3819,11 +3833,11 @@ export class WorldScene extends Phaser.Scene {
     const rod = st.rod || RODS[0];
     const diff = st.diff || { label: `${targetHits} Lần Canh` };
 
-    // Tạo các ngôi sao lớn hiển thị số lượt canh yêu cầu (1 lần cho cá dễ, 2-5 lần cho cá khó)
+    // Tạo các ngôi sao nhỏ gọn hiển thị số lượt canh yêu cầu (thu nhỏ số sao lại xếp 1 hàng đẹp mắt)
     const starsHtml = Array.from({ length: targetHits }).map((_, idx) => {
       const isEarned = idx < curHit;
       return `
-        <span class="onmap-audition-star ${isEarned ? 'earned' : ''}" data-star-index="${idx}" style="font-size:1.35rem;filter:${isEarned ? 'drop-shadow(0 0 6px #facc15)' : 'grayscale(1) opacity(0.32)'};transition:all 0.25s ease;">⭐</span>
+        <span class="onmap-audition-star ${isEarned ? 'earned' : ''}" data-star-index="${idx}" style="font-size:0.95rem;filter:${isEarned ? 'drop-shadow(0 0 5px #facc15)' : 'grayscale(1) opacity(0.32)'};transition:all 0.22s ease;">⭐</span>
       `;
     }).join('');
 
@@ -3840,10 +3854,15 @@ export class WorldScene extends Phaser.Scene {
         <div class="onmap-audition-diff-pill" style="font-size:0.72rem;font-weight:900;color:#0369a1;background:#e0f2fe;border:1.5px solid #7dd3fc;border-radius:999px;padding:2px 8px;margin-top:2px;">
           ${diff.label || `${targetHits} Lần Canh`}
         </div>
-        <div class="onmap-audition-stars" id="onmap-audition-stars" style="display:flex;justify-content:center;gap:3px;margin-top:3px;">
+        <div class="onmap-audition-stars" id="onmap-audition-stars" style="display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:2.5px;margin-top:2px;margin-bottom:2px;">
           ${starsHtml}
         </div>
-
+        <div class="onmap-audition-timer-pill" id="onmap-audition-timer-pill" title="Thời gian còn lại để kéo cá">
+          <span>⏱️</span> <strong id="onmap-audition-timer-val">10.0</strong>s
+        </div>
+        <div class="onmap-audition-timer-bar-wrap">
+          <div id="onmap-audition-timer-bar" class="onmap-audition-timer-bar" style="width: 100%;"></div>
+        </div>
       </div>
       <div class="fishing-vertical-track" id="fishing-vertical-track" data-orientation="vertical">
         <div class="fishing-vertical-zone" id="fishing-vertical-zone" style="top:${st.zoneTop}%;height:${st.zoneHeight}%;">
@@ -3910,6 +3929,64 @@ export class WorldScene extends Phaser.Scene {
       this.onMapFishingRaf = requestAnimationFrame(tick);
     };
     this.onMapFishingRaf = requestAnimationFrame(tick);
+
+    // Kích hoạt bộ đếm 10 giây tự động hủy nếu bé chưa bấm kéo cá
+    this.startVerticalAuditionTimer();
+  }
+
+  /**
+   * Bộ đếm 10s trong Thanh Audition: Nếu 10s chưa bấm kéo cá thì tự động huỷ
+   */
+  startVerticalAuditionTimer() {
+    this.cleanupVerticalAuditionTimer();
+    const totalMs = 10000;
+    const startTime = Date.now();
+
+    const timerValEl = this.onMapAuditionEl?.querySelector('#onmap-audition-timer-val');
+    const timerBarEl = this.onMapAuditionEl?.querySelector('#onmap-audition-timer-bar');
+
+    this.onMapAuditionTimerInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const remainingMs = Math.max(0, totalMs - elapsed);
+      const remainingSec = (remainingMs / 1000).toFixed(1);
+      const pct = Math.max(0, Math.min(100, (remainingMs / totalMs) * 100));
+
+      if (timerValEl) timerValEl.textContent = remainingSec;
+      if (timerBarEl) timerBarEl.style.width = `${pct}%`;
+
+      if (remainingMs <= 0) {
+        clearInterval(this.onMapAuditionTimerInterval);
+        this.onMapAuditionTimerInterval = null;
+      }
+    }, 50);
+
+    this.onMapAuditionTimeout = setTimeout(() => {
+      if (!this.onMapFishingState || this.onMapFishingState.phase !== 'audition') return;
+      this.cleanupVerticalAuditionTimer();
+
+      window.__audioService?.playChime?.(300, 0.22);
+      const st = this.onMapFishingState;
+      this.spawnFloatingPopup(st.castX, st.castY - 48, '💨 Quá 10 giây chưa thao tác! Cá đã bơi đi mất rồi!', '#ef4444');
+      this.spawnStationParticles(st.castX, st.castY, ['💦', '💨', '🫧'], 0x94a3b8);
+
+      if (this.activeBitingPondFish && typeof this.activeBitingPondFish.swimAway === 'function') {
+        this.activeBitingPondFish.swimAway();
+      }
+
+      window.__fishingSystem?.recordTurnMiss?.('escaped_timeout_10s');
+      this.stopOnMapFishing(false);
+    }, totalMs);
+  }
+
+  cleanupVerticalAuditionTimer() {
+    if (this.onMapAuditionTimeout) {
+      clearTimeout(this.onMapAuditionTimeout);
+      this.onMapAuditionTimeout = null;
+    }
+    if (this.onMapAuditionTimerInterval) {
+      clearInterval(this.onMapAuditionTimerInterval);
+      this.onMapAuditionTimerInterval = null;
+    }
   }
 
   /**
@@ -4013,6 +4090,8 @@ export class WorldScene extends Phaser.Scene {
         if (zoneEl) {
           zoneEl.style.top = `${st.zoneTop}%`;
         }
+        // Làm mới bộ đếm 10 giây cho nhịp canh tiếp theo
+        this.startVerticalAuditionTimer();
       }
     } else {
       // Yêu cầu: Câu cá hụt 1 lần là mất cá luôn!
@@ -4047,6 +4126,7 @@ export class WorldScene extends Phaser.Scene {
    * - Thẻ hình ảnh Cá 3D bay vào Túi Của Bé
    */
   completeOnMapFishingCatch() {
+    this.cleanupVerticalAuditionTimer();
     const st = this.onMapFishingState;
     if (!st) return;
     st.phase = 'caught';
