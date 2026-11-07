@@ -1504,8 +1504,8 @@ export class BattleArenaModal {
 
     const cards = [...rawCards].sort(() => Math.random() - 0.5);
     const totalPairs = question.pairs || Math.floor(cards.length / 2);
-    // Quy tắc số lần sai tối đa: Theo yêu cầu, điều chỉnh số lần sai về 1 hết, bé chỉ được sai 1 lần
-    const maxMistakes = 1;
+    // Quy tắc số lần sai tối đa: Cho phép bé lật sai nhiều lần (tối thiểu 5 lần hoặc tương ứng với số thẻ) để ghi nhớ vị trí thẻ phù hợp lứa tuổi 5-6 tuổi
+    const maxMistakes = Math.max(5, Math.ceil(cards.length * 0.8));
     let matchedPairs = 0;
     let mistakeCount = 0;
     let selected = [];
@@ -1516,7 +1516,7 @@ export class BattleArenaModal {
 
     const banner = document.createElement('div');
     banner.className = 'interactive-instruction-banner';
-    banner.innerHTML = `<span>🃏 Lật 2 ô giống nhau (Đã tìm: <b id="mem-matched-count">0</b>/${totalPairs} cặp • <span class="mem-mistakes-counter">Sai: <b id="mem-mistakes-val">0</b>/${maxMistakes}</span>)</span>`;
+    banner.innerHTML = `<span>🃏 Lật 2 ô giống nhau (Đã tìm: <b id="mem-matched-count">0</b>/${totalPairs} cặp • <span class="mem-mistakes-counter">Thử lại: <b id="mem-mistakes-val">0</b>/${maxMistakes}</span>)</span>`;
     wrap.appendChild(banner);
 
     const updateBanner = () => {
@@ -1600,9 +1600,9 @@ export class BattleArenaModal {
               }
 
               if (mistakeCount >= maxMistakes) {
-                // ĐÃ SAI ĐỦ SỐ LẦN CHO PHÉP (1 LẦN) -> BỊ TÍNH THUA!
+                // ĐÃ HẾT SỐ LẦN THỬ TRONG ĐỢT NÀY -> Quái vật phản công!
                 this.isTurnLocked = true;
-                banner.innerHTML = `<span>💥 ĐÃ SAI ${mistakeCount}/${maxMistakes} LẦN! Bé chỉ được sai 1 lần thôi, Quái vật phản công! 💥</span>`;
+                banner.innerHTML = `<span>💥 ĐÃ HẾT ${maxMistakes} LẦN THỬ! Quái vật phản công! Bé cố gắng ở lượt sau nhé! 💥</span>`;
                 banner.style.background = '#fee2e2';
                 banner.style.borderColor = '#ef4444';
                 banner.style.color = '#b91c1c';
@@ -1613,10 +1613,17 @@ export class BattleArenaModal {
                   this.audioService.playChime(260, 0.25);
                 }
                 if (this.audioService?.speak) {
-                  this.audioService.speak('Bé chỉ được sai 1 lần thôi nhé! Quái vật phản công!');
+                  this.audioService.speak('Quái vật phản công! Bé cùng thử lại nhé!');
                 }
 
+                // Tự động lật úp lại và đặt lại biến đếm để sau phản công bé tiếp tục được chơi mà không bị kẹt!
                 setTimeout(() => {
+                  first.el.classList.remove('flipped', 'mismatch-shake');
+                  second.el.classList.remove('flipped', 'mismatch-shake');
+                  selected = [];
+                  mistakeCount = 0;
+                  updateBanner();
+                  isLocked = false;
                   this.executeMonsterAttack();
                 }, 750);
                 return;
@@ -1843,7 +1850,7 @@ export class BattleArenaModal {
 
           if (mistakeCount >= maxMistakes) {
             this.isTurnLocked = true;
-            banner.innerHTML = `<span>💥 BÉ ĐÃ NỐI SAI! Bé chỉ được sai 1 lần thôi, Quái vật phản công! 💥</span>`;
+            banner.innerHTML = `<span>💥 BÉ ĐÃ NỐI SAI! Quái vật phản công! Bé cùng thử lại nhé! 💥</span>`;
             banner.style.background = '#fee2e2';
             banner.style.borderColor = '#ef4444';
             banner.style.color = '#b91c1c';
@@ -1854,10 +1861,17 @@ export class BattleArenaModal {
               this.audioService.playChime(260, 0.25);
             }
             if (this.audioService?.speak) {
-              this.audioService.speak('Bé chỉ được sai 1 lần thôi nhé! Quái vật phản công!');
+              this.audioService.speak('Quái vật phản công! Bé cùng chọn lại nhé!');
             }
 
             setTimeout(() => {
+              btn.classList.remove('mismatch-shake');
+              if (activeLeftBtn) {
+                activeLeftBtn.classList.remove('mismatch-shake', 'selected-left');
+                activeLeftBtn = null;
+              }
+              mistakeCount = 0;
+              updateBanner();
               this.executeMonsterAttack();
             }, 750);
             return;
@@ -2043,7 +2057,7 @@ export class BattleArenaModal {
 
           if (mistakeCount >= maxMistakes) {
             this.isTurnLocked = true;
-            banner.innerHTML = `<span>💥 CHƯA ĐÚNG THỨ TỰ RỒI! Bé chỉ được sai 1 lần thôi, Quái vật phản công! 💥</span>`;
+            banner.innerHTML = `<span>💥 CHƯA ĐÚNG THỨ TỰ! Quái vật phản công! Bé cùng xếp lại nhé! 💥</span>`;
             banner.style.background = '#fee2e2';
             banner.style.borderColor = '#ef4444';
             banner.style.color = '#b91c1c';
@@ -2054,10 +2068,13 @@ export class BattleArenaModal {
               this.audioService.playChime(260, 0.25);
             }
             if (this.audioService?.speak) {
-              this.audioService.speak('Bé chỉ được sai 1 lần thôi nhé! Quái vật phản công!');
+              this.audioService.speak('Quái vật phản công! Bé cùng xếp lại nhé!');
             }
 
             setTimeout(() => {
+              slotsDiv.classList.remove('has-error');
+              mistakeCount = 0;
+              updateBanner(filled);
               this.executeMonsterAttack();
             }, 750);
             return;
@@ -2719,6 +2736,9 @@ export class BattleArenaModal {
     this.bonusHeartsRemaining = Math.max(0, (this.bonusHeartsRemaining || 0) - 1);
     this.cookingSystem?.recordBattleHearts(this.heroHearts - this.bonusHeartsRemaining);
     this.renderHearts(this.arenaHeroHearts, this.heroHearts, this.heroMaxHearts);
+    if (typeof window !== 'undefined' && typeof window.__updateHeroVitalsHud === 'function') {
+      window.__updateHeroVitalsHud();
+    }
 
     // Cập nhật Turn indicator
     if (this.turnIndicator) {
@@ -2867,6 +2887,7 @@ export class BattleArenaModal {
     // 1. Cập nhật giải cứu và điểm thưởng ngay lập tức vào ProgressionSystem & SaveAdapter
     const enc = this.currentEncounter;
     const isBossEncounter = this.isBoss;
+    let rewardRes = null;
 
     if (this.saveAdapter && enc?.id) {
       let state = this.saveAdapter.load();
@@ -2879,7 +2900,6 @@ export class BattleArenaModal {
       };
 
       const rew = enc.reward || (isBossEncounter ? { stars: 3, exp: 30 } : { stars: 1, exp: 10 });
-      let rewardRes = null;
       if (this.combatSystem?.progressionSystem) {
         this.combatSystem.progressionSystem.state = state;
         rewardRes = this.combatSystem.progressionSystem.addReward(rew);
@@ -2908,7 +2928,7 @@ export class BattleArenaModal {
       }
     } else if (this.combatSystem?.progressionSystem && enc?.id) {
       this.combatSystem.progressionSystem.rescueFriend(enc.id, enc.name);
-      this.combatSystem.progressionSystem.addReward(enc.reward || (isBossEncounter ? { stars: 3, exp: 30 } : { stars: 1, exp: 10 }));
+      rewardRes = this.combatSystem.progressionSystem.addReward(enc.reward || (isBossEncounter ? { stars: 3, exp: 30 } : { stars: 1, exp: 10 }));
       if (this.saveAdapter) {
         this.saveAdapter.save(this.combatSystem.progressionSystem.state);
       }
@@ -3110,6 +3130,10 @@ export class BattleArenaModal {
     if (this.hudController) {
       this.hudController.setStatus('Khu vườn sẵn sàng');
       this.hudController.setQuest('Bé Sâu tiếp tục hành trình khám phá nhé!');
+    }
+
+    if (typeof window !== 'undefined' && typeof window.__updateHeroVitalsHud === 'function') {
+      window.__updateHeroVitalsHud();
     }
 
     window.dispatchEvent(new CustomEvent('game:encounter-closed'));

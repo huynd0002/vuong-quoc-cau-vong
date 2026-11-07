@@ -45,6 +45,14 @@ npm install
   npm run test:kitchen
   ```
 
+- **Kiểm tra lỗi màn chơi trống (bản 3.5.8):**
+  ```bash
+  npm run build
+  npm run build:web
+  npm run test:render
+  ```
+  Kiểm tra điểm ảnh thực tế trên 11 bản đồ, cả file offline và bản web khi không có WebGL, tải ảnh chậm hơn 8 giây, di chuyển, tạm dừng và đổi kích thước. Game dùng Canvas 2D để tránh màn xanh khi mất WebGL; màn tải chỉ đóng sau khung hình đầu tiên.
+
 ---
 
 ## 📁 Cấu Trúc Thư Mục Chuẩn Hóa

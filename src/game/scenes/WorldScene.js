@@ -194,10 +194,12 @@ export class WorldScene extends Phaser.Scene {
     }
 
     // Lắng nghe sự kiện nạp trễ từ Phaser TextureManager để tự động đắp ảnh nền khi tải xong
-    this.textures.on('addtexture', (key) => {
-      if (key === mapConfig.bgKey) {
-        applyBgTexture(key);
-      }
+    const onBackgroundTexture = (key) => {
+      if (key === mapConfig.bgKey) applyBgTexture(key);
+    };
+    this.textures.on('addtexture', onBackgroundTexture);
+    this.events.once('shutdown', () => {
+      this.textures.off('addtexture', onBackgroundTexture);
     });
 
     // 2. Trang trí hoa cỏ nhẹ & Bộ Props Sống Động
@@ -857,10 +859,13 @@ export class WorldScene extends Phaser.Scene {
       try {
         this.setWorldScale?.();
       } catch {}
-      // Báo hiệu bản đồ đã sẵn sàng 100% để UI / HUD luôn được kích hoạt
-      window.dispatchEvent(new CustomEvent('game:map-ready', {
-        detail: { mapConfig: this.mapConfig || getMapConfig(this.currentMapId) }
-      }));
+      // Announce readiness after the first rendered frame, not just creation.
+      this.game.events.once('postrender', () => {
+        if (!this.sys.isActive()) return;
+        window.dispatchEvent(new CustomEvent('game:map-ready', {
+          detail: { mapConfig: this.mapConfig || getMapConfig(this.currentMapId) }
+        }));
+      });
     }
   }
 

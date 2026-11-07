@@ -51,8 +51,8 @@ async function run() {
   console.log('  Kết quả kiểm tra Túi Của Bé:', bagCheck);
   assert.ok(bagCheck?.isCentered, `Nút Túi Của Bé phải nằm chính giữa (độ lệch: ${bagCheck?.diffCenter}px)`);
 
-  // 2. KIỂM TRA MEMORY MATCH: maxMistakes = 1
-  console.log('\n--- 2. Kiểm tra Memory Match: maxMistakes = 1 và sai 1 lần quái vật phản công ---');
+  // 2. KIỂM TRA MEMORY MATCH: ĐIỀU CHỈNH RIÊNG CHO TRÒ CHƠI LẬT Ô NHIỀU CƠ HỘI LÀM LẠI (maxMistakes >= 5)
+  console.log('\n--- 2. Kiểm tra Memory Match: Có nhiều cơ hội làm lại (maxMistakes >= 5), thẻ tự úp lại cho bé tiếp tục lật ---');
   const memMatchResult = await page.evaluate(async () => {
     const arena = window.__battleArenaModal;
     if (!arena) return { error: 'No arena instance' };
@@ -99,18 +99,23 @@ async function run() {
     firstCard.click();
     secondCard.click();
 
-    await new Promise(r => setTimeout(r, 1500));
+    // Chờ 1.5s để thẻ rung mismatch-shake và tự động úp lại
+    await new Promise(r => setTimeout(r, 1600));
 
     return {
       bannerText,
-      hasMaxMistake1: bannerText.includes('Sai: 0/1') || bannerText.includes('/1') || bannerText.includes('1 LẦN'),
-      monsterAttacked
+      hasMultipleChances: bannerText.includes('/5') || bannerText.includes('/6') || bannerText.includes('Thử lại: 1/5') || bannerText.includes('Thử lại: 0/5'),
+      monsterDidNotAttackOnFirstTry: !monsterAttacked,
+      cardsUnflipped: !firstCard.classList.contains('flipped') && !secondCard.classList.contains('flipped'),
+      isUnlockedForNextTry: !arena.isTurnLocked
     };
   });
 
   console.log('  Kết quả Memory Match:', memMatchResult);
-  assert.ok(memMatchResult.hasMaxMistake1, 'Banner Memory Match phải có giới hạn 1 lần sai');
-  assert.ok(memMatchResult.monsterAttacked, 'Quái vật phản công ngay khi sai 1 lần duy nhất trong Memory Match');
+  assert.ok(memMatchResult.hasMultipleChances, 'Banner Memory Match phải có nhiều cơ hội làm lại (tối thiểu 5 lần)');
+  assert.ok(memMatchResult.monsterDidNotAttackOnFirstTry, 'Lần sai đầu tiên trong trò chơi lật ô KHÔNG kích hoạt quái vật phản công ngay');
+  assert.ok(memMatchResult.cardsUnflipped, 'Hai thẻ lật sai phải tự động úp lại để bé ghi nhớ vị trí');
+  assert.ok(memMatchResult.isUnlockedForNextTry, 'Sàn đấu phải mở khóa để bé có thể lật tiếp các thẻ khác');
 
   // 3. KIỂM TRA PAIR MATCHING: maxMistakes = 1
   console.log('\n--- 3. Kiểm tra Pair Matching: maxMistakes = 1 và sai 1 lần quái vật phản công ---');

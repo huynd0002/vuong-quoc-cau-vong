@@ -1160,27 +1160,12 @@ if (testPortalBtn) {
   });
 }
 
-// 6. Cấu hình Phaser 2D Engine với khả năng tự động thích ứng & Canvas 2D Fallback
-function getPhaserRendererType() {
-  try {
-    const testCanvas = document.createElement('canvas');
-    const gl = testCanvas.getContext('webgl2') || testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
-    if (gl && typeof gl.getParameter === 'function') {
-      // Giải phóng context thử nghiệm để không làm cạn kiệt tài nguyên WebGL của trình duyệt
-      try {
-        const loseExt = gl.getExtension('WEBGL_lose_context');
-        if (loseExt) loseExt.loseContext();
-      } catch {}
-      return Phaser.AUTO;
-    }
-  } catch (err) {
-    console.warn('[Phaser] WebGL không khả dụng, sử dụng chế độ Canvas 2D:', err);
-  }
-  return Phaser.CANVAS;
-}
-
+// All game artwork and effects support Canvas 2D. Use it explicitly: a valid
+// WebGL probe does not guarantee that the GPU will keep rendering. Restarting
+// a scene cannot repair a lost WebGL context, leaving an apparently active but
+// completely blank game. Canvas also avoids asynchronous WebGL boot failures.
 const config = {
-  type: getPhaserRendererType(),
+  type: Phaser.CANVAS,
   parent: 'game-root',
   width: DESIGN_WIDTH,
   height: DESIGN_HEIGHT,
@@ -1210,78 +1195,11 @@ const config = {
   scene: [BootScene, PreloadScene, WorldScene]
 };
 
-// Khởi chạy Phaser Game với cơ chế Fallback tự động đa tầng
-let game;
-try {
-  game = new Phaser.Game(config);
-} catch (webglErr) {
-  console.warn('[Phaser] Lỗi khởi tạo WebGL, tự động chuyển sang chế độ Canvas 2D an toàn:', webglErr);
-  config.type = Phaser.CANVAS;
-  game = new Phaser.Game(config);
-}
+const game = new Phaser.Game(config);
 window.__PHASER_GAME__ = game;
 
-// Watchdog an toàn đa tầng: Đảm bảo WorldScene luôn hiển thị và canvas luôn hoạt động
-const ensureWorldSceneActive = () => {
-  try {
-    if (game?.scale) {
-      game.scale.refresh();
-    }
-    const canvas = game?.canvas || document.querySelector('#game-root canvas');
-    if (canvas && !document.querySelector('#game-root canvas')) {
-      document.getElementById('game-root')?.appendChild(canvas);
-    }
-    const ws = window.__worldScene || game?.scene?.getScene('WorldScene');
-    // Chỉ kích hoạt khẩn cấp nếu WorldScene chưa hoạt động VÀ PreloadScene đã kết thúc
-    if (!ws || !ws.sys || !ws.sys.isActive()) {
-      const isPreloadActive = game?.scene?.isActive('PreloadScene');
-      if (isPreloadActive) {
-        // PreloadScene đang chạy nạp tài nguyên, không ngắt quãng
-        return;
-      }
-      console.warn('[Phaser Watchdog] Kích hoạt WorldScene bảo vệ...');
-      if (game?.scene) {
-        game.scene.start('WorldScene', { mapId: 'map_pet_farm' });
-      }
-    }
-  } catch (e) {
-    console.error('[Phaser Watchdog] Lỗi kích hoạt thế giới:', e);
-  }
-};
-// Đặt thời gian kiểm tra an toàn sau 5s và 9s (không can thiệp sớm ở 1.8s)
-setTimeout(ensureWorldSceneActive, 5000);
-setTimeout(ensureWorldSceneActive, 9000);
-
-// Khắc phục triệt để việc mất hình trên iPad / Safari: Quản lý phục hồi WebGL Context & Visibility
-const setupPhaserCanvasRecovery = () => {
-  const canvas = game.canvas || document.querySelector('#game-root canvas');
-  if (canvas && !canvas.__recoveryBound) {
-    canvas.__recoveryBound = true;
-    canvas.addEventListener('webglcontextlost', (e) => {
-      e.preventDefault();
-      console.warn('[Phaser] WebGL Context bị mất! Đang tự động khôi phục khung cảnh...');
-      setTimeout(() => {
-        const ws = game.scene.getScene('WorldScene');
-        if (ws && ws.sys && ws.sys.isActive()) {
-          ws.scene.restart();
-        }
-      }, 500);
-    });
-    canvas.addEventListener('webglcontextrestored', () => {
-      console.info('[Phaser] WebGL Context đã phục hồi! Tái tạo lại khung hình thế giới...');
-      const ws = game.scene.getScene('WorldScene');
-      if (ws && ws.scene) {
-        ws.scene.restart();
-      }
-    });
-  }
-};
-if (game.canvas) {
-  setupPhaserCanvasRecovery();
-} else {
-  game.events.once('ready', setupPhaserCanvasRecovery);
-}
-
+// Keep scene lifecycle under Phaser's control. Paused scenes belong to open
+// activities; a timeout must never restart them or interrupt asset loading.
 // Khi quay trở lại tab trên Safari / iPad hoặc mở khóa màn hình
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
@@ -1320,7 +1238,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.5.7';
+export const GAME_VERSION = '3.5.8';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {

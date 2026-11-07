@@ -26,6 +26,7 @@ export class GameLoadingScreen {
     this.currentProgress = 10;
     this.targetProgress = 10;
     this.isDone = false;
+    this.worldReady = false;
     this.animInterval = null;
     this.tipInterval = null;
 
@@ -121,10 +122,11 @@ export class GameLoadingScreen {
       this.setProgress(p);
     };
     this.onLoadComplete = () => {
-      this.finish();
+      this.setProgress(99);
     };
 
     this.onMapReady = () => {
+      this.worldReady = true;
       this.finish();
     };
     window.addEventListener('game:load-progress', this.onLoadProgress);
@@ -139,7 +141,7 @@ export class GameLoadingScreen {
         const factor = this.targetProgress >= 100 ? 0.35 : 0.25;
         const minStep = this.targetProgress >= 100 ? 4 : 2;
         const step = Math.max(minStep, (this.targetProgress - this.currentProgress) * factor);
-        this.currentProgress = Math.min(100, this.currentProgress + step);
+        this.currentProgress = Math.min(this.targetProgress, this.currentProgress + step);
         this.updateBarUI(Math.round(this.currentProgress));
       }
 
@@ -163,22 +165,11 @@ export class GameLoadingScreen {
         }, 150);
       }
     }, 1200);
-
-    // 3. Fallback an toàn: Cho phép thời gian tải tài nguyên thực tế, tối đa 2.8s
-    setTimeout(() => {
-      if (this.targetProgress < 50) this.setProgress(50);
-    }, 350);
-    setTimeout(() => {
-      if (this.targetProgress < 80) this.setProgress(80);
-    }, 1000);
-    setTimeout(() => {
-      if (!this.isDone) this.finish();
-    }, 2800);
   }
 
   setProgress(percent) {
     if (this.isDone) return;
-    this.targetProgress = Math.max(this.targetProgress, Math.min(100, Number(percent) || 0));
+    this.targetProgress = Math.max(this.targetProgress, Math.min(this.worldReady ? 100 : 99, Number(percent) || 0));
   }
 
   updateBarUI(percent) {
@@ -191,6 +182,7 @@ export class GameLoadingScreen {
   }
 
   finish() {
+    if (!this.worldReady) return;
     this.targetProgress = 100;
   }
 

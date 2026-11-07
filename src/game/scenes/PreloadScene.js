@@ -314,50 +314,12 @@ export class PreloadScene extends Phaser.Scene {
         console.warn(`[PreloadScene] Không thể tạo fallback texture cho ${file.key}:`, err);
       }
     });
-
-    this.hasTransitioned = false;
-    const transitionToWorld = () => {
-      if (this.hasTransitioned) return;
-      this.hasTransitioned = true;
-      if (this.preloadWatchdog) {
-        clearTimeout(this.preloadWatchdog);
-        this.preloadWatchdog = null;
-      }
-      window.dispatchEvent(new CustomEvent('game:load-complete'));
-      try {
-        this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
-      } catch (startErr) {
-        console.error('[PreloadScene] Lỗi khi chuyển cảnh WorldScene:', startErr);
-        if (this.game?.scene) {
-          this.game.scene.start('WorldScene', { mapId: 'map_pet_farm' });
-        }
-      }
-    };
-
-    // Watchdog an toàn: Dự phòng tối đa 8 giây nếu mạng quá yếu hoặc máy quá chậm,
-    // tự động chuyển cảnh vào WorldScene mà KHÔNG HỦY TIẾN TRÌNH TẢI (không gọi load.stop())
-    this.preloadWatchdog = setTimeout(() => {
-      console.warn('[PreloadScene] Watchdog an toàn kích hoạt: Tự động vào thế giới, tài nguyên tiếp tục nạp nền!');
-      transitionToWorld();
-    }, 8000);
-
-    this.load.once('complete', () => {
-      transitionToWorld();
-    });
   }
 
   create() {
-    if (this.preloadWatchdog) {
-      clearTimeout(this.preloadWatchdog);
-      this.preloadWatchdog = null;
-    }
-    if (!this.hasTransitioned) {
-      this.hasTransitioned = true;
-      try {
-        this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
-      } catch (e) {
-        console.error('[PreloadScene.create] Lỗi khởi động WorldScene:', e);
-      }
-    }
+    // Phaser calls create only after its loader finishes processing textures.
+    // Starting WorldScene from a wall-clock timeout stops this loader early.
+    window.dispatchEvent(new CustomEvent('game:load-complete'));
+    this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
   }
 }
