@@ -2487,6 +2487,21 @@ body.is-handwash-dragging * {
   opacity: 0.65;
 }
 
+.btn-fridge-buy-action.is-disabled {
+  background: #cbd5e1 !important;
+  color: #475569 !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.btn-fridge-buy-action.is-disabled:hover {
+  transform: translateY(-1px) scale(1.02);
+  opacity: 1;
+  background: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
 .buy-cost {
   padding: 1px 4px;
   border-radius: 999px;

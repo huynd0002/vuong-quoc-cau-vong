@@ -40,7 +40,16 @@ export class KitchenModal {
     this.content = this.root.querySelector('#kitchen-content'); this.feedback = this.root.querySelector('#kitchen-feedback');
     this.root.addEventListener('click', e => {
       if (Date.now() < (this.suppressClickUntil || 0)) return;
-      const button = e.target.closest('button'); if (button && !button.disabled) this.handle(button);
+      const button = e.target.closest('button');
+      if (button && !button.disabled) {
+        this.handle(button);
+        return;
+      }
+      const card = e.target.closest('.fridge-item-card[data-card]');
+      if (card) {
+        const buyBtn = card.querySelector('[data-buy]');
+        if (buyBtn && !buyBtn.disabled) this.handle(buyBtn);
+      }
     });
     this.root.addEventListener('keydown', e => {
       if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); this.close(); }
@@ -225,15 +234,16 @@ export class KitchenModal {
                 <div class="fridge-shelf-glass-tray">
                   ${shelfItems.map(item => {
                     const owned = state.ingredients[item.id] || 0;
-                    const canBuy = stars >= item.price && owned < KITCHEN_LIMITS.ingredientStack;
+                    const isFull = owned >= KITCHEN_LIMITS.ingredientStack;
+                    const hasStars = stars >= item.price;
                     return `
-                      <article data-card="${item.id}" class="fridge-item-card kitchen-stock ${owned > 0 ? 'is-stocked' : ''}">
+                      <article data-card="${item.id}" class="fridge-item-card kitchen-stock ${owned > 0 ? 'is-stocked' : ''}" title="${item.name} (⭐ ${item.price})">
                         ${owned > 0 ? `<div class="fridge-owned-chip" title="Số lượng trong túi">Đang có: <b>${owned}</b></div>` : ''}
                         <div class="fridge-item-avatar-wrap">
                           <img class="fridge-food-3d-asset" src="${item.image}" alt="${item.name}" draggable="false" />
                         </div>
                         <strong class="fridge-item-title">${item.name}</strong>
-                        <button type="button" class="btn-fridge-buy-action" data-buy="${item.id}" ${!canBuy ? 'disabled' : ''}>
+                        <button type="button" class="btn-fridge-buy-action ${!hasStars ? 'is-disabled' : ''}" data-buy="${item.id}" ${isFull ? 'disabled' : ''}>
                           <span class="buy-label">Mua 1</span>
                           <span class="buy-cost">⭐ ${item.price}</span>
                         </button>
@@ -2054,7 +2064,17 @@ evaluateAuditionHit() {
     const s=this.system.getState().session;
     let result;
     if(button.dataset.buy) {
-      result=this.system.buy(button.dataset.buy);
+      const ingId = button.dataset.buy;
+      const item = getIngredient(ingId);
+      const stars = this.system.getStars();
+      if (item && stars < item.price) {
+        this.audioService?.playChime?.(420, 0.2);
+        const msg = `⭐ Bé cần ${item.price} Sao để mua 1 phần ${item.name}! Hãy phiêu lưu giải đố để nhận thêm Sao nhé!`;
+        this.notify(msg);
+        window.dispatchEvent(new CustomEvent('game:show-toast', { detail: { message: msg } }));
+        return;
+      }
+      result=this.system.buy(ingId);
       if (result.ok) this.audioService?.playCoinBuy?.();
     }
     else if(button.dataset.recipe) { result=this.system.start(button.dataset.recipe); if(result.ok)this.tab='cook'; }

@@ -518,15 +518,15 @@ export function runFishingSystemTests() {
     // 12.2 Bán Món Ăn
     const sellDishRes = testFs.sellItemAtMarket('dish', 'cook-99');
     assert.equal(sellDishRes.ok, true);
-    assert.equal(sellDishRes.starsEarned, 10, 'Món ăn bán lại bị lỗ 50% (21 Sao -> 10 Sao)');
-    assert.equal(testFs.getStars(), starsAfterFish + 10);
+    assert.equal(sellDishRes.starsEarned, 1, 'Món ăn bán lại bị lỗ 50% (3 Sao -> 1 Sao)');
+    assert.equal(testFs.getStars(), starsAfterFish + 1);
     const gameAfterDish = testFs.loadGame();
     assert.equal(gameAfterDish.cooking.dishes.some(d => d.id === 'cook-99'), false, 'Món ăn bán xong phải mất luôn vĩnh viễn');
 
     // 12.3 Bán Nguyên Liệu
     const sellIngRes = testFs.sellItemAtMarket('ingredient', 'banana');
     assert.equal(sellIngRes.ok, true);
-    assert.equal(sellIngRes.starsEarned, 4, 'Nguyên liệu bán lại bị lỗ 50% (Chuối 8 Sao -> 4 Sao)');
+    assert.equal(sellIngRes.starsEarned, 1, 'Nguyên liệu bán lại bị lỗ 50% (Chuối 1 Sao -> 1 Sao)');
     const gameAfterIng = testFs.loadGame();
     assert.equal(gameAfterIng.cooking.ingredients.banana, 1, 'Chuối từ 2 trừ 1 còn 1');
 

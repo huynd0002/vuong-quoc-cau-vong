@@ -1,18 +1,18 @@
 // All quantities and times are game symbols, not instructions for a real stove.
 export const KITCHEN_LIMITS = { bag: 6, ingredientStack: 99, hearts: 3, bonusHearts: 2, energy: 3 };
 export const INGREDIENTS = [
-  { id: 'banana', name: 'chuối', icon: '🍌', image: '/assets/cooking/ingredients/ing_banana.png', price: 8 },
-  { id: 'yogurt', name: 'sữa chua', icon: '🥛', image: '/assets/cooking/ingredients/ing_yogurt.png', price: 12 },
-  { id: 'bread', name: 'bánh mì', icon: '🍞', image: '/assets/cooking/ingredients/ing_bread.png', price: 8 },
-  { id: 'greens', name: 'rau sạch', icon: '🥬', image: '/assets/cooking/ingredients/ing_greens.png', price: 5 },
-  { id: 'carrot', name: 'cà rốt', icon: '🥕', image: '/assets/cooking/ingredients/ing_carrot.png', price: 5 },
-  { id: 'broccoli', name: 'bông cải', icon: '🥦', image: '/assets/cooking/ingredients/ing_broccoli.png', price: 5 },
-  { id: 'water', name: 'nước', icon: '💧', image: '/assets/cooking/ingredients/ing_water.png', price: 4 },
-  { id: 'rice', name: 'cơm', icon: '🍚', image: '/assets/cooking/ingredients/ing_rice.png', price: 8 },
-  { id: 'egg', name: 'trứng', icon: '🥚', image: '/assets/cooking/ingredients/ing_egg.png', price: 10 },
-  { id: 'grain', name: 'gạo', icon: '🌾', image: '/assets/cooking/ingredients/ing_grain.png', price: 6 },
-  { id: 'pumpkin', name: 'bí đỏ', icon: '🎃', image: '/assets/cooking/ingredients/ing_pumpkin.png', price: 8 },
-  { id: 'fish', name: 'cá tươi', icon: '🐟', image: '/assets/cooking/ingredients/ing_fish.png', price: 15 }
+  { id: 'banana', name: 'chuối', icon: '🍌', image: '/assets/cooking/ingredients/ing_banana.png', price: 1 },
+  { id: 'yogurt', name: 'sữa chua', icon: '🥛', image: '/assets/cooking/ingredients/ing_yogurt.png', price: 2 },
+  { id: 'bread', name: 'bánh mì', icon: '🍞', image: '/assets/cooking/ingredients/ing_bread.png', price: 1 },
+  { id: 'greens', name: 'rau sạch', icon: '🥬', image: '/assets/cooking/ingredients/ing_greens.png', price: 1 },
+  { id: 'carrot', name: 'cà rốt', icon: '🥕', image: '/assets/cooking/ingredients/ing_carrot.png', price: 1 },
+  { id: 'broccoli', name: 'bông cải', icon: '🥦', image: '/assets/cooking/ingredients/ing_broccoli.png', price: 1 },
+  { id: 'water', name: 'nước', icon: '💧', image: '/assets/cooking/ingredients/ing_water.png', price: 1 },
+  { id: 'rice', name: 'cơm', icon: '🍚', image: '/assets/cooking/ingredients/ing_rice.png', price: 1 },
+  { id: 'egg', name: 'trứng', icon: '🥚', image: '/assets/cooking/ingredients/ing_egg.png', price: 2 },
+  { id: 'grain', name: 'gạo', icon: '🌾', image: '/assets/cooking/ingredients/ing_grain.png', price: 1 },
+  { id: 'pumpkin', name: 'bí đỏ', icon: '🎃', image: '/assets/cooking/ingredients/ing_pumpkin.png', price: 1 },
+  { id: 'fish', name: 'cá tươi', icon: '🐟', image: '/assets/cooking/ingredients/ing_fish.png', price: 2 }
 ];
 export const getIngredient = id => INGREDIENTS.find(item => item.id === id);
 export const RECIPES = [
