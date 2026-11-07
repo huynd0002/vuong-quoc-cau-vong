@@ -1,11 +1,11 @@
 /**
  * Service Worker — Vương Quốc Cầu Vồng PWA
- * Cung cấp khả năng hoạt động Offline, bộ đệm tài nguyên tốc độ cao và cập nhật an toàn.
+ * Cung cấp khả năng hoạt động Offline, bộ đệm tài nguyên tốc độ cao và tự động bảo vệ chống nhiễm cache HTML.
  */
 
 // rainbow-kingdom-cache-v1 (legacy support)
 const LEGACY_CACHE = 'rainbow-kingdom-cache-v1';
-const CACHE_NAME = 'rainbow-kingdom-cache-v3.5.9';
+const CACHE_NAME = 'rainbow-kingdom-cache-v3.6.0';
 
 const STATIC_ASSETS = [
   '/',
@@ -13,6 +13,35 @@ const STATIC_ASSETS = [
   '/game.html',
   '/manifest.json'
 ];
+
+function isValidResponseForUrl(url, response) {
+  if (!response || response.status !== 200) return false;
+  if (response.type !== 'basic' && response.type !== 'cors') return false;
+  const contentType = (response.headers.get('content-type') || '').toLowerCase();
+  const pathname = url.pathname.toLowerCase();
+
+  // Chặn tuyệt đối lỗi SPA rewrite trả về text/html cho file ảnh, JS, CSS
+  if (
+    pathname.endsWith('.png') ||
+    pathname.endsWith('.webp') ||
+    pathname.endsWith('.jpg') ||
+    pathname.endsWith('.jpeg') ||
+    pathname.endsWith('.gif') ||
+    pathname.endsWith('.svg')
+  ) {
+    return contentType.startsWith('image/');
+  }
+  if (pathname.endsWith('.js') || pathname.endsWith('.mjs')) {
+    return contentType.includes('javascript') || contentType.includes('ecmascript');
+  }
+  if (pathname.endsWith('.css')) {
+    return contentType.includes('text/css');
+  }
+  if (pathname.endsWith('.json')) {
+    return contentType.includes('json');
+  }
+  return true;
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -42,10 +71,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
 
-  // Bỏ qua các request không phải GET
+  // Bỏ qua các request không phải GET hoặc không phải http/https
   if (request.method !== 'GET') return;
-
   const url = new URL(request.url);
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
   // Chiến lược cho HTML, JS, CSS (Network-first, fallback to cache) để luôn nhận cập nhật mới
   if (
@@ -53,43 +82,47 @@ self.addEventListener('fetch', (event) => {
     url.pathname.endsWith('.js') ||
     url.pathname.endsWith('.css') ||
     url.pathname === '/' ||
-    url.pathname.endsWith('/index.html') || url.pathname.endsWith('/game.html')
+    url.pathname.endsWith('/index.html') ||
+    url.pathname.endsWith('/game.html')
   ) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          if (response && response.status === 200) {
-            const cloned = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
+          if (isValidResponseForUrl(url, response)) {
+            try {
+              const cloned = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned)).catch(() => {});
+            } catch {}
           }
           return response;
         })
-        .catch(() => caches.match(request).then((res) => res || (request.headers.get('accept')?.includes('text/html') ? caches.match('/game.html') : null)))
+        .catch(() =>
+          caches.match(request).then((res) => {
+            if (res && isValidResponseForUrl(url, res)) return res;
+            return request.headers.get('accept')?.includes('text/html') ? caches.match('/index.html') : Response.error();
+          })
+        )
     );
     return;
   }
 
-  // Chiến lược cho tài nguyên tĩnh (Cache-first, fallback to network)
+  // Chiến lược cho tài nguyên tĩnh (Kiểm tra tính hợp lệ của cache trước khi dùng, tránh mọi cache bị nhiễm text/html)
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
+      if (cachedResponse && isValidResponseForUrl(url, cachedResponse)) {
         return cachedResponse;
       }
-      return fetch(request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200) {
+      return fetch(request)
+        .then((networkResponse) => {
+          if (isValidResponseForUrl(url, networkResponse)) {
+            try {
+              const cloned = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned)).catch(() => {});
+            } catch {}
+          }
           return networkResponse;
-        }
-        if (networkResponse.type === 'basic' || networkResponse.type === 'cors') {
-          try {
-            const cloned = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned)).catch(() => {});
-          } catch {}
-        }
-        return networkResponse;
-      }).catch((err) => {
-        console.warn('[ServiceWorker] Lỗi nạp tài nguyên tĩnh:', err);
-        return caches.match(request);
-      });
+        })
+        .catch(() => Response.error());
     })
   );
 });

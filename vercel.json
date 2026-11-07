@@ -24,7 +24,7 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|sw\\.js|manifest\\.json).*)",
       "destination": "/index.html"
     }
   ]

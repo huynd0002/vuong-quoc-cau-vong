@@ -1015,16 +1015,21 @@ window.addEventListener('game:coords-updated', (e) => {
 // ==========================================================================
 // CẦN ĐIỀU KHIỂN ẢO (VIRTUAL JOYSTICK) & TỐI ƯU HÓA MÁY TÍNH BẢNG (TABLET)
 // ==========================================================================
-const virtualJoystick = new VirtualJoystick({
-  container: document.querySelector('.scene-stage'),
-  onMove: ({ x, y, force }) => {
-    const worldScene = window.__worldScene || game.scene.getScene('WorldScene');
-    if (worldScene && typeof worldScene.setJoystickDirection === 'function') {
-      worldScene.setJoystickDirection(x, y);
+let virtualJoystick = null;
+try {
+  virtualJoystick = new VirtualJoystick({
+    container: document.querySelector('.scene-stage'),
+    onMove: ({ x, y, force }) => {
+      const worldScene = window.__worldScene || window.__PHASER_GAME__?.scene?.getScene?.('WorldScene');
+      if (worldScene && typeof worldScene.setJoystickDirection === 'function') {
+        worldScene.setJoystickDirection(x, y);
+      }
     }
-  }
-});
-window.__virtualJoystick = virtualJoystick;
+  });
+  window.__virtualJoystick = virtualJoystick;
+} catch (vjErr) {
+  console.warn('[VirtualJoystick] Lỗi khởi tạo cần gạt ảo:', vjErr);
+}
 
 // Nút Bật / Tắt Cần Gạt Ảo trên Topbar
 const btnToggleJoystick = document.getElementById('btn-toggle-joystick');
@@ -1040,14 +1045,19 @@ if (btnToggleJoystick) {
   };
 
   // Mặc định luôn BẬT cho trải nghiệm máy tính bảng sẵn sàng xuất sắc
-  let joystickEnabled = localStorage.getItem('rkr_joystick_enabled') !== 'false';
-  virtualJoystick.setVisible(joystickEnabled);
+  let joystickEnabled = true;
+  try {
+    joystickEnabled = localStorage.getItem('rkr_joystick_enabled') !== 'false';
+  } catch {}
+  virtualJoystick?.setVisible(joystickEnabled);
   updateJoystickUI(joystickEnabled);
 
   btnToggleJoystick.addEventListener('click', () => {
     joystickEnabled = !joystickEnabled;
-    localStorage.setItem('rkr_joystick_enabled', String(joystickEnabled));
-    virtualJoystick.setVisible(joystickEnabled);
+    try {
+      localStorage.setItem('rkr_joystick_enabled', String(joystickEnabled));
+    } catch {}
+    virtualJoystick?.setVisible(joystickEnabled);
     updateJoystickUI(joystickEnabled);
   });
 }
@@ -1171,6 +1181,12 @@ const config = {
   height: DESIGN_HEIGHT,
   backgroundColor: '#a9d5b0',
   transparent: false,
+  audio: {
+    noAudio: true
+  },
+  loader: {
+    maxRetries: 2
+  },
   render: {
     antialias: true,
     pixelArt: false,
@@ -1195,8 +1211,37 @@ const config = {
   scene: [BootScene, PreloadScene, WorldScene]
 };
 
-const game = new Phaser.Game(config);
+let game;
+try {
+  game = new Phaser.Game(config);
+} catch (err) {
+  console.error('[Game] Lỗi khởi tạo Phaser, dùng cấu hình dự phòng:', err);
+  game = new Phaser.Game({
+    ...config,
+    type: Phaser.CANVAS,
+    audio: { noAudio: true }
+  });
+}
 window.__PHASER_GAME__ = game;
+
+// Đảm bảo canvas luôn được gắn vào #game-root và WorldScene khởi chạy an toàn
+const ensureWorldSceneActive = () => {
+  try {
+    if (!game) return;
+    const rootEl = document.getElementById('game-root');
+    if (rootEl && game.canvas && !rootEl.contains(game.canvas)) {
+      rootEl.appendChild(game.canvas);
+    }
+    const ws = game.scene?.getScene?.('WorldScene');
+    const ps = game.scene?.getScene?.('PreloadScene');
+    if (ws && !ws.sys?.isActive?.() && !ws.sys?.isPaused?.() && (!ps || !ps.sys?.isActive?.())) {
+      game.scene.start('WorldScene', { mapId: gameState?.campaign?.currentMapId || 'map_pet_farm' });
+    }
+  } catch (err) {
+    console.warn('[Game] Lỗi kiểm tra WorldScene:', err);
+  }
+};
+setTimeout(ensureWorldSceneActive, 15500);
 
 // Keep scene lifecycle under Phaser's control. Paused scenes belong to open
 // activities; a timeout must never restart them or interrupt asset loading.
@@ -1238,16 +1283,21 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.5.9';
+export const GAME_VERSION = '3.6.0';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {
   try {
     const cachedVer = localStorage.getItem('rainbow_kingdom_game_version');
     if (cachedVer !== GAME_VERSION) {
-      console.info(`[VersionSync] Phát hiện phiên bản mới: ${GAME_VERSION} (phiên bản cũ: ${cachedVer || 'không rõ'}). Đang dọn dẹp toàn bộ cache cũ...`);
+      console.info(`[VersionSync] Phát hiện phiên bản mới: ${GAME_VERSION} (phiên bản cũ: ${cachedVer || 'không rõ'}). Đang dọn dẹp cache phiên bản cũ...`);
+      const currentSwCache = `rainbow-kingdom-cache-v${GAME_VERSION}`;
       window.caches.keys().then((keys) => {
-        return Promise.all(keys.map(k => window.caches.delete(k)));
+        return Promise.all(
+          keys
+            .filter((k) => k !== currentSwCache)
+            .map((k) => window.caches.delete(k))
+        );
       }).then(() => {
         localStorage.setItem('rainbow_kingdom_game_version', GAME_VERSION);
         if (/^https?:$/.test(window.location.protocol) && 'serviceWorker' in navigator) {
@@ -1262,17 +1312,8 @@ if (typeof window !== 'undefined' && 'caches' in window) {
   } catch {}
 }
 
-// Đăng ký Service Worker cho Progressive Web App (PWA)
+// Đăng ký Service Worker cho Progressive Web App (PWA) — Không tự động reload làm gián đoạn quá trình nạp game
 if (typeof window !== 'undefined' && /^https?:$/.test(window.location.protocol) && 'serviceWorker' in navigator) {
-  let hadController = Boolean(navigator.serviceWorker.controller);
-  let updatingPage = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (hadController && !updatingPage) {
-      updatingPage = true;
-      window.location.reload();
-    }
-    hadController = true;
-  });
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then((registration) => {
       registration.update();

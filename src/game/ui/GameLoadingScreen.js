@@ -127,8 +127,7 @@ export class GameLoadingScreen {
       this.setProgress(99);
       setTimeout(() => {
         if (!this.isDone) {
-          this.worldReady = true;
-          this.finish();
+          this.ensureWorldReadyAndFinish();
         }
       }, 600);
     };
@@ -184,15 +183,32 @@ export class GameLoadingScreen {
       }
     }, 280);
 
-    // 4. Watchdog an toàn: Sau 13 giây nếu chưa xong, tự động kích hoạt vào game
+    // 4. Watchdog an toàn: Sau 16 giây nếu chưa xong, tự động kích hoạt WorldScene và vào game
     this.safetyWatchdogTimeout = setTimeout(() => {
       if (!this.isDone) {
-        console.warn('[GameLoadingScreen] Watchdog an toàn: Tự động kích hoạt vào game!');
-        this.worldReady = true;
-        this.targetProgress = 100;
-        this.finish();
+        console.warn('[GameLoadingScreen] Watchdog an toàn: Đảm bảo WorldScene khởi chạy và mở màn hình vào game!');
+        this.ensureWorldReadyAndFinish();
       }
-    }, 13000);
+    }, 16000);
+  }
+
+  ensureWorldReadyAndFinish() {
+    try {
+      const game = typeof window !== 'undefined' ? window.__PHASER_GAME__ : null;
+      const ws = typeof window !== 'undefined' ? (window.__worldScene || game?.scene?.getScene?.('WorldScene')) : null;
+      if (game && (!ws || !ws.sys?.isActive?.())) {
+        const rootEl = document.getElementById('game-root');
+        if (rootEl && game.canvas && !rootEl.contains(game.canvas)) {
+          rootEl.appendChild(game.canvas);
+        }
+        game.scene?.start?.('WorldScene', { mapId: 'map_pet_farm' });
+      }
+    } catch (err) {
+      console.warn('[GameLoadingScreen] Lỗi kích hoạt WorldScene dự phòng:', err);
+    }
+    this.worldReady = true;
+    this.targetProgress = 100;
+    this.finish();
   }
 
   setProgress(percent) {

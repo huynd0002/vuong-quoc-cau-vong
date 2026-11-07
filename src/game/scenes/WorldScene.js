@@ -859,13 +859,24 @@ export class WorldScene extends Phaser.Scene {
       try {
         this.setWorldScale?.();
       } catch {}
-      // Announce readiness after the first rendered frame, not just creation.
-      this.game.events.once('postrender', () => {
-        if (!this.sys.isActive()) return;
+      // Announce readiness after the first rendered frame, with a 350ms fallback if RAF is throttled.
+      let mapReadyDispatched = false;
+      const dispatchMapReady = () => {
+        if (mapReadyDispatched) return;
+        mapReadyDispatched = true;
         window.dispatchEvent(new CustomEvent('game:map-ready', {
           detail: { mapConfig: this.mapConfig || getMapConfig(this.currentMapId) }
         }));
+      };
+      this.game.events.once('postrender', () => {
+        if (!this.sys.isActive()) return;
+        dispatchMapReady();
       });
+      setTimeout(() => {
+        if (this.sys?.isActive?.()) {
+          dispatchMapReady();
+        }
+      }, 350);
     }
   }
 
@@ -1148,14 +1159,6 @@ export class WorldScene extends Phaser.Scene {
       const station = this.mapConfig?.petStations?.find(s => s.type === type || (type === 'potty' && s.type === 'toilet'));
       if (station) this.handlePetStationInteraction(station);
     });
-
-    // Báo hiệu bản đồ và tài nguyên sẵn sàng 100% để UI / HUD / Loading Screen luôn được kích hoạt
-    try {
-      this.setWorldScale?.();
-    } catch {}
-    window.dispatchEvent(new CustomEvent('game:map-ready', {
-      detail: { mapConfig: this.mapConfig || getMapConfig(this.currentMapId) }
-    }));
   }
 
   /**

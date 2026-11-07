@@ -140,20 +140,9 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    // 1. Tải tài nguyên hình nền 6 Bản Đồ Cốt Truyện
-    this.load.image('map_1_bg', map1BgUrl);
-    this.load.image('map_2_bg', map2BgUrl);
-    this.load.image('map_3_bg', map3BgUrl);
-    this.load.image('map_4_bg', map4BgUrl);
-    this.load.image('map_5_bg', map5BgUrl);
-    this.load.image('map_6_bg', map6BgUrl);
+    // 1. Tài nguyên khởi đầu thiết yếu (Core Farm & Hero Assets) để vào thế giới tức thì
     this.load.image('map_pet_farm_bg', mapPetFarmBgUrl);
-    this.load.image('map_kitchen_bg', mapKitchenBgUrl);
-    this.load.image('map_fishing_pond_bg', mapFishingPondBgUrl);
-    this.load.image('map_rainbow_market_bg', mapRainbowMarketBgUrl);
-    this.load.image('map_fashion_street_bg', mapFashionStreetBgUrl);
-
-    // Spritesheet nhân vật chính (Cơ bản & Nâng cấp Hiệp Sĩ Cầu Vồng) & Bạn đồng hành
+    this.load.image('map_1_bg', map1BgUrl);
     this.load.image('hero_idle', heroUrl);
     this.load.spritesheet('hero_walk_sheet', walkSheetUrl, { frameWidth: 128, frameHeight: 128 });
     this.load.spritesheet('hero_idle_sheet', idleSheetUrl, { frameWidth: 128, frameHeight: 128 });
@@ -161,7 +150,6 @@ export class PreloadScene extends Phaser.Scene {
     this.load.spritesheet('hero_upgrade_walk_sheet', heroKnightWalkSheetUrl, { frameWidth: 128, frameHeight: 128 });
     this.load.spritesheet('hero_upgrade_idle_sheet', heroKnightIdleSheetUrl, { frameWidth: 128, frameHeight: 128 });
     this.load.image('pet_bunny_idle', petUrl);
-    // Tải tài nguyên Bé Cún Vàng (Pet Dog): Đi bộ 8 hướng, Buồn bã, Ở dơ, Vui vẻ
     this.load.image('pet_dog_idle', petDogIdleUrl);
     this.load.spritesheet('pet_dog_walk_sheet', petDogWalkSheetUrl, { frameWidth: 256, frameHeight: 256 });
     this.load.spritesheet('pet_dog_sad_sheet', petDogSadSheetUrl, { frameWidth: 256, frameHeight: 256 });
@@ -172,6 +160,37 @@ export class PreloadScene extends Phaser.Scene {
     this.load.spritesheet('pet_dog_potty_sheet', petDogPottySheetUrl, { frameWidth: 256, frameHeight: 256 });
     this.load.spritesheet('pet_dog_bath_sheet', petDogBathSheetUrl, { frameWidth: 256, frameHeight: 256 });
     this.load.spritesheet('pet_dog_eat_sheet', petDogEatSheetUrl, { frameWidth: 256, frameHeight: 256 });
+    this.load.image('prop_chest', propChestUrl);
+    this.load.image('prop_signpost', propSignpostUrl);
+    this.load.image('prop_lotus', propLotusUrl);
+    this.load.image('prop_mushrooms', propMushroomsUrl);
+    this.load.image('prop_flower_bush', propFlowerBushUrl);
+    this.load.image('prop_lantern', propLanternUrl);
+    this.load.image('prop_haystack', propHaystackUrl);
+    this.load.image('prop_pet_bath', propPetBathUrl);
+    this.load.image('prop_pet_bed', propPetBedUrl);
+    this.load.image('prop_pet_toilet', propPetToiletUrl);
+    this.load.image('prop_ball', propBallUrl);
+    this.load.image('icon_shop_backpack', iconShopBackpackUrl);
+    this.load.image('butterfly_rainbow', butterflyRainbowUrl);
+    this.load.spritesheet('prop_ball_sheet', propBallSheetUrl, { frameWidth: 72, frameHeight: 72 });
+    this.load.spritesheet('teleport_portal_sheet', portalSheetUrl, { frameWidth: 256, frameHeight: 256 });
+    this.load.spritesheet('vfx_implosion_sheet', implosionSheetUrl, { frameWidth: 208, frameHeight: 184 });
+    this.load.spritesheet('vfx_level_up_sheet', vfxLevelUpSheetUrl, { frameWidth: 176, frameHeight: 138 });
+    this.load.spritesheet('vfx_exclamation_sheet', vfxExclamationSheetUrl, { frameWidth: 84, frameHeight: 104 });
+    this.load.spritesheet('vfx_cartoon_pow_sheet', vfxCartoonPowSheetUrl, { frameWidth: 184, frameHeight: 144 });
+
+    // 1b. Tài nguyên các bản đồ còn lại
+    this.load.image('map_2_bg', map2BgUrl);
+    this.load.image('map_3_bg', map3BgUrl);
+    this.load.image('map_4_bg', map4BgUrl);
+    this.load.image('map_5_bg', map5BgUrl);
+    this.load.image('map_6_bg', map6BgUrl);
+    this.load.image('map_kitchen_bg', mapKitchenBgUrl);
+    this.load.image('map_fishing_pond_bg', mapFishingPondBgUrl);
+    this.load.image('map_rainbow_market_bg', mapRainbowMarketBgUrl);
+    this.load.image('map_fashion_street_bg', mapFashionStreetBgUrl);
+
     this.load.image('mon_sprout', sproutUrl);
     this.load.spritesheet('mon_sprout_walk_sheet', sproutWalkSheetUrl, { frameWidth: 384, frameHeight: 384 });
     this.load.spritesheet('mon_sprout_idle_sheet', sproutIdleSheetUrl, { frameWidth: 384, frameHeight: 384 });
@@ -226,29 +245,6 @@ export class PreloadScene extends Phaser.Scene {
     this.load.spritesheet('boss_desert_sphinx_idle_sheet', bossDesertSphinxIdleSheetUrl, { frameWidth: 320, frameHeight: 320 });
     this.load.spritesheet('boss_desert_sphinx_skill_sheet', bossDesertSphinxSkillSheetUrl, { frameWidth: 320, frameHeight: 320 });
 
-    // 3. Tải Bộ Prop Làng Quê Sinh Động
-    this.load.image('prop_chest', propChestUrl);
-    this.load.image('prop_signpost', propSignpostUrl);
-    this.load.image('prop_lotus', propLotusUrl);
-    this.load.image('prop_mushrooms', propMushroomsUrl);
-    this.load.image('prop_flower_bush', propFlowerBushUrl);
-    this.load.image('prop_lantern', propLanternUrl);
-    this.load.image('prop_haystack', propHaystackUrl);
-    this.load.image('prop_pet_bath', propPetBathUrl);
-    this.load.image('prop_pet_bed', propPetBedUrl);
-    this.load.image('prop_pet_toilet', propPetToiletUrl);
-    this.load.image('prop_ball', propBallUrl);
-    this.load.image('icon_shop_backpack', iconShopBackpackUrl);
-    this.load.image('butterfly_rainbow', butterflyRainbowUrl);
-    this.load.spritesheet('prop_ball_sheet', propBallSheetUrl, { frameWidth: 72, frameHeight: 72 });
-
-    // 4. Tải Cổng Dịch Chuyển Không Gian Cầu Vồng (8 Frames Animation) & Hiệu Ứng Implosion (51 Frames)
-    this.load.spritesheet('teleport_portal_sheet', portalSheetUrl, { frameWidth: 256, frameHeight: 256 });
-    this.load.spritesheet('vfx_implosion_sheet', implosionSheetUrl, { frameWidth: 208, frameHeight: 184 });
-    this.load.spritesheet('vfx_level_up_sheet', vfxLevelUpSheetUrl, { frameWidth: 176, frameHeight: 138 });
-    this.load.spritesheet('vfx_exclamation_sheet', vfxExclamationSheetUrl, { frameWidth: 84, frameHeight: 104 });
-    this.load.spritesheet('vfx_cartoon_pow_sheet', vfxCartoonPowSheetUrl, { frameWidth: 184, frameHeight: 144 });
-
     // 5. Tải Boss Rồng Thần Cầu Vồng (Walk, Idle, Skill Spritesheets)
     this.load.image('boss_dragon', bossDragonUrl);
     this.load.spritesheet('boss_dragon_walk_sheet', bossDragonWalkSheetUrl, { frameWidth: 256, frameHeight: 256 });
@@ -289,10 +285,41 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('acc_pinwheel', accPinwheelUrl);
     this.load.image('acc_star_wand', accStarWandUrl);
 
-    // 2. Báo tiến trình cho UI bên ngoài
+    // 2. Báo tiến trình cho UI bên ngoài & Kiểm tra tài nguyên thiết yếu của Nông Trại Khởi Đầu
+    const coreStartupKeys = [
+      'map_pet_farm_bg',
+      'map_1_bg',
+      'hero_idle',
+      'hero_walk_sheet',
+      'hero_idle_sheet',
+      'hero_upgrade_idle',
+      'hero_upgrade_walk_sheet',
+      'hero_upgrade_idle_sheet',
+      'pet_bunny_idle',
+      'pet_dog_idle',
+      'pet_dog_walk_sheet',
+      'prop_pet_bath',
+      'prop_pet_bed',
+      'prop_pet_toilet',
+      'prop_ball_sheet',
+      'teleport_portal_sheet'
+    ];
+
+    const checkEarlyWorldReady = () => {
+      if (this.hasTransitioned) return;
+      const allCoreReady = coreStartupKeys.every((k) => this.textures.exists(k));
+      if (allCoreReady) {
+        this.transitionToWorld();
+      }
+    };
+
     this.load.on('progress', (value) => {
       const percent = Math.round(value * 100);
       window.dispatchEvent(new CustomEvent('game:load-progress', { detail: { percent } }));
+    });
+
+    this.load.on('filecomplete', () => {
+      checkEarlyWorldReady();
     });
 
     this.load.on('loaderror', (file) => {
@@ -317,11 +344,11 @@ export class PreloadScene extends Phaser.Scene {
 
     this.hasTransitioned = false;
 
-    // Watchdog an toàn: Dự phòng tối đa 12 giây nếu mạng quá yếu hoặc máy bị kẹt
+    // Watchdog an toàn: Dự phòng tối đa 15 giây nếu mạng quá yếu hoặc máy bị kẹt
     this.preloadWatchdog = setTimeout(() => {
       console.warn('[PreloadScene] Watchdog an toàn kích hoạt: Tự động vào thế giới, tài nguyên tiếp tục nạp nền!');
       this.transitionToWorld();
-    }, 12000);
+    }, 15000);
 
     this.load.once('complete', () => {
       this.transitionToWorld();
@@ -337,7 +364,17 @@ export class PreloadScene extends Phaser.Scene {
     }
     window.dispatchEvent(new CustomEvent('game:load-complete'));
     try {
-      this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+      // Dùng launch thay vì start nếu loader vẫn đang tải nền để không hủy các file đang tải
+      if (this.load && this.load.isLoading()) {
+        this.scene.launch('WorldScene', { mapId: 'map_pet_farm' });
+        this.load.once('complete', () => {
+          try {
+            this.scene.stop('PreloadScene');
+          } catch {}
+        });
+      } else {
+        this.scene.start('WorldScene', { mapId: 'map_pet_farm' });
+      }
     } catch (err) {
       console.error('[PreloadScene] Lỗi khi chuyển cảnh WorldScene:', err);
       if (this.game?.scene) {
