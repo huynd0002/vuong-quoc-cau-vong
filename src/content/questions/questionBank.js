@@ -1712,9 +1712,9 @@ export const QUESTION_BANK = {
     speak: 'Bé hãy kéo thả các bạn nhỏ xếp từ nhỏ nhất đến lớn nhất nhé!',
     slots: ['1. Nhỏ nhất', '2. Vừa vừa', '3. Lớn nhất'],
     items: [
-      { id: 'it1', label: '🐥 Gà Con', order: 1 },
-      { id: 'it2', label: '🐰 Bé Thỏ', order: 2 },
-      { id: 'it3', label: '🐻 Bác Gấu', order: 3 }
+      { id: 'it1', label: '🐥 Gà Con', text: 'Gà Con (Nhỏ)', order: 1, image: '/assets/edu/animals/anim_chick.svg' },
+      { id: 'it2', label: '🐰 Bé Thỏ', text: 'Bé Thỏ (Vừa)', order: 2, image: '/assets/edu/animals/anim_bunny.svg' },
+      { id: 'it3', label: '🐻 Bác Gấu', text: 'Bác Gấu (Lớn)', order: 3, image: '/assets/edu/animals/anim_bear.svg' }
     ],
     choices: ['Gà Con', 'Bé Thỏ', 'Bác Gấu'],
     correct: 0,
@@ -2411,10 +2411,31 @@ export const QUESTION_BANK = {
 
 };
 
+// Bộ nhớ câu hỏi đã gặp trong phiên chơi để chống trùng lặp tuyệt đối
+export const sessionQuestionHistory = [];
+const MAX_SESSION_HISTORY = 18;
+
+let lastShuffledCorrectIndex = -1;
+
+export function recordQuestionSeen(questionId) {
+  if (!questionId) return;
+  if (!sessionQuestionHistory.includes(questionId)) {
+    sessionQuestionHistory.push(questionId);
+    if (sessionQuestionHistory.length > MAX_SESSION_HISTORY) {
+      sessionQuestionHistory.shift();
+    }
+  }
+}
+
+export function clearQuestionHistory() {
+  sessionQuestionHistory.length = 0;
+  lastShuffledCorrectIndex = -1;
+}
+
 /**
  * Trộn ngẫu nhiên vị trí các đáp án (A, B, C...) của câu hỏi
  * Giữ nguyên tính liên kết chuẩn xác giữa choices, choiceImages và chỉ mục đáp án đúng correct
- * Đảm bảo đáp án đúng xuất hiện ngẫu nhiên ở mọi vị trí (A, B, C, D) thay vì luôn ở B.
+ * Đảm bảo đáp án đúng xuất hiện ngẫu nhiên ở mọi vị trí (A, B, C, D) và KHÔNG bị cố định lặp lại 1 vị trí liên tiếp
  */
 export function shuffleQuestion(question) {
   if (!question || !Array.isArray(question.choices) || question.choices.length <= 1) {
@@ -2424,14 +2445,25 @@ export function shuffleQuestion(question) {
     return { ...question };
   }
 
-  const indices = question.choices.map((_, i) => i);
-  for (let i = indices.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [indices[i], indices[j]] = [indices[j], indices[i]];
-  }
-
+  const numChoices = question.choices.length;
   const originalCorrect = typeof question.correct === 'number' ? question.correct : 0;
-  const newCorrect = indices.indexOf(originalCorrect);
+  let indices = question.choices.map((_, i) => i);
+  let newCorrect = originalCorrect;
+  let attempts = 0;
+
+  // Fisher-Yates shuffle kèm thuật toán chống lặp vị trí đáp án đúng liên tiếp:
+  // Nếu có từ 2 đáp án trở lên, cố gắng tránh để newCorrect trùng với lastShuffledCorrectIndex
+  do {
+    indices = question.choices.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    newCorrect = indices.indexOf(originalCorrect);
+    attempts++;
+  } while (numChoices > 1 && newCorrect === lastShuffledCorrectIndex && attempts < 10);
+
+  lastShuffledCorrectIndex = newCorrect;
 
   const newChoices = indices.map(i => question.choices[i]);
   const newChoiceImages = Array.isArray(question.choiceImages)
@@ -2455,22 +2487,44 @@ export function getAllQuestions() {
 }
 
 /**
- * Chọn câu hỏi ngẫu nhiên trong vùng, ưu tiên loại trừ các câu vừa xuất hiện
+ * Chọn câu hỏi ngẫu nhiên trong vùng, ưu tiên loại trừ các câu vừa xuất hiện cả trong trận lẫn trong phiên chơi
  */
 export function getRandomZoneQuestion(zoneId, excludeIds = []) {
   const prefix = `q_${zoneId}_`;
-  const candidates = Object.values(QUESTION_BANK).filter(
-    q => q.id.startsWith(prefix) && !q.id.includes('boss') && !excludeIds.includes(q.id)
+  const allZone = Object.values(QUESTION_BANK).filter(
+    q => q.id.startsWith(prefix) && !q.id.includes('boss')
   );
 
-  if (candidates.length === 0) {
-    const fallback = Object.values(QUESTION_BANK).filter(
-      q => q.id.startsWith(prefix) && !q.id.includes('boss')
-    );
-    return fallback[Math.floor(Math.random() * fallback.length)] || getQuestion(`${prefix}colors_1`);
+  // 1. Ưu tiên số 1: Các câu hỏi CHƯA gặp trong excludeIds VÀ CHƯA gặp trong sessionQuestionHistory
+  const unseenCandidates = allZone.filter(
+    q => !excludeIds.includes(q.id) && !sessionQuestionHistory.includes(q.id)
+  );
+
+  if (unseenCandidates.length > 0) {
+    const chosen = unseenCandidates[Math.floor(Math.random() * unseenCandidates.length)];
+    recordQuestionSeen(chosen.id);
+    return chosen;
   }
 
-  return candidates[Math.floor(Math.random() * candidates.length)];
+  // 2. Nếu đã gặp gần hết ngân hàng, chọn trong các câu không nằm trong excludeIds của trận hiện tại
+  const eligible = allZone.filter(q => !excludeIds.includes(q.id));
+  if (eligible.length > 0) {
+    // Sắp xếp ưu tiên câu nào xuất hiện lâu nhất trong quá khứ lên trước
+    eligible.sort((a, b) => {
+      const idxA = sessionQuestionHistory.indexOf(a.id);
+      const idxB = sessionQuestionHistory.indexOf(b.id);
+      return idxA - idxB;
+    });
+    const chosen = eligible[0];
+    recordQuestionSeen(chosen.id);
+    return chosen;
+  }
+
+  // 3. Fallback: Lấy ngẫu nhiên từ ngân hàng câu hỏi
+  const fallback = allZone.length > 0 ? allZone : Object.values(QUESTION_BANK).filter(q => !q.id.includes('boss'));
+  const chosen = fallback[Math.floor(Math.random() * fallback.length)] || getQuestion(`${prefix}colors_1`);
+  recordQuestionSeen(chosen.id);
+  return chosen;
 }
 
 /**

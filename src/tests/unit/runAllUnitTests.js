@@ -16,6 +16,7 @@ import { runBackpackSystemTests } from './backpackSystem.test.js';
 import { runVirtualJoystickTests } from './virtualJoystick.test.js';
 import { runFishingSkillAndHarderFishTests } from './fishingSkillAndHarderFish.test.js';
 import { runImagePairMatchingNoTextTests } from './imagePairMatchingNoText.test.js';
+import { runDragSortAndAntiRepeatTests } from './dragSortAndAntiRepeat.test.js';
 
 console.log('====================================================');
 console.log('  CHẠY TẤT CẢ UNIT TESTS (GIAI ĐOẠN 2 ĐẾN 6: REBUILD)');
@@ -56,8 +57,10 @@ try {
   runFishingSkillAndHarderFishTests();
   console.log('');
   runImagePairMatchingNoTextTests();
+  console.log('');
+  runDragSortAndAntiRepeatTests();
   console.log('\n====================================================');
-  console.log('  TẤT CẢ 17/17 BỘ UNIT TESTS ĐÃ VƯỢT QUA!   ');
+  console.log('  TẤT CẢ 18/18 BỘ UNIT TESTS ĐÃ VƯỢT QUA!   ');
   console.log('====================================================');
 } catch (err) {
   console.error('\n❌ TEST THẤT BẠI:', err);

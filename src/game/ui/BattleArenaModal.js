@@ -1100,15 +1100,12 @@ export class BattleArenaModal {
     }
 
     // 3. Dự phòng câu hỏi nếu ngân hàng chưa đủ số lượng
-    const fallbackIds = ['q_map1_colors_1', 'q_map1_shapes_1', 'q_map1_fruits_1', 'q_map1_animals_1', 'q_map1_colors_2'];
+    const fallbackCandidates = Object.values(QUESTION_BANK).filter(
+      q => !q.id.includes('boss') && !knowledgeQuestions.some(item => item.id === q.id)
+    );
     let fbIdx = 0;
-    while (knowledgeQuestions.length < targetCount) {
-      const fbQ = getQuestion(fallbackIds[fbIdx % fallbackIds.length]);
-      if (fbQ && !knowledgeQuestions.some(q => q.id === fbQ.id)) {
-        knowledgeQuestions.push(fbQ);
-      } else if (fbQ) {
-        knowledgeQuestions.push({ ...fbQ, id: `${fbQ.id}_fb_${knowledgeQuestions.length}` });
-      }
+    while (knowledgeQuestions.length < targetCount && fbIdx < fallbackCandidates.length) {
+      knowledgeQuestions.push(fallbackCandidates[fbIdx]);
       fbIdx++;
     }
 
@@ -1118,14 +1115,15 @@ export class BattleArenaModal {
       // Boss 5 tim: Q1 (Pha 1) -> Q2 (Mê cung giải mã) -> Q3 (Pha 2) -> Q4 (Mê cung cao trào) -> Q5 (Dứt điểm)
       list.push(knowledgeQuestions[0]);
       list.push(createMazeQuestion({ encounter, phase: 1, isBoss: true }));
-      list.push(knowledgeQuestions[1] || knowledgeQuestions[0]);
+      list.push(knowledgeQuestions[1] || getRandomZoneQuestion(mapId, list.map(q => q?.id)));
       list.push(createMazeQuestion({ encounter, phase: 2, isBoss: true }));
-      list.push(knowledgeQuestions[2] || knowledgeQuestions[0]);
+      list.push(knowledgeQuestions[2] || getRandomZoneQuestion(mapId, list.map(q => q?.id)));
     } else {
       // Quái thường 3 tim: Q1 (Kiến thức) -> Q2 (Mê cung vượt ải) -> Q3 (Kiến thức kết liễu)
       list.push(knowledgeQuestions[0]);
       list.push(createMazeQuestion({ encounter, phase: 1, isBoss: false }));
-      list.push(knowledgeQuestions[1] || knowledgeQuestions[0]);
+      const q3 = knowledgeQuestions[1] || getRandomZoneQuestion(mapId, [knowledgeQuestions[0]?.id]);
+      list.push(q3);
     }
 
     return list.slice(0, targetCount).map(q => shuffleQuestion(q));
@@ -1152,7 +1150,7 @@ export class BattleArenaModal {
     // Nạp danh sách câu hỏi theo số tim
     this.encounterQuestions = this.getEncounterQuestions(encounter);
     this.currentQuestionIndex = 0;
-    this.currentQuestion = this.encounterQuestions[0] ? shuffleQuestion(this.encounterQuestions[0]) : null;
+    this.currentQuestion = this.encounterQuestions[0] || null;
 
     if (this.combatSystem) {
       this.combatSystem.startEncounter(encounter, this.currentQuestion);
@@ -1901,28 +1899,63 @@ export class BattleArenaModal {
   }
 
   formatChipContent(it) {
-    const raw = String(it.label || '').trim();
-    // 1. Nếu có số hoặc emoji số (như 2️⃣ Số Hai, 8️⃣ Số Tám, 1️⃣ Một, 5️⃣ Số Năm, "2", "8"...)
-    const numMatch = raw.match(/\d+/);
-    if (numMatch) {
-      return `<span class="drag-chip-num-hero">${numMatch[0]}</span>`;
+    if (it.image) {
+      return `
+        <div class="drag-chip-inner">
+          <img src="${it.image}" class="drag-chip-img" alt="${it.text || it.label}" onerror="this.style.display='none'">
+          <span class="drag-chip-text">${it.text || it.label}</span>
+        </div>
+      `;
     }
-    // 2. Nếu có sao (⭐ (1 Sao), ⭐⭐...)
+    const raw = String(it.label || '').trim();
+    // 1. Nếu có sao (⭐ (1 Sao), ⭐⭐...)
     if (raw.includes('⭐')) {
       const count = (raw.match(/⭐/g) || []).length;
-      return `<span class="drag-chip-stars-hero">${'⭐'.repeat(Math.max(1, count))}</span>`;
+      return `
+        <div class="drag-chip-inner">
+          <span class="drag-chip-stars-hero">${'⭐'.repeat(Math.max(1, count))}</span>
+          <span class="drag-chip-text">${count} Sao</span>
+        </div>
+      `;
     }
-    // 3. Nếu là màu sắc (🔴 Màu Đỏ...)
+    // 2. Nếu là màu sắc (🔴 Màu Đỏ...)
     const colorMatch = raw.match(/[🔴🟠🟡🟢🔵🟣🟤⚫⚪]/);
     if (colorMatch) {
-      return `<span class="drag-chip-emoji-hero">${colorMatch[0]}</span>`;
+      const restText = raw.replace(/[🔴🟠🟡🟢🔵🟣🟤⚫⚪]/, '').trim();
+      return `
+        <div class="drag-chip-inner">
+          <span class="drag-chip-emoji-hero" style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;">${colorMatch[0]}</span>
+          <span class="drag-chip-text">${restText}</span>
+        </div>
+      `;
+    }
+    // 3. Nếu có số hoặc emoji số (như 2️⃣ Số Hai, 8️⃣ Số Tám, 1️⃣ Một, 5️⃣ Số Năm, "2", "8"...)
+    const numMatch = raw.match(/\d+/);
+    if (numMatch) {
+      const restText = raw.replace(/\d+️⃣?/, '').trim();
+      return `
+        <div class="drag-chip-inner">
+          <span class="drag-chip-num-hero">${numMatch[0]}</span>
+          <span class="drag-chip-text">${restText || ('Số ' + numMatch[0])}</span>
+        </div>
+      `;
     }
     // 4. Nếu bắt đầu bằng emoji hình (🐥 Gà Con...)
     const emojiMatch = raw.match(/^(\p{Extended_Pictographic}+)/u);
     if (emojiMatch) {
-      return `<span class="drag-chip-emoji-hero">${emojiMatch[1]}</span>`;
+      const restText = raw.replace(emojiMatch[0], '').trim();
+      return `
+        <div class="drag-chip-inner">
+          <span class="drag-chip-emoji-hero" style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;">${emojiMatch[0]}</span>
+          <span class="drag-chip-text">${restText || raw}</span>
+        </div>
+      `;
     }
-    return `<span class="drag-chip-num-hero">${raw}</span>`;
+    return `
+      <div class="drag-chip-inner">
+        <span class="drag-chip-text">${raw}</span>
+      </div>
+    `;
   }
 
   formatSlotBadge(slotText, index) {
@@ -1940,11 +1973,16 @@ export class BattleArenaModal {
 
     const slots = question.slots || ['1. Nhỏ nhất', '2. Vừa', '3. Lớn nhất'];
     const rawItems = question.items || [
-      { id: 'it1', label: '🐥 Gà Con', order: 1 },
-      { id: 'it2', label: '🐰 Bé Thỏ', order: 2 },
-      { id: 'it3', label: '🐻 Bác Gấu', order: 3 }
+      { id: 'it1', label: '🐥 Gà Con', text: 'Gà Con (Nhỏ)', order: 1, image: '/assets/edu/animals/anim_chick.svg' },
+      { id: 'it2', label: '🐰 Bé Thỏ', text: 'Bé Thỏ (Vừa)', order: 2, image: '/assets/edu/animals/anim_bunny.svg' },
+      { id: 'it3', label: '🐻 Bác Gấu', text: 'Bác Gấu (Lớn)', order: 3, image: '/assets/edu/animals/anim_bear.svg' }
     ];
-    const poolItems = [...rawItems].sort(() => Math.random() - 0.5);
+    let poolItems = [...rawItems].sort(() => Math.random() - 0.5);
+    let shuffleAttempts = 0;
+    while (poolItems.every((it, idx) => it.order === idx + 1) && shuffleAttempts < 10) {
+      poolItems.sort(() => Math.random() - 0.5);
+      shuffleAttempts++;
+    }
 
     let pickedItem = null;
     let mistakeCount = 0;
@@ -2074,7 +2112,14 @@ export class BattleArenaModal {
             setTimeout(() => {
               slotsDiv.classList.remove('has-error');
               mistakeCount = 0;
-              updateBanner(filled);
+              // Chuyển toàn bộ các thẻ đã đặt trong các ô slot về lại poolDiv để bé xếp lại
+              const placedChips = wrap.querySelectorAll('.slot-dropzone .drag-item-chip');
+              placedChips.forEach(chip => {
+                poolDiv.appendChild(chip);
+                chip.classList.remove('is-placed', 'active-picked');
+              });
+              pickedItem = null;
+              updateGameState();
               this.executeMonsterAttack();
             }, 750);
             return;
@@ -2153,12 +2198,18 @@ export class BattleArenaModal {
           return;
         }
 
-        if (pickedItem === chip) {
-          if (chip.classList.contains('is-placed')) {
-            moveOrSwap(chip, poolDiv);
+        // Nếu chip này đã nằm trong ô slot -> 1 chạm đưa ngay về lại poolDiv!
+        if (chip.classList.contains('is-placed')) {
+          if (pickedItem === chip) {
             pickedItem = null;
-            return;
+            chip.classList.remove('active-picked');
           }
+          moveOrSwap(chip, poolDiv);
+          this.audioService?.playChime?.(600, 0.08);
+          return;
+        }
+
+        if (pickedItem === chip) {
           chip.classList.remove('active-picked');
           pickedItem = null;
         } else {
@@ -2188,8 +2239,8 @@ export class BattleArenaModal {
         moveOrSwap(draggedChip, poolDiv);
       }
     });
-    poolDiv.addEventListener('click', (e) => {
-      if (e.target === poolDiv && pickedItem) {
+    poolDiv.addEventListener('click', () => {
+      if (pickedItem) {
         const p = pickedItem;
         pickedItem = null;
         moveOrSwap(p, poolDiv);
