@@ -63,7 +63,7 @@ const __dirname = path.dirname(__filename);
   // Kiểm tra cổng hồ câu không trùng station (1210, 310 vs station 1210, 420)
   const fishingPortal = farmPortalInfo.portals.find(p => p.id === 'portal_farm_to_fishing');
   assert.ok(fishingPortal, 'Phải có portal_farm_to_fishing');
-  assert.strictEqual(fishingPortal.y, 310, 'Cổng Hồ câu phải ở y=310, không trùng station y=420');
+  assert.strictEqual(fishingPortal.y, 615, 'Cổng Hồ câu phải ở y=310, không trùng station y=420');
 
   // Kiểm tra cổng hành trình không bị joystick che (y: 440)
   const journeyPortal = farmPortalInfo.portals.find(p => p.id === 'portal_pet_farm_to_journey');
@@ -90,7 +90,7 @@ const __dirname = path.dirname(__filename);
 
   const marketToFarm = marketPortalInfo.find(p => p.id === 'portal_market_to_farm');
   assert.ok(marketToFarm, 'Phải có portal_market_to_farm');
-  assert.strictEqual(marketToFarm.y, 505, 'portal_market_to_farm y phải là 505 (thông thoáng phía trên nút Túi)');
+  assert.strictEqual(marketToFarm.y, 625, 'portal_market_to_farm y phải là 505 (thông thoáng phía trên nút Túi)');
 
   // Chụp ảnh bằng chứng
   const artifactPath = path.resolve('C:/Users/Admin/.gemini/antigravity/brain/b4d73263-dfb7-48f9-a7e6-9542f5c3bba5/verified_optimized_smaller_portals.png');

@@ -1065,7 +1065,7 @@ export const SPECIAL_MAPS_CONFIG = {
     "bgKey": "map_rainbow_market_bg",
     "heroSpawn": {
       "x": 640,
-      "y": 545
+      "y": 480
     },
     "storyIntro": null,
     "propsPuzzle": null,
@@ -1138,7 +1138,7 @@ export const SPECIAL_MAPS_CONFIG = {
       "id": "portal_market_to_pond",
       "name": "Về Hồ Câu",
       "x": 180,
-      "y": 520,
+      "y": 645,
       "targetMapId": "map_fishing_pond",
       "targetMapName": "Hồ Câu",
       "isReturn": true,
@@ -1148,7 +1148,7 @@ export const SPECIAL_MAPS_CONFIG = {
       "id": "portal_market_to_farm",
       "name": "Về Nông Trại",
       "x": 640,
-      "y": 505,
+      "y": 625,
       "targetMapId": "map_pet_farm",
       "targetMapName": "Nông Trại",
       "isReturn": false,
@@ -1159,7 +1159,7 @@ export const SPECIAL_MAPS_CONFIG = {
         "id": "portal_market_to_fashion",
         "name": "Phố Thời Trang Cầu Vồng",
         "x": 1120,
-        "y": 520,
+        "y": 645,
         "targetMapId": "map_fashion_street",
         "targetMapName": "Phố Thời Trang Cầu Vồng",
         "isReturn": false,
