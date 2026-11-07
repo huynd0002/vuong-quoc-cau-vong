@@ -659,7 +659,7 @@ export class Hero {
 
     // Tốc độ di chuyển nhịp nhàng, êm dịu: duration = (dist / speed) * 1000
     const moveSpeed = this.speed || 165;
-    const duration = Math.max(220, Math.round((dist / moveSpeed) * 1000));
+    const duration = Math.max(60, Math.round((dist / moveSpeed) * 1000));
 
     this.scene.tweens.add({
       targets: this.sprite,

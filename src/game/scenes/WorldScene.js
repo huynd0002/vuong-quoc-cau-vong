@@ -129,13 +129,30 @@ export class WorldScene extends Phaser.Scene {
       // Chặn nếu chạm vào các nút điều khiển HTML HUD bên ngoài
       const isUiControl = target.closest(
         'button, a, input, select, textarea, ' +
-        '.top-bar, .control-bar, .virtual-joystick-zone, ' +
+        '.top-bar, .control-bar, .virtual-joystick-base, ' +
         '.floating-bag-btn, .interactive-e-action-btn, .dock-stop-fishing-btn, ' +
         '.pet-farm-growth-panel'
       );
       if (isUiControl) return false;
     }
     return true;
+  }
+
+  showTouchRipple(x, y) {
+    try {
+      if (!this.add) return;
+      const ripple = this.add.circle(x, y, 6, 0xffffff, 0.9);
+      ripple.setStrokeStyle(3.5, 0x38bdf8, 0.95);
+      ripple.setDepth(2000);
+      this.tweens.add({
+        targets: ripple,
+        radius: 28,
+        alpha: 0,
+        duration: 320,
+        ease: 'Cubic.easeOut',
+        onComplete: () => ripple.destroy()
+      });
+    } catch {}
   }
 
   create() {
@@ -838,129 +855,89 @@ export class WorldScene extends Phaser.Scene {
       stopFishingBtn.ontouchend = handleStopClick;
     }
 
-    // 9. Điều khiển cảm ứng (Tap/Click to move)
-    this.input.on('pointerdown', (pointer) => {
+    // 9. Điều khiển cảm ứng (Tap/Click to move & Drag-to-move tối ưu cho iPad)
+    const handleWorldPointerAction = (pointer, isDrag = false) => {
       if (!this.isWorldPointer(pointer)) return;
-      // Bé vẫn có thể đi lại tự do khi đang câu cá trên bản đồ hồ câu
+      if (this.isFishingSpotLocked || !this.hero) return;
+
       const point = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
 
-      const nearMonster = this.monsters.some(m => Math.hypot(point.x - m.sprite.x, point.y - m.sprite.y) < 110);
-      const nearBoss = this.boss && this.boss.isAppeared && Math.hypot(point.x - this.boss.sprite.x, point.y - this.boss.sprite.y) < 125;
-      const nearPuzzle = this.propsPuzzle && Math.hypot(point.x - this.propsPuzzle.x, point.y - this.propsPuzzle.y) < 80;
-      const nearProp = this.propsList && this.propsList.some(p => Math.hypot(point.x - p.x, point.y - p.y) < 65);
-      const clickedPortal = (this.portals && this.portals.length > 0)
-        ? this.portals.find(p => p && Math.hypot(point.x - p.x, point.y - p.y) < 75)
-        : (this.teleportPortal && Math.hypot(point.x - this.teleportPortal.x, point.y - this.teleportPortal.y) < 75 ? this.teleportPortal : null);
-      if (clickedPortal) {
-        clickedPortal.handleInteract();
-        return;
-      }
-      // Kiểm tra chạm trực tiếp vào trạm bếp trong map_kitchen
-      if (this.currentMapId === 'map_kitchen' && this.kitchenStationContainers) {
-        const clickedKitchen = this.kitchenStationContainers.find(st => {
-          if (st.data.type === 'pantry') {
-            return (point.x >= 305 && point.x <= 455 && point.y >= 80 && point.y <= 360) ||
-                   Math.hypot(point.x - st.data.x, point.y - st.data.y) < 85;
+      // Khi vuốt ngón tay: chỉ di chuyển nhân vật nếu khoảng cách di chuyển đủ lớn (> 22px)
+      if (isDrag) {
+        const curX = this.hero.getX();
+        const curY = this.hero.getY();
+        if (Math.hypot(point.x - curX, point.y - curY) < 22) return;
+      } else {
+        // Chỉ khi chạm nhấp (pointerdown) mới kiểm tra click trực diện vào Portal, Boss, Quái vật hoặc Icon Trạm
+        const clickedPortal = (this.portals && this.portals.length > 0)
+          ? this.portals.find(p => p && Math.hypot(point.x - p.x, point.y - p.y) < 55)
+          : (this.teleportPortal && Math.hypot(point.x - this.teleportPortal.x, point.y - this.teleportPortal.y) < 55 ? this.teleportPortal : null);
+        if (clickedPortal) {
+          clickedPortal.handleInteract();
+          return;
+        }
+
+        // Bấm trực tiếp vào quái vật
+        const directClickedMonster = this.monsters.find(m => m.sprite?.active && Math.hypot(point.x - m.sprite.x, point.y - m.sprite.y) < 45);
+        if (directClickedMonster && !directClickedMonster.isRescued) {
+          this.triggerEncounterPrompt(directClickedMonster.data, false);
+          return;
+        }
+        if (this.boss && this.boss.isAppeared && !this.boss.isRescued && this.boss.sprite?.active && Math.hypot(point.x - this.boss.sprite.x, point.y - this.boss.sprite.y) < 55) {
+          const phaseConfig = this.boss.data.phases ? this.boss.data.phases[this.boss.phase - 1] : null;
+          const questionId = phaseConfig ? phaseConfig.questionId : this.boss.data.questionId;
+          this.triggerEncounterPrompt({
+            ...this.boss.data,
+            questionId,
+            name: phaseConfig ? phaseConfig.name : this.boss.data.name
+          }, true);
+          return;
+        }
+
+        // Bấm trực diện vào tâm icon của trạm (bán kính nhỏ < 42px, không chặn sàn đi bộ của bé)
+        if (this.currentMapId === 'map_kitchen' && this.kitchenStationContainers) {
+          const clickedKitchen = this.kitchenStationContainers.find(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 42);
+          if (clickedKitchen) {
+            this.handleKitchenStationInteraction(clickedKitchen.data);
+            return;
           }
-          if (st.data.type === 'prep') {
-            return (point.x >= 525 && point.x <= 685 && point.y >= 70 && point.y <= 210) ||
-                   Math.hypot(point.x - st.data.x, point.y - st.data.y) < 85;
+        }
+        if (this.currentMapId === 'map_pet_farm' && this.petStationContainers) {
+          const clickedPet = this.petStationContainers.find(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 45);
+          if (clickedPet) {
+            this.handlePetStationInteraction(clickedPet.data);
+            return;
           }
-          if (st.data.type === 'cook') {
-            return (point.x >= 650 && point.x <= 1120 && point.y >= 100 && point.y <= 360) ||
-                   Math.hypot(point.x - st.data.x, point.y - st.data.y) < 140;
+        }
+        if (this.currentMapId === 'map_fishing_pond' && this.fishingStationContainers) {
+          const clickedFishing = this.fishingStationContainers.find(st =>
+            st.container?.visible !== false && Math.hypot(point.x - st.data.x, point.y - st.data.y) < 45
+          );
+          if (clickedFishing) {
+            this.handleFishingStationInteraction(clickedFishing.data);
+            return;
           }
-          return Math.hypot(point.x - st.data.x, point.y - st.data.y) < 110;
-        });
-        if (clickedKitchen) {
-          this.handleKitchenStationInteraction(clickedKitchen.data);
-          return;
         }
-      }
-      // Kiểm tra chạm trực tiếp vào trạm trên Nông Trại thú cưng
-      if (this.currentMapId === 'map_pet_farm' && this.petStationContainers) {
-        const clickedPet = this.petStationContainers.find(st => {
-          const r = st.data.type === 'water' ? 120 : (st.data.type === 'bath' ? 100 : 85);
-          return Math.hypot(point.x - st.data.x, point.y - st.data.y) < r;
-        });
-        if (clickedPet) {
-          this.handlePetStationInteraction(clickedPet.data);
-          return;
+        if (this.currentMapId === 'map_rainbow_market' && this.marketStationContainers) {
+          const clickedMarket = this.marketStationContainers.find(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 48);
+          if (clickedMarket) {
+            this.handleMarketStationInteraction(clickedMarket.data);
+            return;
+          }
         }
+        if (this.currentMapId === 'map_fashion_street' && this.fashionStationContainers) {
+          const clickedFashion = this.fashionStationContainers.find(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 48);
+          if (clickedFashion) {
+            this.handleFashionStationInteraction(clickedFashion.data);
+            return;
+          }
+        }
+
+        // Tạo hiệu ứng vòng tròn chạm trực quan trên iPad
+        this.showTouchRipple(point.x, point.y);
       }
 
-      // Kiểm tra chạm trực tiếp vào trạm trên Hồ Câu Lá Sen
-      if (this.currentMapId === 'map_fishing_pond' && this.fishingStationContainers) {
-        // Nếu chạm vào bất kỳ đâu trên cầu gỗ hoặc gần điểm câu
-        const isOnDockArea = (mapConfig.pondWaterZone && this.isPointOnPondDock(point.x, point.y, mapConfig.pondWaterZone))
-          || (point.x >= 615 && point.x <= 830 && point.y >= 290 && point.y <= 425)
-          || (this.fishingDockBlueCircle && Math.hypot(point.x - 688, point.y - 398) < 80)
-          || Math.hypot(point.x - 688, point.y - 360) < 85;
-        if (isOnDockArea) {
-          const dockSt = (mapConfig.fishingStations || []).find(s => s.id === 'station_lotus_dock') || {
-            id: 'station_lotus_dock',
-            type: 'dock',
-            dockId: 'lotus_dock',
-            x: 688,
-            y: 360,
-            interactionPoint: { x: 688, y: 360 },
-            castTarget: { x: 485, y: 445 }
-          };
-          this.handleFishingStationInteraction(dockSt);
-          return;
-        }
-        const clickedFishing = this.fishingStationContainers.find(st =>
-          st.container?.visible !== false && Math.hypot(point.x - st.data.x, point.y - st.data.y) < 76
-        );
-        if (clickedFishing) {
-          this.handleFishingStationInteraction(clickedFishing.data);
-          return;
-        }
-      }
-
-      // Kiểm tra chạm trực tiếp vào trạm trên Chợ Cầu Vồng
-      if (this.currentMapId === 'map_rainbow_market' && this.marketStationContainers) {
-        const clickedMarket = this.marketStationContainers.find(st =>
-          Math.hypot(point.x - st.data.x, point.y - st.data.y) < 105
-        );
-        if (clickedMarket) {
-          this.handleMarketStationInteraction(clickedMarket.data);
-          return;
-        }
-      }
-
-      // Kiểm tra chạm trực tiếp vào trạm trên Phố Thời Trang
-      if (this.currentMapId === 'map_fashion_street' && this.fashionStationContainers) {
-        const clickedFashion = this.fashionStationContainers.find(st =>
-          Math.hypot(point.x - st.data.x, point.y - st.data.y) < 105
-        );
-        if (clickedFashion) {
-          this.handleFashionStationInteraction(clickedFashion.data);
-          return;
-        }
-      }
-
-      // Nếu bấm trực tiếp vào quái vật thì kích hoạt thử thách chiến đấu
-      const directClickedMonster = this.monsters.find(m => m.sprite?.active && Math.hypot(point.x - m.sprite.x, point.y - m.sprite.y) < 50);
-      if (directClickedMonster && !directClickedMonster.isRescued) {
-        this.triggerEncounterPrompt(directClickedMonster.data, false);
-        return;
-      }
-      if (this.boss && this.boss.isAppeared && !this.boss.isRescued && this.boss.sprite?.active && Math.hypot(point.x - this.boss.sprite.x, point.y - this.boss.sprite.y) < 65) {
-        const phaseConfig = this.boss.data.phases ? this.boss.data.phases[this.boss.phase - 1] : null;
-        const questionId = phaseConfig ? phaseConfig.questionId : this.boss.data.questionId;
-        this.triggerEncounterPrompt({
-          ...this.boss.data,
-          questionId,
-          name: phaseConfig ? phaseConfig.name : this.boss.data.name
-        }, true);
-        return;
-      }
-
-      // Tối ưu iPad/Touch: Không chặn di chuyển khi bấm gần trạm hoặc vật thể!
-      // Bấm vào bất kỳ đâu trên mặt đất đều cho nhân vật di chuyển êm dịu tới đó
-      if (this.isFishingSpotLocked) return;
-
+      // Di chuyển nhân vật êm dịu đến điểm chạm an toàn
       let targetX = point.x;
       let targetY = point.y;
       if (this.currentMapId === 'map1' || !this.currentMapId) {
@@ -976,6 +953,11 @@ export class WorldScene extends Phaser.Scene {
       }
 
       this.hero.moveTo(targetX, targetY);
+    };
+
+    this.input.on('pointerdown', (pointer) => handleWorldPointerAction(pointer, false));
+    this.input.on('pointermove', (pointer) => {
+      if (pointer?.isDown) handleWorldPointerAction(pointer, true);
     });
 
     // 11. Lắng nghe các sự kiện giao diện

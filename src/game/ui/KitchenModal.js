@@ -279,9 +279,23 @@ export class KitchenModal {
       const mastery = state.mastery[r.id] || 0;
       const totalStars = r.ingredients.reduce((sum, item) => sum + (getIngredient(item.id)?.price || 1) * item.count, 0);
       return `<button type="button" class="kitchen-recipe ${unlocked ? 'is-unlocked' : 'is-locked'}" data-recipe="${r.id}" ${!unlocked ? 'disabled aria-disabled="true"' : ''} aria-label="${r.name}">
-        <div class="dish-badge-pill ${unlocked ? 'ready' : 'locked'}">${unlocked ? `⭐ Đã nấu ${mastery} · Cần ~${totalStars}⭐` : `🔒 Cần ${r.unlock} món · ~${totalStars}⭐`}</div>
+        <div class="dish-card-header">
+          <strong class="dish-hero-name">${r.name}</strong>
+          <div class="dish-badge-pill ${unlocked ? 'ready' : 'locked'}">${unlocked ? `⭐ Đã nấu ${mastery} · Cần ~${totalStars}⭐` : `🔒 Cần ${r.unlock} món · ~${totalStars}⭐`}</div>
+        </div>
         <div class="dish-hero-wrapper"><img class="dish-hero-img" src="${r.image}" alt="${r.name}" /></div>
-        <strong class="dish-hero-name">${r.name}</strong>
+        <div class="dish-card-ingredients-footer">
+          ${r.ingredients.map(i => {
+            const owned = state.ingredients[i.id] || 0;
+            const isEnough = owned >= i.count;
+            const ingData = getIngredient(i.id) || i;
+            return `<span class="dish-card-ing-pill ${isEnough ? 'is-enough' : 'is-missing'}" title="${i.name}: có ${owned}/${i.count}">
+              <img class="dish-card-ing-img" src="${ingData.image || i.image}" alt="${i.name}" />
+              <span class="ing-pill-name">${i.name}</span>
+              <strong class="ing-pill-qty">${owned}/${i.count}</strong>
+            </span>`;
+          }).join('')}
+        </div>
         <div class="dish-hover-flyout" role="tooltip">
           <div class="dish-flyout-title-bar"><span class="flyout-dish-title">${r.name}</span><span class="flyout-tier-badge">Cấp ${r.tier}</span></div>
           <div class="dish-flyout-content">
@@ -937,7 +951,7 @@ export class KitchenModal {
           </div>
           <!-- NÚT XEM CÔNG THỨC Ở GÓC (Theo yêu cầu người dùng) -->
           <button type="button" class="btn-cook-view-recipes" data-action="cancel" title="Xem danh sách công thức">
-            <span>📖 Xem công thức</span>
+            <span class="view-recipe-icon">📖</span> <span class="view-recipe-text">Xem Công Thức</span>
           </button>
         </div>
 
