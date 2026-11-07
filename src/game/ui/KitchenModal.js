@@ -2117,13 +2117,13 @@ evaluateAuditionHit() {
       return;
     }
     if (button.dataset.useIngredient) {
-      const res = this.system.useIngredient(button.dataset.useIngredient);
+      const ingredientId = button.dataset.useIngredient;
       this.confirmDiscard = false;
-      this.render();
-      if (res.ok) {
-        this.notify('😋 Bé đã dùng nguyên liệu tươi ngon!');
-        this.audio?.playChime(880, 0.15);
-      }
+      // Đóng pop-up túi ngay lập tức và kích hoạt hiệu ứng vfx ăn món trên thế giới (v3.7.1)
+      this.close();
+      window.dispatchEvent(new CustomEvent('hero:use-food', {
+        detail: { ingredientId }
+      }));
       return;
     }
     if (button.dataset.discardIngredient) {
@@ -2209,8 +2209,13 @@ evaluateAuditionHit() {
       if(result.ok)this.tab='recipes';
     }
     else if(button.dataset.eat) {
-      result=this.system.eat(button.dataset.eat);
-      if (result?.ok) this.audioService?.playPetEat?.();
+      const dishId = button.dataset.eat;
+      // Đóng pop-up túi ngay lập tức và kích hoạt hiệu ứng vfx heal-aoe + charmed + loading 100% (v3.7.1)
+      this.close();
+      window.dispatchEvent(new CustomEvent('hero:use-food', {
+        detail: { dishId }
+      }));
+      return;
     }
     else if(button.dataset.discard) result=this.system.discard(button.dataset.discard);
     else if(button.dataset.feedPet) {

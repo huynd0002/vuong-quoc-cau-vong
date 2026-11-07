@@ -40,31 +40,49 @@ export class Butterfly {
     this.shadow = scene.add.ellipse(x, y + this.altitude, 8, 4, 0x1a2e10, 0.25)
       .setDepth(4);
 
-    // Butterfly sprite (thu nhỏ 50% theo yêu cầu: 19x19 px so với gốc 38x38 px)
-    const textureKey = scene.textures && scene.textures.exists('butterfly_rainbow') ? 'butterfly_rainbow' : null;
-    if (textureKey) {
-      this.sprite = scene.add.image(x, y, textureKey)
-        .setDisplaySize(19, 19)
+    // 8. Thay thế toàn bộ bướm bằng vfx critters/butterfly (v3.7.1)
+    const hasVfxButterfly = Boolean(scene?.textures?.exists?.('vfx_butterfly'));
+    if (hasVfxButterfly) {
+      if (scene.anims && !scene.anims.exists('anim_butterfly')) {
+        scene.anims.create({
+          key: 'anim_butterfly',
+          frames: scene.anims.generateFrameNumbers('vfx_butterfly', { start: 0, end: 95 }),
+          frameRate: 28,
+          repeat: -1
+        });
+      }
+      this.sprite = scene.add.sprite(x, y, 'vfx_butterfly')
+        .setDisplaySize(32, 22)
         .setOrigin(0.5, 0.5)
         .setDepth(20);
+      if (scene.anims?.exists('anim_butterfly')) {
+        this.sprite.play('anim_butterfly');
+      }
+      this.flapTween = null;
     } else {
-      // Fallback emoji if texture is missing (thu nhỏ 50%)
-      this.sprite = scene.add.text(x, y, '🦋', { fontSize: '13px' })
-        .setOrigin(0.5, 0.5)
-        .setDepth(20);
-    }
+      const textureKey = scene.textures && scene.textures.exists('butterfly_rainbow') ? 'butterfly_rainbow' : null;
+      if (textureKey) {
+        this.sprite = scene.add.image(x, y, textureKey)
+          .setDisplaySize(19, 19)
+          .setOrigin(0.5, 0.5)
+          .setDepth(20);
+      } else {
+        this.sprite = scene.add.text(x, y, '🦋', { fontSize: '13px' })
+          .setOrigin(0.5, 0.5)
+          .setDepth(20);
+      }
 
-    // Wing flapping tween: rapid scale oscillation simulating flutter
-    this.baseScaleX = this.sprite.scaleX || 1;
-    this.baseScaleY = this.sprite.scaleY || 1;
-    this.flapTween = scene.tweens.add({
-      targets: this.sprite,
-      scaleX: { from: this.baseScaleX, to: this.baseScaleX * 0.25 },
-      duration: randomBetween(85, 120),
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut'
-    });
+      this.baseScaleX = this.sprite.scaleX || 1;
+      this.baseScaleY = this.sprite.scaleY || 1;
+      this.flapTween = scene.tweens.add({
+        targets: this.sprite,
+        scaleX: { from: this.baseScaleX, to: this.baseScaleX * 0.25 },
+        duration: randomBetween(85, 120),
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    }
 
     // Flight state
     this.currentDirection = null;

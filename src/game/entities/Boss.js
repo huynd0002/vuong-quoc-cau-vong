@@ -598,7 +598,12 @@ export class Boss {
           duration: 500,
           ease: 'Power2',
           onComplete: () => {
+            const posX = this.sprite?.x || this.x;
+            const posY = this.sprite?.y || this.y;
             this.destroy();
+            if (this.scene && typeof this.scene.playCoinDropVFX === 'function') {
+              this.scene.playCoinDropVFX(posX, posY, 5);
+            }
           }
         });
       }

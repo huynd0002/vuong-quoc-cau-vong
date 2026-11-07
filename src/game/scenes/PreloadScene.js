@@ -91,6 +91,17 @@ import vfxLevelUpSheetUrl from '../../../assets/ui/vfx_level_up_sheet.png?url';
 import vfxExclamationSheetUrl from '../../../assets/ui/vfx_exclamation_sheet.png?url';
 import vfxCartoonPowSheetUrl from '../../../assets/ui/vfx_cartoon_pow_sheet.png?url';
 
+// 9 PixelFX Spritesheets (v3.7.1)
+import vfxRespawnBeamUrl from '../../../assets/vfx/vfx_respawn_beam.png?url';
+import vfxCoinDropUrl from '../../../assets/vfx/vfx_coin_drop.png?url';
+import vfxHealAoeUrl from '../../../assets/vfx/vfx_heal_aoe.png?url';
+import vfxCharmedUrl from '../../../assets/vfx/vfx_charmed.png?url';
+import vfxCountdownUrl from '../../../assets/vfx/vfx_countdown.png?url';
+import vfxPowerStarUrl from '../../../assets/vfx/vfx_power_star.png?url';
+import vfxGlitchWipeUrl from '../../../assets/vfx/vfx_glitch_wipe.png?url';
+import vfxButterflyUrl from '../../../assets/vfx/vfx_butterfly.png?url';
+import vfxFrogUrl from '../../../assets/vfx/vfx_frog.png?url';
+
 // Phụ Kiện Nhân Vật Thời Trang Mua Bằng Sao (Chibi Accessories)
 import accRainbowCrownUrl from '../../../assets/fashion/accessories/acc_rainbow_crown.png?url';
 import accCatEarsBowUrl from '../../../assets/fashion/accessories/acc_cat_ears_bow.png?url';
@@ -179,6 +190,17 @@ export class PreloadScene extends Phaser.Scene {
     this.load.spritesheet('vfx_level_up_sheet', vfxLevelUpSheetUrl, { frameWidth: 176, frameHeight: 138 });
     this.load.spritesheet('vfx_exclamation_sheet', vfxExclamationSheetUrl, { frameWidth: 84, frameHeight: 104 });
     this.load.spritesheet('vfx_cartoon_pow_sheet', vfxCartoonPowSheetUrl, { frameWidth: 184, frameHeight: 144 });
+
+    // 9 PixelFX Spritesheets (v3.7.1)
+    this.load.spritesheet('vfx_respawn_beam', vfxRespawnBeamUrl, { frameWidth: 128, frameHeight: 150 });
+    this.load.spritesheet('vfx_coin_drop', vfxCoinDropUrl, { frameWidth: 160, frameHeight: 88 });
+    this.load.spritesheet('vfx_heal_aoe', vfxHealAoeUrl, { frameWidth: 256, frameHeight: 136 });
+    this.load.spritesheet('vfx_charmed', vfxCharmedUrl, { frameWidth: 60, frameHeight: 76 });
+    this.load.spritesheet('vfx_countdown', vfxCountdownUrl, { frameWidth: 152, frameHeight: 136 });
+    this.load.spritesheet('vfx_power_star', vfxPowerStarUrl, { frameWidth: 88, frameHeight: 84 });
+    this.load.spritesheet('vfx_glitch_wipe', vfxGlitchWipeUrl, { frameWidth: 320, frameHeight: 180 });
+    this.load.spritesheet('vfx_butterfly', vfxButterflyUrl, { frameWidth: 128, frameHeight: 88 });
+    this.load.spritesheet('vfx_frog', vfxFrogUrl, { frameWidth: 112, frameHeight: 88 });
 
     // 1b. Tài nguyên các bản đồ còn lại
     this.load.image('map_2_bg', map2BgUrl);
