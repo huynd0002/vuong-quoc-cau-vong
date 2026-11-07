@@ -17,8 +17,8 @@ export const MAPS_CONFIG = {
     },
     "storyIntro": {
       "title": "Chào mừng đến Làng Quê Yên Bình!",
-      "story": "Khu vườn thiên nhiên đang bị làn mây mù lú lẫn bao phủ. Bông hoa và các bạn Mầm quên mất màu sắc và hình khối. Cùng Bé Sâu và Thỏ Bông giúp các bạn nhớ lại nhé!",
-      "voice": "Chào mừng bé đến với Làng Quê Yên Bình! Cùng Bé Sâu và Thỏ Bông giải cứu các bạn thiên nhiên nhé!"
+      "story": "Khu vườn thiên nhiên đang bị làn mây mù lú lẫn bao phủ. Bông hoa và các bạn Mầm quên mất màu sắc và hình khối. Cùng Bé Sâu và Bé Cún giúp các bạn nhớ lại nhé!",
+      "voice": "Chào mừng bé đến với Làng Quê Yên Bình! Cùng Bé Sâu và Bé Cún giải cứu các bạn thiên nhiên nhé!"
     },
     "propsPuzzle": {
       "id": "puzzle_flower_gate",
@@ -138,8 +138,8 @@ export const MAPS_CONFIG = {
     },
     "storyIntro": {
       "title": "Chào mừng đến Vịnh Biển Pha Lê!",
-      "story": "Bờ biển cát vàng sóng vỗ rì rào. Các bạn sinh vật biển đang cần bé giúp đếm số lượng vỏ sò và sao biển. Cùng Bé Sâu và Thỏ Bông khám phá nhé!",
-      "voice": "Chào mừng bé đến với Vịnh Biển Pha Lê! Cùng Bé Sâu và Thỏ Bông đếm số lượng các bạn sinh vật biển nhé!"
+      "story": "Bờ biển cát vàng sóng vỗ rì rào. Các bạn sinh vật biển đang cần bé giúp đếm số lượng vỏ sò và sao biển. Cùng Bé Sâu và Bé Cún khám phá nhé!",
+      "voice": "Chào mừng bé đến với Vịnh Biển Pha Lê! Cùng Bé Sâu và Bé Cún đếm số lượng các bạn sinh vật biển nhé!"
     },
     "propsPuzzle": {
       "id": "puzzle_pearl_shell",
@@ -495,7 +495,7 @@ export const MAPS_CONFIG = {
     },
     "storyIntro": {
       "title": "Chào mừng đến Hẻm Núi Gió Hát!",
-      "story": "Đỉnh núi quanh năm gió mát và chim ca líu lo. Cùng Bé Sâu và Thỏ Bông so sánh các bạn muông thú để tìm ra điều bất ngờ nhé!",
+      "story": "Đỉnh núi quanh năm gió mát và chim ca líu lo. Cùng Bé Sâu và Bé Cún so sánh các bạn muông thú để tìm ra điều bất ngờ nhé!",
       "voice": "Chào mừng bé đến với Hẻm Núi Gió Hát! Cùng so sánh các bạn muông thú nhé!"
     },
     "propsPuzzle": {
@@ -771,7 +771,7 @@ export const SPECIAL_MAPS_CONFIG = {
         "icon": "⚽",
         "badge": "BÓNG CẦU VỒNG",
         "auraColor": 1096065,
-        "actionPrompt": "Chơi bóng tung tăng cùng Thỏ Bông"
+        "actionPrompt": "Chơi bóng tung tăng cùng Bé Cún"
       },
       {
         "id": "station_potty",

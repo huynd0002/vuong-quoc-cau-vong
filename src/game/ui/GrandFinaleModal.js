@@ -71,7 +71,7 @@ export class GrandFinaleModal {
 
         <div class="finale-character-celebrate">
           <span class="char-icon">🐛</span>
-          <span class="char-balloon">"Cảm ơn bé đã cùng Bé Sâu và Thỏ Bông khôi phục vương quốc rực rỡ!"</span>
+          <span class="char-balloon">"Cảm ơn bé đã cùng Bé Sâu và Bé Cún khôi phục vương quốc rực rỡ!"</span>
           <span class="char-icon">🐰</span>
         </div>
 

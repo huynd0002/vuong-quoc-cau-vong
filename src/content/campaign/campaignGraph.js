@@ -24,7 +24,7 @@ export const CAMPAIGN_ZONES = {
       { id: 'quest_m1_boss', title: 'Đánh thức & giải cứu Nấm Mũ Đỏ', bossId: 'boss_map1' }
     ],
     sideQuests: [
-      { id: 'side_m1_pet', title: 'Thỏ Bông đạt mức thân thiết Cấp 2', type: 'pet_affinity', target: 2 },
+      { id: 'side_m1_pet', title: 'Bé Cún đạt mức thân thiết Cấp 2', type: 'pet_affinity', target: 2 },
       { id: 'side_m1_perfect', title: 'Hoàn thành 3 câu đố không cần thử lại', type: 'first_try_streak', target: 3 }
     ],
     nextZoneId: 'map2'
@@ -48,7 +48,7 @@ export const CAMPAIGN_ZONES = {
       { id: 'quest_m2_boss', title: 'Giải cứu Cua Vua Vỏ Ngọc', bossId: 'boss_map2' }
     ],
     sideQuests: [
-      { id: 'side_m2_feed', title: 'Cho Thỏ Bông ăn no trên 90%', type: 'pet_hunger', target: 90 }
+      { id: 'side_m2_feed', title: 'Cho Bé Cún ăn no trên 90%', type: 'pet_hunger', target: 90 }
     ],
     nextZoneId: 'map3'
   },
@@ -73,7 +73,7 @@ export const CAMPAIGN_ZONES = {
       { id: 'quest_m3_boss', title: 'Đánh thức Rồng Pha Lê Ngủ Quên', bossId: 'boss_map3' }
     ],
     sideQuests: [
-      { id: 'side_m3_clean', title: 'Tắm sạch cho Thỏ Bông sau khi khám phá động', type: 'pet_clean', target: 90 }
+      { id: 'side_m3_clean', title: 'Tắm sạch cho Bé Cún sau khi khám phá động', type: 'pet_clean', target: 90 }
     ],
     nextZoneId: 'map4'
   },
@@ -96,7 +96,7 @@ export const CAMPAIGN_ZONES = {
       { id: 'quest_m4_boss', title: 'Giúp Vua Gấu Kẹo Bông bình tĩnh', bossId: 'boss_map4' }
     ],
     sideQuests: [
-      { id: 'side_m4_play', title: 'Chơi ném bóng cùng Thỏ Bông trong Rừng Kẹo', type: 'pet_play', target: 1 }
+      { id: 'side_m4_play', title: 'Chơi ném bóng cùng Bé Cún trong Rừng Kẹo', type: 'pet_play', target: 1 }
     ],
     nextZoneId: 'map5'
   },
@@ -119,7 +119,7 @@ export const CAMPAIGN_ZONES = {
       { id: 'quest_m5_boss', title: 'Vượt qua câu đố của Cú Thông Thái', bossId: 'boss_map5' }
     ],
     sideQuests: [
-      { id: 'side_m5_energy', title: 'Giữ Thỏ Bông luôn tràn đầy năng lượng', type: 'pet_energy', target: 80 }
+      { id: 'side_m5_energy', title: 'Giữ Bé Cún luôn tràn đầy năng lượng', type: 'pet_energy', target: 80 }
     ],
     nextZoneId: 'map6'
   },

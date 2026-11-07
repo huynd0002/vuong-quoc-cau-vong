@@ -297,7 +297,7 @@ export class WorldScene extends Phaser.Scene {
     };
     this.addManagedListener('game:pet-companion-toggled', this.onPetCompanionToggled);
 
-    // 4. Khởi tạo Pet (Bé Cún Vàng / Thỏ Bông):
+    // 4. Khởi tạo Pet (Bé Cún):
     // QUY TẮC: Chú cún CHỈ đi theo qua các maps khi ĐÃ ĐƯỢC YÊU CẦU tại nông trại (map_pet_farm).
     // Tuyệt đối KHÔNG tự động đi theo mặc định!
     const isFarmMap = this.currentMapId === 'map_pet_farm';
@@ -2528,7 +2528,7 @@ export class WorldScene extends Phaser.Scene {
 
     const state = saveAdapter.load();
     const pet = state.pet || {};
-    const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+    const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
     const now = Date.now();
     let feedback = '';
 
@@ -2660,7 +2660,7 @@ export class WorldScene extends Phaser.Scene {
   openPetSleepConfirmDialog() {
     const state = saveAdapter.load();
     const pet = state?.pet || {};
-    const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún');
+    const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
     const isSleeping = Boolean(this.pet?.isSleepingOnBed || this.pet?.isForcedSleeping);
 
     if (!this.petSleepModal) {
@@ -2699,7 +2699,7 @@ export class WorldScene extends Phaser.Scene {
       window.dispatchEvent(new CustomEvent('game:pet-updated', { detail: { pet: state.pet } }));
     }
 
-    const petName = state?.pet?.name || (state?.pet?.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún');
+    const petName = (state?.pet?.name && !state?.pet?.name.toLowerCase().includes('thỏ')) ? state.pet.name : 'Bé Cún';
     const msg = `💤 ${petName} đang đi tới đệm ngủ ấm áp...`;
     window.dispatchEvent(new CustomEvent('game:show-toast', { detail: { message: msg } }));
   }
@@ -2743,7 +2743,7 @@ export class WorldScene extends Phaser.Scene {
     // Cập nhật chỉ số Vui vẻ cho thú cưng
     const state = saveAdapter.load();
     const pet = state.pet || {};
-    const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+    const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
     pet.energy = Math.max(10, (pet.energy || 0) - 4);
     pet.fun = Math.min(100, (pet.fun ?? 80) + 16);
     pet.affection = Math.min(100, (pet.affection || 10) + 1);
@@ -2780,7 +2780,7 @@ export class WorldScene extends Phaser.Scene {
       saveAdapter.save(state);
       window.dispatchEvent(new CustomEvent('game:pet-updated', { detail: { pet: state.pet } }));
     }
-    const petName = state?.pet?.name || (state?.pet?.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún');
+    const petName = (state?.pet?.name && !state?.pet?.name.toLowerCase().includes('thỏ')) ? state.pet.name : 'Bé Cún';
     const msg = `☀️ ${petName} đã thức dậy tràn đầy năng lượng chào bé!`;
     window.dispatchEvent(new CustomEvent('game:show-toast', { detail: { message: msg } }));
   }

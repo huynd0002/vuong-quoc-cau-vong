@@ -165,7 +165,7 @@ export class PetCareModal {
     this.updateDisplay();
 
     const pet = this.petSystem.getPet();
-    const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+    const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
 
     if (this.audioService) {
       this.audioService.playChime(620, 0.12);
@@ -179,7 +179,7 @@ export class PetCareModal {
     if (type === 'dog') {
       pet.name = 'Bé Cún Vàng';
     } else {
-      pet.name = 'Thỏ Bông';
+      pet.name = 'Bé Cún';
     }
 
     if (this.tabDog && this.tabBunny) {
@@ -195,7 +195,7 @@ export class PetCareModal {
 
     const switchMsg = type === 'dog'
       ? 'Bé đã chọn Bé Cún Vàng làm bạn đồng hành! Gâu gâu! 🐶'
-      : 'Bé đã chọn Thỏ Bông làm bạn đồng hành! 🐰';
+      : 'Bé đã chọn Bé Cún làm bạn đồng hành! 🐶';
 
     this.updateDisplay(switchMsg);
 
@@ -285,7 +285,7 @@ export class PetCareModal {
     if (!this.petSystem) return;
     const pet = this.petSystem.getPet();
     const petType = pet.type || 'dog';
-    const petName = pet.name || (petType === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+    const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
 
     // Cập nhật tab
     if (this.tabDog && this.tabBunny) {
@@ -359,7 +359,7 @@ export class PetCareModal {
 
     const topPetName = document.getElementById('pet-name-top');
     if (topPetName) {
-      topPetName.textContent = petType === 'dog' ? '🐶 Bé Cún' : '🐰 Thỏ Bông';
+      topPetName.textContent = '🐶 Bé Cún';
     }
 
     if (this.feedback && feedbackMessage) {
@@ -393,7 +393,7 @@ export class PetCareModal {
       this.saveAdapter.save(state);
     }
     this.updateCompanionButton(nextCompanion);
-    const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+    const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
     const msg = nextCompanion
       ? `🐾 Bé đã rủ ${petName} đi cùng! Cún sẽ đi theo bé qua các bản đồ phiêu lưu! 💖`
       : `🏡 ${petName} sẽ ở lại nông trại vui chơi và trông nhà cho bé nhé! 🐕`;

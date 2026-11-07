@@ -795,7 +795,7 @@ export class KitchenStationModal {
           </div>
           <h3 class="door-heading">Bé muốn quay lại Nông Trại Thú Cưng?</h3>
           <p class="door-subtext">
-            Các bạn Thỏ Bông và Bé Cún đang đợi bé về cùng vui chơi, cho ăn món ăn ngon và chăm sóc ngoài vườn đấy!
+            Bé Cún đang đợi bé về cùng vui chơi, cho ăn món ăn ngon và chăm sóc ngoài vườn đấy!
           </p>
         </div>
 
@@ -811,7 +811,7 @@ export class KitchenStationModal {
     `;
 
     this.open();
-    this.speak('Bé có muốn quay lại Nông Trại Thú Cưng cùng Thỏ Bông và Bé Cún không?');
+    this.speak('Bé có muốn quay lại Nông Trại Thú Cưng cùng Bé Cún không?');
 
     this.root.querySelector('#btn-confirm-return-farm')?.addEventListener('click', () => {
       this.close();
@@ -864,7 +864,7 @@ export class KitchenStationModal {
                 </div>
                 <div class="hub-option-text">
                   <h3>Trở Về Nông Trại</h3>
-                  <p>Ra ngoài bãi cỏ chơi đùa cùng Thỏ Bông, Bé Cún và bể bơi bọt nước!</p>
+                  <p>Ra ngoài bãi cỏ chơi đùa cùng Bé Cún và bể bơi bọt nước!</p>
                   <span class="hub-pill-btn primary-pill">Về Nông Trại 🌸</span>
                 </div>
               </div>
@@ -881,7 +881,7 @@ export class KitchenStationModal {
 
     this.open();
     this.speak(isInsideKitchen
-      ? 'Bé có muốn quay lại Nông Trại Thú Cưng cùng Thỏ Bông và Bé Cún không?'
+      ? 'Bé có muốn quay lại Nông Trại Thú Cưng cùng Bé Cún không?'
       : 'Chào mừng bé đến với Căn Bếp Thần Kỳ! Cùng bước vào gian bếp nấu những món ăn thơm ngon nhé!'
     );
 

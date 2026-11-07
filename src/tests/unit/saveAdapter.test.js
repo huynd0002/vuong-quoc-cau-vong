@@ -10,7 +10,7 @@ export function runSaveAdapterTests() {
   const defaultState = adapter.load();
   assert.equal(defaultState.version, 2, 'Default state must have version 2');
   assert.equal(defaultState.player.name, 'Bé Sâu', 'Player name must be Bé Sâu');
-  assert.equal(defaultState.pet.name, 'Thỏ Bông', 'Pet name must be Thỏ Bông');
+  assert.equal(defaultState.pet.name, 'Bé Cún', 'Pet name must be Bé Cún');
   assert.deepEqual(defaultState.campaign.unlockedMaps, ['map1'], 'Initial unlocked map is map1');
   console.log('✓ Test 1 Passed: Default state load');
 

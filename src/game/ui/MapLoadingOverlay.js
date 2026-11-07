@@ -1,12 +1,12 @@
 import sauActionUrl from '../../../assets/hero/sau/sau_action.webp?url';
 import heroUpgradeActionUrl from '../../../assets/hero/sau_upgrade/hero_upgrade_action.webp?url';
-import petBunnyUrl from '../../../assets/pets/pet_bunny_idle.png?url';
+import petDogUrl from '../../../assets/pets/dog/dog_idle.png?url';
 import { saveAdapter } from '../../services/save/saveAdapter.js';
 
 /**
  * MapLoadingOverlay (Màn Hình Loading Chuyển Maps Thần Kỳ Cho Bé)
  * - Thiết kế phong cách Chibi mầm non, màu sắc Cầu Vồng tươi vui, ấm áp
- * - Bé Sâu tung tăng bước đi cùng bạn Thỏ Bông
+ * - Bé Sâu tung tăng bước đi cùng bạn Bé Cún
  * - Hiển thị tên vùng đất chuẩn bị đến với icon sinh động
  * - Lời dặn dò, động viên ngọt ngào và thanh tiến trình Candy Rainbow 3D
  * - Hiệu ứng chuyển cảnh mượt mà không gây giật màn hình
@@ -30,7 +30,7 @@ export class MapLoadingOverlay {
       '🌸 Hãy lắng nghe thật kỹ để tìm ra những người bạn nhỏ nhé!',
       '⭐ Lòng tốt và trí thông minh sẽ giúp bé vượt qua mọi thử thách!',
       '🌊 Vùng đất mới có biết bao nhiêu điều kỳ thú đang chờ bé đó!',
-      '🏡 Cùng đến Nông Trại để chăm sóc và chơi đùa với Thỏ Bông nhé! 🥕'
+      '🏡 Cùng đến Nông Trại để chăm sóc và chơi đùa với Bé Cún nhé! 🦴'
     ];
 
     this.mapIcons = {

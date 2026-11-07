@@ -4,7 +4,7 @@ import { isPointInLake, clampOutOfLake } from '../effects/LakeWaterEffect.js';
 import { saveAdapter } from '../../services/save/saveAdapter.js';
 
 /**
- * Pet Entity: Bé Cún Vàng (và Thỏ Bông)
+ * Pet Entity: Bé Cún Vàng (Bạn đồng hành trung thành)
  * Hỗ trợ bạn đồng hành di chuyển 8 hướng mượt mà,
  * đầy đủ 4 bộ hành động biểu cảm: Đi bộ (8 hướng), Buồn bã chán ăn, Ở dơ lấm lem, Vui vẻ nhảy cẫng.
  * Tích hợp AI dạo chơi tự động trên Nông Trại Nuôi Thú (Pet Farm).

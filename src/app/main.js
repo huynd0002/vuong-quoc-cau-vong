@@ -891,7 +891,7 @@ window.addEventListener('game:map-ready', (e) => {
   if (mapConfig && hudController) {
     const objective = mapConfig.objective || 
       (mapConfig.id === 'map_kitchen' ? 'Rửa tay sạch sẽ, chọn món ăn và nấu bữa cơm ngon lành!' :
-       mapConfig.id === 'map_pet_farm' ? 'Chăm sóc và vui chơi cùng Thỏ Bông!' : 'Khám phá và giải đố cùng bạn bè!');
+       mapConfig.id === 'map_pet_farm' ? 'Chăm sóc và vui chơi cùng Bé Cún!' : 'Khám phá và giải đố cùng bạn bè!');
     const zoneName = mapConfig.name || CAMPAIGN_ZONES[mapConfig.id]?.name || 'Vương Quốc Cầu Vồng';
     const subtitle = mapConfig.subtitle || '';
 
@@ -1300,7 +1300,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.6.6';
+export const GAME_VERSION = '3.6.7';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {

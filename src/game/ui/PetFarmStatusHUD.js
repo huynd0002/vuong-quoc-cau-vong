@@ -122,7 +122,7 @@ export class PetFarmStatusHUD {
         const state = this.saveAdapter?.load() || {};
         const pet = state.pet || {};
         const level = pet.level || 1;
-        const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+        const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
         window.dispatchEvent(new CustomEvent('game:show-toast', {
           detail: { message: `👑 ${petName} đang đạt Cấp ${level}! Chăm sóc cún mỗi ngày để cún ngày càng lớn khôn nhé!` }
         }));
@@ -141,7 +141,7 @@ export class PetFarmStatusHUD {
         else if (aff >= 75) tierLabel = 'Quấn quýt';
         else if (aff >= 50) tierLabel = 'Gắn bó';
         else if (aff >= 25) tierLabel = 'Thân thiện';
-        const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+        const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
         window.dispatchEvent(new CustomEvent('game:show-toast', {
           detail: { message: `💖 Độ Yêu Thương của ${petName}: ${aff}% (${tierLabel}) - Bé hãy cho ăn, tắm mát và chơi bóng cùng cún nhé!` }
         }));
@@ -163,7 +163,7 @@ export class PetFarmStatusHUD {
         const pet = state.pet || {};
         const exp = pet.exp || 0;
         const level = pet.level || 1;
-        const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+        const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
         window.dispatchEvent(new CustomEvent('game:show-toast', {
           detail: { message: `⭐ Điểm EXP của ${petName}: ${exp}/30 (Cấp ${level}) - Chăm sóc cún cưng để nhận thêm EXP và lên cấp mới!` }
         }));
@@ -192,7 +192,7 @@ export class PetFarmStatusHUD {
       // Fallback trực tiếp nếu không tìm thấy vị trí trạm cụ thể
       const state = this.saveAdapter ? this.saveAdapter.load() : { pet: {} };
       const pet = state.pet || {};
-      const petName = pet.name || (pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+      const petName = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
 
       if (statKey === 'clean') {
         pet.clean = Math.min(100, (pet.clean || 0) + 40);
@@ -245,12 +245,12 @@ export class PetFarmStatusHUD {
     if (!pet) return;
 
     // Cập nhật tên và icon
-    const isBunny = pet.type === 'bunny' || (pet.name && pet.name.toLowerCase().includes('thỏ'));
+    const isBunny = false;
     if (this.headerName) {
-      this.headerName.textContent = pet.name || (isBunny ? 'Thỏ Bông' : 'Bé Cún Vàng');
+      this.headerName.textContent = (pet.name && !pet.name.toLowerCase().includes('thỏ')) ? pet.name : 'Bé Cún';
     }
     if (this.headerIcon) {
-      this.headerIcon.textContent = isBunny ? '🐰' : '🐶';
+      this.headerIcon.textContent = '🐶';
     }
 
     // 1. Cập nhật Cấp độ (Level)
@@ -345,7 +345,7 @@ export class PetFarmStatusHUD {
     this.saveAdapter?.save(state);
     this.updateCompanionButton(nextCompanion);
 
-    const petName = state.pet.name || (state.pet.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng');
+    const petName = (state.pet.name && !state.pet.name.toLowerCase().includes('thỏ')) ? state.pet.name : 'Bé Cún';
     if (nextCompanion) {
       this.audioService?.playVictoryChime?.(880, 0.22);
       window.dispatchEvent(new CustomEvent('game:show-toast', {

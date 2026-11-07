@@ -53,8 +53,8 @@ export class PetSystem {
   ensureValidPetState(state) {
     const now = Date.now();
     return {
-      type: state.type || 'dog',
-      name: state.name || (state.type === 'bunny' ? 'Thỏ Bông' : 'Bé Cún Vàng'),
+      type: (state.type === 'bunny' ? 'dog' : (state.type || 'dog')),
+      name: (!state.name || state.name === 'Thỏ Bông' || state.name.toLowerCase().includes('thỏ')) ? 'Bé Cún' : state.name,
       hunger: typeof state.hunger === 'number' ? state.hunger : 100,
       thirst: typeof state.thirst === 'number' ? state.thirst : 100,
       clean: typeof state.clean === 'number' ? state.clean : 100,

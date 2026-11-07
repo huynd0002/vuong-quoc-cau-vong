@@ -56,7 +56,7 @@ export function getDefaultGameState() {
     },
     pet: {
       type: 'dog',
-      name: 'Thỏ Bông',
+      name: 'Bé Cún',
       hunger: 100,
       thirst: 100,
       clean: 100,
@@ -114,7 +114,9 @@ export function migrateV1toV2(rawV1) {
     state.player.gems = Number(rawV1.player?.gems || rawV1.gems || 0);
   }
 
-  // 2. Chuyển đổi dữ liệu Thỏ Bông
+  // 2. Chuyển đổi dữ liệu Thú Cưng (Bé Cún)
+  state.pet.type = 'dog';
+  state.pet.name = 'Bé Cún';
   if (rawV1.pet) {
     state.pet.hunger = Math.max(30, Math.min(100, Number(rawV1.pet.hunger ?? 80)));
     state.pet.clean = Math.max(30, Math.min(100, Number(rawV1.pet.clean ?? 80)));
@@ -288,7 +290,18 @@ export class SaveAdapter {
           }
           return mergedPlayer;
         })(),
-        pet: { ...defaultState.pet, ...(state.pet || {}) },
+        pet: (() => {
+          const mergedPet = { ...defaultState.pet, ...(state.pet || {}) };
+          let resolvedName = mergedPet.name;
+          let resolvedType = mergedPet.type || 'dog';
+          if (!resolvedName || resolvedName === 'Thỏ Bông' || resolvedName.toLowerCase().includes('thỏ') || resolvedType === 'bunny') {
+            resolvedName = 'Bé Cún';
+            resolvedType = 'dog';
+          }
+          mergedPet.name = resolvedName;
+          mergedPet.type = resolvedType;
+          return mergedPet;
+        })(),
         campaign: {
           ...defaultState.campaign,
           ...(state.campaign || {}),

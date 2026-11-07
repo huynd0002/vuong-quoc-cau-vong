@@ -2,14 +2,14 @@
  * GameLoadingScreen
  * Màn hình Loading Khởi Đầu (Preloader / Splash Screen) trước khi vào game.
  * - Thiết kế phong cách Cầu Vồng mầm non rực rỡ, ấm áp, ngộ nghĩnh
- * - Linh vật Bé Sâu & Thỏ Bông nhún nhảy đón chào bé
+ * - Linh vật Bé Sâu & Bé Cún nhún nhảy đón chào bé
  * - Thanh tiến trình Rainbow Candy 3D chạy từ 0% đến 100%
  * - Lời dẫn động viên ngọt ngào kích thích trí tò mò
  * - Chuyển tiếp mượt mà sang Màn hình Chọn Nhân Vật Khởi Đầu
  */
 
 import sauActionUrl from '../../../assets/hero/sau/sau_action.webp?url';
-import petBunnyUrl from '../../../assets/pets/pet_bunny_idle.png?url';
+import petDogUrl from '../../../assets/pets/dog/dog_idle.png?url';
 import bannerRibbonUrl from '../../../assets/ui/custom_kids_ui/banner_ribbon_gold.png?url';
 import iconStarUrl from '../../../assets/ui/custom_kids_ui/icon_star_3d.png?url';
 
@@ -36,7 +36,7 @@ export class GameLoadingScreen {
       '🌱 Đang gieo mầm hoa thơm trong khu vườn cổ tích...',
       '🌈 Đang pha màu rực rỡ cho chiếc Cầu Vồng diệu kỳ...',
       '⭐ Đang thắp sáng những viên pha lê toán học thông minh...',
-      '🐰 Bé Sâu và Thỏ Bông đang chuẩn bị đồ chơi cho bé...',
+      '🐶 Bé Sâu và Bé Cún đang chuẩn bị đồ chơi cho bé...',
       '🍎 Táo chín ngọt ngào và những người bạn nhỏ đang đợi bé!',
       '✨ Thế giới phép thuật sắp sẵn sàng chào đón bé yêu!'
     ];
@@ -79,11 +79,11 @@ export class GameLoadingScreen {
           <p class="ils-subtitle">🌈 Phiêu Lưu Học Tập Diệu Kỳ Dành Cho Bé 5-6 Tuổi 🌈</p>
         </div>
 
-        <!-- Sân khấu Linh vật: Bé Sâu & Thỏ Bông -->
+        <!-- Sân khấu Linh vật: Bé Sâu & Bé Cún -->
         <div class="ils-mascot-stage">
           <div class="ils-mascot-aura"></div>
           <img class="ils-mascot-hero" src="${sauActionUrl}" alt="Bé Sâu" />
-          <img class="ils-mascot-pet" src="${petBunnyUrl}" alt="Thỏ Bông" />
+          <img class="ils-mascot-pet" src="${petDogUrl}" alt="Bé Cún" />
           <div class="ils-sparkles" aria-hidden="true">
             <span class="ils-spk s1">✨</span>
             <span class="ils-spk s2">🌸</span>
