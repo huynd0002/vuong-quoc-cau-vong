@@ -782,11 +782,12 @@ window.addEventListener('game:encounter-prompt', (e) => {
 });
 
 window.addEventListener('game:encounter-start', (e) => {
-  const { encounter } = e.detail || {};
+  const { encounter, isBoss } = e.detail || {};
   if (!encounter) return;
-  const targetState = encounter.phases ? GAME_STATES.BOSS_BATTLE : GAME_STATES.ENCOUNTER_QUESTION;
+  const isBossBattle = Boolean(isBoss || encounter.phases || encounter.isBoss);
+  const targetState = isBossBattle ? GAME_STATES.BOSS_BATTLE : GAME_STATES.ENCOUNTER_QUESTION;
   gameStateMachine.transition(targetState);
-  battleArenaModal.openArena(encounter);
+  battleArenaModal.openArena(encounter, isBossBattle);
 });
 
 // Nút mở Pet Care Sheet từ topbar
@@ -1299,7 +1300,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.6.4';
+export const GAME_VERSION = '3.6.5';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {

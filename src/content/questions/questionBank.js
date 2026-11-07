@@ -2564,14 +2564,14 @@ export function getRandomZoneQuestion(zoneId, excludeIds = []) {
 export function createAuditionQuestion({ id, encounter, phase = 1, isBoss = false } = {}) {
   const encName = encounter?.name || 'Quái vật';
   const mapId = encounter?.mapId || (encounter?.id?.includes('map') ? ('map' + encounter.id.split('map')[1].charAt(0)) : 'map1');
-  const target = isBoss ? 4 : (encounter?.isElite ? 4 : 3);
+  const target = 1;
 
   const prompt = isBoss
-    ? `🎵 VŨ ĐIỆU AUDITION CẦU VỒNG: Bé hãy canh viên bi vào VÙNG ĐỎ và bấm BẮT NHỊP (hoặc phím CÁCH) ${target} lần để tung Tuyệt Kỹ Âm Nhạc đánh bại ${encName}!`
-    : `🎵 VŨ ĐIỆU AUDITION CẦU VỒNG: Bé hãy canh viên bi vào VÙNG ĐỎ và bấm BẮT NHỊP (hoặc phím CÁCH) ${target} lần để tung chiêu đánh trúng ${encName}!`;
+    ? `🎵 VŨ ĐIỆU AUDITION CẦU VỒNG: Bé hãy canh viên bi vào VÙNG ĐỎ và bấm BẮT NHỊP (hoặc phím CÁCH) để xuất chiêu Âm Nhạc đánh trúng ${encName}! ⚡`
+    : `🎵 VŨ ĐIỆU AUDITION CẦU VỒNG: Bé hãy canh viên bi vào VÙNG ĐỎ và bấm BẮT NHỊP (hoặc phím CÁCH) để xuất chiêu đánh trúng ${encName}! ⚡`;
 
   const speak = isBoss
-    ? `Thử thách vũ điệu Audition! Bé hãy canh viên bi vào vùng đỏ rồi bấm bắt nhịp đúng thời điểm nhé!`
+    ? `Thử thách vũ điệu Audition! Bé hãy canh viên bi vào vùng đỏ rồi bấm bắt nhịp để tấn công ${encName} nhé!`
     : `Vũ điệu Audition sôi động! Bé hãy canh viên bi vào vùng màu đỏ rồi bấm bắt nhịp nhé!`;
 
   return {

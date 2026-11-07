@@ -86,14 +86,14 @@ export function runMapDifficultyAndAuditionTests() {
   assert.equal(MAPS_CONFIG.map6.boss.reward.stars, 40);
   console.log('✓ Test 3 Passed: Star rewards scale proportionally with map progression');
 
-  // Test 4: Mini Game Audition Question Schema & targets
+  // Test 4: Mini Game Audition Question Schema & targets (1 nhịp chuẩn = 1 đòn trừ 1 tim ngay)
   const auditionMonster = createAuditionQuestion({
     encounter: MAPS_CONFIG.map1.encounters[0],
     isBoss: false
   });
   assert.equal(auditionMonster.type, 'audition_rhythm');
   assert.equal(auditionMonster.isAudition, true);
-  assert.equal(auditionMonster.target, 3);
+  assert.equal(auditionMonster.target, 1);
   const vMonster = validateQuestion(auditionMonster);
   assert.equal(vMonster.valid, true, `Audition monster question valid: ${vMonster.errors?.join(', ')}`);
 
@@ -103,10 +103,10 @@ export function runMapDifficultyAndAuditionTests() {
   });
   assert.equal(auditionBoss.type, 'audition_rhythm');
   assert.equal(auditionBoss.isAudition, true);
-  assert.equal(auditionBoss.target, 4);
+  assert.equal(auditionBoss.target, 1);
   const vBoss = validateQuestion(auditionBoss);
   assert.equal(vBoss.valid, true, `Audition boss question valid: ${vBoss.errors?.join(', ')}`);
-  console.log('✓ Test 4 Passed: Audition rhythm question creation conforms 100% to schema');
+  console.log('✓ Test 4 Passed: Audition rhythm question creation conforms 100% to schema (1 hit = 1 heart damage)');
 
   // Test 5: Chuỗi quái tinh anh & boss có maxHearts được nạp chuẩn xác trong MAPS_CONFIG
   assert.equal(MAPS_CONFIG.map1.encounters[2].maxHearts, 5);

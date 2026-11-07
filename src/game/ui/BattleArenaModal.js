@@ -297,13 +297,10 @@ export class BattleArenaModal {
       });
     }
 
-    // 2b. Nút Xem Tuyệt Kỹ Boss trực tiếp (Trình diễn kỹ năng Boss)
+    // 2b. Nút Tuyệt Kỹ Boss: Ẩn hoàn toàn trong trận để tránh đòn đánh thử nghiệm 0 sát thương gây khó hiểu
     if (this.arenaBtnBossSkill) {
-      this.arenaBtnBossSkill.addEventListener('click', () => {
-        if (this.isTurnLocked) return;
-        this.isTurnLocked = true;
-        this.executeMonsterAttack(true); // true = showcase / preview mode (Bé Sâu có khiên chắn)
-      });
+      this.arenaBtnBossSkill.hidden = true;
+      this.arenaBtnBossSkill.style.display = 'none';
     }
 
     // 3. Nút Nghe đọc câu hỏi
@@ -1229,10 +1226,10 @@ export class BattleArenaModal {
   /**
    * Mở Sàn đấu Battle Arena: 2 nhân vật nhìn đối diện nhau và thể hiện máu 2 bên (Boss 5 tim, Quái 3 tim)
    */
-  openArena(encounter) {
+  openArena(encounter, isBoss = false) {
     if (this.arenaModal && !this.arenaModal.hidden) return;
     this.currentEncounter = encounter;
-    this.isBoss = Boolean(encounter.phases || encounter.isBoss);
+    this.isBoss = Boolean(isBoss || encounter.phases || encounter.isBoss || this.isBoss);
     const meal = this.cookingSystem?.beginBattle() || { hearts: 3, maxHearts: 3, bonus: 0 };
     this.heroHearts = meal.hearts;
     this.heroMaxHearts = meal.maxHearts;
@@ -1265,11 +1262,8 @@ export class BattleArenaModal {
       }
     }
     if (this.arenaBtnBossSkill) {
-      this.arenaBtnBossSkill.hidden = !this.isBoss;
-      if (this.isBoss) {
-        const isCrab = String(encounter?.name || '').includes('Cua');
-        this.arenaBtnBossSkill.innerHTML = isCrab ? `🦀 <span>Xem Đại Hồng Thủy</span>` : `🐉 <span>Xem Phun Lửa</span>`;
-      }
+      this.arenaBtnBossSkill.hidden = true;
+      this.arenaBtnBossSkill.style.display = 'none';
     }
 
     // Cập nhật máu 2 bên: 3 tim cho Bé, 3 hoặc 5 tim cho Quái
@@ -1423,6 +1417,11 @@ export class BattleArenaModal {
         ? heartFullUrl
         : heartEmptyUrl;
       containerEl.appendChild(img);
+    }
+    const isHero = containerEl === this.arenaHeroHearts;
+    const hpTextEl = document.getElementById(isHero ? 'arena-hero-hp-text' : 'arena-monster-hp-text');
+    if (hpTextEl) {
+      hpTextEl.textContent = `${Math.max(0, current)}/${max} ❤️`;
     }
   }
 
@@ -2637,58 +2636,49 @@ export class BattleArenaModal {
       if (isPerfect || isGreat) {
         score++;
         isLocked = true;
-        const isSuper = isPerfect;
-        const msg = isSuper ? `🌟 PERFECT! +1 Nhịp (${score}/${target})` : `✨ GREAT! +1 Nhịp (${score}/${target})`;
-        updateScoreUI(msg, 'hit');
+        this.isTurnLocked = true;
+        this.stopBattleAuditionLoop();
+        updateScoreUI(isPerfect ? '🌟 PERFECT! Tuyệt đỉnh!' : '✨ GREAT! Chính xác!', 'hit');
         triggerHitFX(true);
 
         if (this.audioService?.playChime) {
-          this.audioService.playChime(600 + score * 100, 0.15);
+          this.audioService.playChime(760, 0.2);
         }
 
-        if (score >= target) {
-          this.isTurnLocked = true;
-          this.stopBattleAuditionLoop();
-          banner.innerHTML = '<span>🎉 <b>XUẤT SẮC!</b> Bé đã hoàn thành Vũ Điệu Cầu Vồng! 🌈✨</span>';
-          banner.style.background = '#dcfce7';
-          banner.style.borderColor = '#22c55e';
-          banner.style.color = '#15803d';
+        banner.innerHTML = '<span>🎉 <b>XUẤT SẮC!</b> Bé xuất chiêu Âm Nhạc Cầu Vồng chính xác! 🌈✨</span>';
+        banner.style.background = '#dcfce7';
+        banner.style.borderColor = '#22c55e';
+        banner.style.color = '#15803d';
 
-          setTimeout(() => {
-            this.executeHeroAttack();
-          }, 600);
-          return;
+        setTimeout(() => {
+          this.executeHeroAttack();
+        }, 400);
+        return;
+      } else {
+        isLocked = true;
+        this.isTurnLocked = true;
+        this.stopBattleAuditionLoop();
+        updateScoreUI('⚠️ Chưa đúng vùng đỏ rồi!', 'miss');
+        triggerHitFX(false);
+        banner.innerHTML = `<span>💥 Chưa trúng nhịp! ${this.currentEncounter?.name || 'Quái vật'} phản công! Bé hãy canh lại ở lượt sau nhé! 💥</span>`;
+        banner.style.background = '#fee2e2';
+        banner.style.borderColor = '#ef4444';
+        banner.style.color = '#b91c1c';
+
+        if (this.audioService?.playPlayerHurt) {
+          this.audioService.playPlayerHurt();
         }
 
         setTimeout(() => {
-          isLocked = false;
-        }, 220);
-      } else {
-        mistakes++;
-        updateScoreUI('Chưa trúng vùng đỏ rồi! Bé canh lại nhé!', 'miss');
-        triggerHitFX(false);
-        if (this.audioService?.playChime) {
-          this.audioService.playChime(280, 0.1);
-        }
-
-        if (mistakes >= maxMistakes) {
-          this.isTurnLocked = true;
-          this.stopBattleAuditionLoop();
-          banner.innerHTML = '<span>💥 Quái vật phản công! Bé hãy giữ nhịp điệu và thử lại nhé! 💥</span>';
-          banner.style.background = '#fee2e2';
-          banner.style.borderColor = '#ef4444';
-          banner.style.color = '#b91c1c';
-
-          if (this.audioService?.playPlayerHurt) {
-            this.audioService.playPlayerHurt();
-          }
-
-          setTimeout(() => {
-            this.executeMonsterAttack();
-          }, 800);
-          return;
-        }
+          this.executeMonsterAttack();
+        }, 500);
+        return;
       }
+    };
+
+    this._testAuditionHit = (forceHit = true) => {
+      ballPos = forceHit ? 75 : 10;
+      evaluateHit();
     };
 
     const animate = (now) => {
@@ -2865,9 +2855,9 @@ export class BattleArenaModal {
 
           if (this.turnIndicator) {
             if (this.isBoss && this.monsterHearts <= 2) {
-              this.turnIndicator.innerHTML = `🔥 <strong>CAO TRÀO: Boss bùng nổ sức mạnh! Chỉ còn ${this.monsterHearts} tim cuối!</strong>`;
+              this.turnIndicator.innerHTML = `🔥 <strong>CAO TRÀO: Boss bùng nổ sức mạnh! Chỉ còn ${this.monsterHearts}/${this.monsterMaxHearts} tim cuối!</strong>`;
             } else {
-              this.turnIndicator.textContent = `🎯 Chính xác! Còn ${this.monsterHearts} tim nữa! Cùng giải đố câu tiếp theo nhé!`;
+              this.turnIndicator.textContent = `🎯 Chính xác! Boss còn ${this.monsterHearts}/${this.monsterMaxHearts} tim! Cùng giải đố câu tiếp theo nhé!`;
             }
           }
           this.setupTurn();
@@ -3400,16 +3390,10 @@ export class BattleArenaModal {
           setTimeout(() => this.audioService?.playTone(70, 0.45, 'triangle'), 160);
         }
 
-        // Banner thông báo giai đoạn cao trào
+        // Banner thông báo giai đoạn cao trào (không tung đòn giả 0 sát thương)
         if (this.turnIndicator) {
-          this.turnIndicator.innerHTML = `🔥 <strong>CẢNH BÁO CAO TRÀO: BOSS BÙNG NỔ HỎA LONG THẦN KỸ!</strong>`;
+          this.turnIndicator.innerHTML = `🔥 <strong>CẢNH BÁO CAO TRÀO: BOSS BÙNG NỔ SỨC MẠNH! Chỉ còn ${this.monsterHearts}/${this.monsterMaxHearts} tim cuối! Bé hãy trả lời chính xác để hạ gục Boss nhé!</strong>`;
         }
-
-        // Khóa lượt và ngay lập tức cho Boss phô diễn tuyệt kỹ cao trào!
-        this.isTurnLocked = true;
-        setTimeout(() => {
-          this.executeMonsterAttack(true); // true = showcase mode (Bé Sâu có khiên bảo vệ)
-        }, 750);
       }
     } else {
       if (this.isBossEnraged && (!this.isBoss || this.monsterHearts <= 0)) {
