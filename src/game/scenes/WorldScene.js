@@ -1537,8 +1537,12 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    const cx = DESIGN_WIDTH / 2;
-    const cy = DESIGN_HEIGHT / 2 - 20;
+    // Xích hiệu ứng đếm ngược ra bên trái để không che nhân vật theo yêu cầu người dùng (v3.7.2)
+    const heroX = this.hero?.sprite?.x ?? 688;
+    const heroY = this.hero?.sprite?.y ?? 360;
+    const castX = this.onMapFishingState?.castX;
+    const cx = castX !== undefined ? Math.min(castX, heroX - 160) : (heroX - 180);
+    const cy = this.onMapFishingState?.castY ? (this.onMapFishingState.castY - 80) : (heroY - 20);
 
     const countdownSprite = this.add.sprite(cx, cy, 'vfx_countdown')
       .setDisplaySize(180, 160)
@@ -4067,6 +4071,11 @@ export class WorldScene extends Phaser.Scene {
       this.onMapFishingState.zoneHeight = baseZoneHeight;
       this.onMapFishingState.zoneTop = Math.max(12, Math.round(42 - baseZoneHeight / 2));
       this.onMapFishingState.markerSpeed = markerSpeed;
+      // 2-3 cơ hội thử lại cho cá khó (v3.7.2)
+      const maxRetries = diff.maxRetries || (targetHits >= 3 ? 3 : 2);
+      this.onMapFishingState.maxRetries = maxRetries;
+      this.onMapFishingState.retriesRemaining = maxRetries;
+      this.onMapFishingState.misses = 0;
       const updatedState = fishingSystem.getState();
       const remainingBait = updatedState.baits?.[curBaitId] ?? 0;
 
@@ -4380,6 +4389,9 @@ export class WorldScene extends Phaser.Scene {
         <div class="onmap-audition-diff-pill" style="font-size:0.72rem;font-weight:900;color:#0369a1;background:#e0f2fe;border:1.5px solid #7dd3fc;border-radius:999px;padding:2px 8px;margin-top:2px;">
           ${diff.label || `${targetHits} Lần Canh`}
         </div>
+        <div class="onmap-audition-chances" id="onmap-audition-chances" style="display:flex;align-items:center;justify-content:center;gap:3px;font-size:0.75rem;font-weight:900;color:#e11d48;background:#ffe4e6;border:1.5px solid #fecdd3;border-radius:999px;padding:2px 8px;margin-top:2px;box-shadow:0 2px 6px rgba(225,29,72,0.12);transition:all 0.2s ease;">
+          <span>❤️</span> <span>Còn <b>${st.retriesRemaining !== undefined ? st.retriesRemaining : (st.maxRetries || (targetHits >= 3 ? 3 : 2))}</b>/${st.maxRetries || (targetHits >= 3 ? 3 : 2)} cơ hội</span>
+        </div>
         <div class="onmap-audition-stars" id="onmap-audition-stars" style="display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:2.5px;margin-top:2px;margin-bottom:2px;">
           ${starsHtml}
         </div>
@@ -4490,17 +4502,34 @@ export class WorldScene extends Phaser.Scene {
       if (!this.onMapFishingState || this.onMapFishingState.phase !== 'audition') return;
       this.cleanupVerticalAuditionTimer();
 
-      window.__audioService?.playChime?.(300, 0.22);
       const st = this.onMapFishingState;
-      this.spawnFloatingPopup(st.castX, st.castY - 48, '💨 Quá 10 giây chưa thao tác! Cá đã bơi đi mất rồi!', '#ef4444');
-      this.spawnStationParticles(st.castX, st.castY, ['💦', '💨', '🫧'], 0x94a3b8);
+      st.misses = (st.misses || 0) + 1;
+      const maxRetries = st.maxRetries || (st.targetHits >= 3 ? 3 : 2);
+      const remaining = Math.max(0, maxRetries - st.misses);
+      st.retriesRemaining = remaining;
 
-      if (this.activeBitingPondFish && typeof this.activeBitingPondFish.swimAway === 'function') {
-        this.activeBitingPondFish.swimAway();
+      if (remaining > 0) {
+        window.__audioService?.playChime?.(440, 0.18);
+        this.spawnFloatingPopup(st.castX, st.castY - 48, `⏱️ Hết 10s! Bé còn ${remaining} cơ hội thử lại nhé!`, '#f59e0b');
+        this.spawnStationParticles(st.castX, st.castY, ['💦', '🫧'], 0x38bdf8);
+
+        const chancesEl = this.onMapAuditionEl?.querySelector('#onmap-audition-chances');
+        if (chancesEl) {
+          chancesEl.innerHTML = `<span>❤️</span> <span>Còn <b>${remaining}</b>/${maxRetries} cơ hội</span>`;
+        }
+        this.startVerticalAuditionTimer();
+      } else {
+        window.__audioService?.playChime?.(300, 0.22);
+        this.spawnFloatingPopup(st.castX, st.castY - 48, '💨 Hết cơ hội rồi! Cá đã bơi đi mất!', '#ef4444');
+        this.spawnStationParticles(st.castX, st.castY, ['💦', '💨', '🫧'], 0x94a3b8);
+
+        if (this.activeBitingPondFish && typeof this.activeBitingPondFish.swimAway === 'function') {
+          this.activeBitingPondFish.swimAway();
+        }
+
+        window.__fishingSystem?.recordTurnMiss?.('escaped_timeout_10s');
+        this.stopOnMapFishing(false);
       }
-
-      window.__fishingSystem?.recordTurnMiss?.('escaped_timeout_10s');
-      this.stopOnMapFishing(false);
     }, totalMs);
   }
 
@@ -4620,28 +4649,67 @@ export class WorldScene extends Phaser.Scene {
         this.startVerticalAuditionTimer();
       }
     } else {
-      // Yêu cầu: Câu cá hụt 1 lần là mất cá luôn!
-      window.__audioService?.playChime?.(300, 0.22);
-      this.spawnFloatingPopup(st.castX, st.castY - 48, '💨 Hụt rồi! Cá vụt mất rồi!', '#ef4444');
-      this.spawnStationParticles(st.castX, st.castY, ['💦', '💨', '🫧'], 0x94a3b8);
-      const trackEl = this.onMapAuditionEl?.querySelector('#fishing-vertical-track');
-      if (trackEl) {
-        trackEl.style.transform = 'scale(1.08)';
-        trackEl.style.borderColor = '#ef4444';
+      st.misses = (st.misses || 0) + 1;
+      const maxRetries = st.maxRetries || (st.targetHits >= 3 ? 3 : 2);
+      const remaining = Math.max(0, maxRetries - st.misses);
+      st.retriesRemaining = remaining;
+
+      if (remaining > 0) {
+        // Bé còn cơ hội thử lại! (2-3 cơ hội cho cá khó theo yêu cầu v3.7.2)
+        window.__audioService?.playChime?.(440, 0.18);
+        this.spawnFloatingPopup(st.castX, st.castY - 48, `⚠️ Hụt nhịp! Bé còn ${remaining} cơ hội thử lại nhé!`, '#f59e0b');
+        this.spawnStationParticles(st.castX, st.castY, ['💦', '🫧'], 0x38bdf8);
+
+        if (this.onMapAuditionEl) {
+          this.onMapAuditionEl.classList.remove('audition-hit-shake');
+          void this.onMapAuditionEl.offsetWidth;
+          this.onMapAuditionEl.classList.add('audition-hit-shake');
+
+          const chancesEl = this.onMapAuditionEl.querySelector('#onmap-audition-chances');
+          if (chancesEl) {
+            chancesEl.innerHTML = `<span>❤️</span> <span>Còn <b>${remaining}</b>/${maxRetries} cơ hội</span>`;
+            chancesEl.style.transform = 'scale(1.22)';
+            setTimeout(() => { if (chancesEl) chancesEl.style.transform = 'scale(1)'; }, 220);
+          }
+        }
+
+        // Đảo lại điểm canh và reset đồng hồ 10s để bé thử lại
+        const minTop = 14;
+        const maxTop = Math.max(16, 86 - st.zoneHeight);
+        let newTop = Math.floor(minTop + Math.random() * (maxTop - minTop));
+        if (Math.abs(newTop - st.zoneTop) < 14) {
+          newTop = (st.zoneTop > 45) ? 20 : 60;
+        }
+        st.zoneTop = newTop;
+        const zoneEl = this.onMapAuditionEl?.querySelector('#fishing-vertical-zone');
+        if (zoneEl) {
+          zoneEl.style.top = `${st.zoneTop}%`;
+        }
+        this.startVerticalAuditionTimer();
+      } else {
+        // Đã hết toàn bộ cơ hội thử lại -> Cá mới vụt lặn sâu trốn thoát!
+        window.__audioService?.playChime?.(300, 0.22);
+        this.spawnFloatingPopup(st.castX, st.castY - 48, '💨 Hết cơ hội rồi! Cá đã bơi đi mất!', '#ef4444');
+        this.spawnStationParticles(st.castX, st.castY, ['💦', '💨', '🫧'], 0x94a3b8);
+        const trackEl = this.onMapAuditionEl?.querySelector('#fishing-vertical-track');
+        if (trackEl) {
+          trackEl.style.transform = 'scale(1.08)';
+          trackEl.style.borderColor = '#ef4444';
+        }
+
+        // Cá trong hồ vụt lặn sâu trốn thoát
+        if (this.activeBitingPondFish && typeof this.activeBitingPondFish.swimAway === 'function') {
+          this.activeBitingPondFish.swimAway();
+        } else if (this.activeBitingPondFish && typeof this.activeBitingPondFish.resetBackToPond === 'function') {
+          this.activeBitingPondFish.resetBackToPond();
+        }
+
+        window.__fishingSystem?.recordTurnMiss?.('escaped');
+
+        setTimeout(() => {
+          this.stopOnMapFishing(false);
+        }, 420);
       }
-
-      // Cá trong hồ vụt lặn sâu trốn thoát
-      if (this.activeBitingPondFish && typeof this.activeBitingPondFish.swimAway === 'function') {
-        this.activeBitingPondFish.swimAway();
-      } else if (this.activeBitingPondFish && typeof this.activeBitingPondFish.resetBackToPond === 'function') {
-        this.activeBitingPondFish.resetBackToPond();
-      }
-
-      window.__fishingSystem?.recordTurnMiss?.('escaped');
-
-      setTimeout(() => {
-        this.stopOnMapFishing(false);
-      }, 420);
     }
   }
 

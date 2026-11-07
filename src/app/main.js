@@ -1332,7 +1332,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.7.1';
+export const GAME_VERSION = '3.7.2';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {

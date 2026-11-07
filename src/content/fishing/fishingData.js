@@ -275,54 +275,63 @@ export const FISH_DIFFICULTY_PROFILES = Object.freeze({
     requiredHits: 1,
     zoneHeight: 46,
     markerSpeed: 58,
+    maxRetries: 2,
     label: 'Cực Dễ · 1 Lần Canh'
   },
   lotus_fish: {
     requiredHits: 2,
     zoneHeight: 38,
     markerSpeed: 76,
+    maxRetries: 2,
     label: 'Dễ · 2 Lần Canh'
   },
   orange_fish: {
     requiredHits: 3,
     zoneHeight: 30,
     markerSpeed: 98,
+    maxRetries: 3,
     label: 'Khó Vừa · 3 Lần Canh'
   },
   silver_bell_fish: {
     requiredHits: 4,
     zoneHeight: 24,
     markerSpeed: 124,
+    maxRetries: 3,
     label: 'Khó · 4 Lần Canh'
   },
   sun_spot_fish: {
     requiredHits: 5,
     zoneHeight: 18,
     markerSpeed: 148,
+    maxRetries: 3,
     label: 'Rất Khó · 5 Lần Canh'
   },
   rainbow_fish: {
     requiredHits: 5,
     zoneHeight: 14,
     markerSpeed: 176,
+    maxRetries: 3,
     label: 'Thần Thoại · 5 Lần Canh'
   },
   crystal_fairy_fish: {
     requiredHits: 6,
     zoneHeight: 13,
     markerSpeed: 195,
+    maxRetries: 3,
     label: 'Kỳ Ảo · 6 Lần Canh'
   },
   golden_dragon_fish: {
     requiredHits: 6,
     zoneHeight: 12,
     markerSpeed: 210,
+    maxRetries: 3,
     label: 'Hoàng Kim · 6 Lần Canh'
   },
   galaxy_star_fish: {
     requiredHits: 7,
     zoneHeight: 10,
     markerSpeed: 240,
+    maxRetries: 3,
     label: 'Vũ Trụ · 7 Lần Canh'
   }
 });
