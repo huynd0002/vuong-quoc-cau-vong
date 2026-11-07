@@ -27,7 +27,7 @@ async function verifyLive() {
     if (retries > 0) await new Promise(r => setTimeout(r, 6000));
   }
 
-  await page.screenshot({ path: 'C:/Users/Admin/.gemini/antigravity/brain/b4d73263-dfb7-48f9-a7e6-9542f5c3bba5/verified_live_vercel_368.png' });
+  await page.screenshot({ path: 'C:/Users/Admin/.gemini/antigravity/brain/b4d73263-dfb7-48f9-a7e6-9542f5c3bba5/verified_live_vercel_370.png' });
   console.log('Đã lưu ảnh xác minh live vercel 3.7.0');
   await browser.close();
 }
