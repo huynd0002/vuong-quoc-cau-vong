@@ -15,6 +15,9 @@ export class KitchenModal {
     this.rhythmActive = false;
     this.rhythmScore = 0;
     this.rhythmTarget = 5;
+    this.rhythmMisses = 0;
+    this.maxAllowedMisses = 2;
+    this.failedDishRecipe = null;
     this.ballPos = 10;
     this.ballDir = 1;
     this.rhythmAnimId = null;
@@ -191,6 +194,11 @@ export class KitchenModal {
       if (eyebrowEl) eyebrowEl.textContent = 'BẾP CẦU VỒNG • ĐẦU BẾP NHÍ XUẤT SẮC';
       return this.renderCookSuccess(this.cookedDishReward);
     }
+    if (this.tab === 'cook-failed') {
+      if (titleEl) titleEl.innerHTML = 'Món Ăn Bị Cháy Khét! <img src="/assets/ui/custom_kids_ui/icon_heart_empty.png" class="modal-title-3d-icon" alt="⚠️">';
+      if (eyebrowEl) eyebrowEl.textContent = 'BẾP CẦU VỒNG • CHƯA THÀNH CÔNG';
+      return this.renderCookFailed(this.failedDishRecipe);
+    }
     if (titleEl) titleEl.innerHTML = 'Bếp Nấu Thần Kỳ <img src="/assets/ui/custom_kids_ui/icon_kitchen_pan_3d.png" class="modal-title-3d-icon" alt="🍳">';
     if (eyebrowEl) eyebrowEl.textContent = 'BẾP CẦU VỒNG • ĐẦU BẾP NHÍ';
     if (state.session) { this.tab = 'cook'; return this.renderCook(state); }
@@ -282,7 +290,7 @@ export class KitchenModal {
               <div class="dish-flyout-ingredients">${r.ingredients.map(i => {
                 const owned = state.ingredients[i.id] || 0;
                 const isEnough = owned >= i.count;
-                return `<div class="dish-flyout-ing ${isEnough ? 'has-enough' : 'is-missing'}"><span class="ing-icon">${i.icon}</span><span class="ing-name">${i.name}</span><span class="ing-qty">${owned}/${i.count}</span><span class="ing-state">${isEnough ? '✓ Đủ' : 'Thiếu'}</span></div>`;
+                return `<div class="dish-flyout-ing ${isEnough ? 'has-enough' : 'is-missing'}"><div class="flyout-ing-avatar-wrap"><img src="${(getIngredient(i.id) || i).image || i.image}" class="flyout-ing-3d-img" alt="${i.name}" /></div><span class="ing-name">${i.name}</span><span class="ing-qty">${owned}/${i.count}</span><span class="ing-state">${isEnough ? '✓ Đủ' : 'Thiếu'}</span></div>`;
               }).join('')}</div>
             </div>
             <div class="dish-flyout-section"><span class="dish-flyout-label">✨ Dinh dưỡng & Tiếp sức:</span>
@@ -917,7 +925,7 @@ export class KitchenModal {
 
     const isRecipeReady = r.ingredients.every(i => (s.staged[i.id] || 0) >= i.count);
     const ownedIngredients = INGREDIENTS.filter(i => (state.ingredients[i.id] || 0) > 0);
-    this.rhythmTarget = r.tier === 1 ? 4 : (r.tier === 2 ? 5 : 6);
+    this.rhythmTarget = 5;
 
     this.content.innerHTML = `
       <div class="cook-widescreen-container">
@@ -925,7 +933,7 @@ export class KitchenModal {
         <div class="cook-top-bar">
           <div class="cook-top-info">
             <span class="cook-info-badge">🍳 Đang chuẩn bị: <strong>${r.icon} ${r.name}</strong></span>
-            <span class="cook-diff-badge">${r.tier === 1 ? '⭐ Dễ (4 nhịp)' : (r.tier === 2 ? '⭐⭐ Vừa (5 nhịp)' : '⭐⭐⭐ Khéo tay (6 nhịp)')}</span>
+            <span class="cook-diff-badge">⭐ Canh 5 nhịp chuẩn xác (Hụt 2 nhịp là hỏng món)</span>
           </div>
           <!-- NÚT XEM CÔNG THỨC Ở GÓC (Theo yêu cầu người dùng) -->
           <button type="button" class="btn-cook-view-recipes" data-action="cancel" title="Xem danh sách công thức">
@@ -971,12 +979,12 @@ export class KitchenModal {
               </div>
               <div class="matched-dish-info">
                 <h4 class="matched-dish-title">${r.icon} ${r.name}</h4>
-                <span class="matched-dish-badge">✨ ĐÃ ĐỦ NGUYÊN LIỆU! SẴN SÀNG NẤU ✨</span>
+                <span class="matched-dish-badge">✨ ĐÃ ĐỦ NGUYÊN LIỆU! SẴN SÀNG NẤU (5 NHỊP) ✨</span>
               </div>
               <div class="cook-staged-chips">
                 ${r.ingredients.map(i => `
                   <button type="button" class="staged-chip is-complete" data-remove="${i.id}" title="Chạm để bớt 1 phần">
-                    ${i.icon} ${i.name} ${s.staged[i.id]}/${i.count} ✓ ↩
+                    <img class="staged-chip-3d-img" src="${(getIngredient(i.id) || i).image || i.image}" alt="${i.name}" /> <span class="staged-chip-text">${i.name} ${s.staged[i.id]}/${i.count} ✓ ↩</span>
                   </button>
                 `).join('')}
               </div>
@@ -995,7 +1003,7 @@ export class KitchenModal {
                   const done = current >= i.count;
                   return `
                     <div class="cook-req-card ${done ? 'is-done' : 'is-pending'}">
-                      <span class="req-icon">${i.icon}</span>
+                      <div class="cook-req-avatar-wrap"><img class="cook-req-3d-img" src="${(getIngredient(i.id) || i).image || i.image}" alt="${i.name}" /></div>
                       <span class="req-name">${i.name}</span>
                       <span class="req-count">${current}/${i.count}</span>
                       ${done ? '<span class="req-check">✓</span>' : ''}
@@ -1007,7 +1015,7 @@ export class KitchenModal {
                 <div class="cook-staged-chips">
                   ${r.ingredients.filter(i => s.staged[i.id]).map(i => `
                     <button type="button" class="staged-chip" data-remove="${i.id}" title="Chạm để bớt 1 phần">
-                      ${i.icon} ${i.name} x${s.staged[i.id]} ↩
+                      <img class="staged-chip-3d-img" src="${(getIngredient(i.id) || i).image || i.image}" alt="${i.name}" /> <span class="staged-chip-text">${i.name} x${s.staged[i.id]} ↩</span>
                     </button>
                   `).join('')}
                 </div>
@@ -1035,11 +1043,20 @@ export class KitchenModal {
                   <div class="audition-title-box">
                     <strong class="audition-title">Canh viên bi vào VÙNG ĐỎ rồi bấm phím CÁCH (hoặc chạm nút)!</strong>
                   </div>
-                  <div class="audition-score-pill">
-                    <span>Điểm nhịp:</span>
-                    <strong class="audition-score-text">${this.rhythmScore}/${this.rhythmTarget}</strong>
-                    <div class="audition-stars-meter">
-                      ${Array.from({ length: this.rhythmTarget }).map((_, i) => `<span class="audition-star ${i < this.rhythmScore ? 'is-lit' : ''}"><i class="star-bead"></i></span>`).join('')}
+                  <div class="audition-counters-group">
+                    <div class="audition-score-pill">
+                      <span class="pill-label">🎯 Nhịp trúng:</span>
+                      <strong class="audition-score-text">${this.rhythmScore}/${this.rhythmTarget}</strong>
+                      <div class="audition-stars-meter">
+                        ${Array.from({ length: this.rhythmTarget }).map((_, i) => `<span class="audition-star ${i < this.rhythmScore ? 'is-lit' : ''}"><i class="star-bead"></i></span>`).join('')}
+                      </div>
+                    </div>
+                    <div class="audition-miss-pill">
+                      <span class="pill-label">💔 Lỡ nhịp:</span>
+                      <strong class="audition-miss-text ${this.rhythmMisses > 0 ? 'is-danger' : ''}">${this.rhythmMisses}/${this.maxAllowedMisses}</strong>
+                      <div class="audition-miss-hearts">
+                        ${Array.from({ length: this.maxAllowedMisses }).map((_, i) => `<span class="miss-heart-icon ${i < this.rhythmMisses ? 'is-missed' : ''}">${i < this.rhythmMisses ? '💔' : '🤍'}</span>`).join('')}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1129,6 +1146,19 @@ export class KitchenModal {
     if (starsContainer) {
       starsContainer.innerHTML = Array.from({ length: this.rhythmTarget }).map((_, i) =>
         `<span class="audition-star ${i < this.rhythmScore ? 'is-lit' : ''}">${i < this.rhythmScore ? '⭐' : '☆'}</span>`
+      ).join('');
+    }
+
+    const missVal = this.content.querySelector('.audition-miss-text');
+    if (missVal) {
+      missVal.textContent = `${this.rhythmMisses}/${this.maxAllowedMisses}`;
+      missVal.className = `audition-miss-text ${this.rhythmMisses > 0 ? 'is-danger' : ''}`;
+    }
+
+    const missHearts = this.content.querySelector('.audition-miss-hearts');
+    if (missHearts) {
+      missHearts.innerHTML = Array.from({ length: this.maxAllowedMisses }).map((_, i) =>
+        `<span class="miss-heart-icon ${i < this.rhythmMisses ? 'is-missed' : ''}">${i < this.rhythmMisses ? '💔' : '🤍'}</span>`
       ).join('');
     }
 
@@ -1238,12 +1268,87 @@ evaluateAuditionHit() {
         this.completeCookingSuccess(s.id);
       }
     } else {
-      this.rhythmFeedback = 'Chưa vào vùng đỏ! Bé canh lại nhé!';
-      this.rhythmFeedbackType = 'miss';
-      this.audio?.playChime(360, 0.08);
+      this.rhythmMisses++;
       this.triggerAuditionHitFX(false);
+      this.audio?.playChime(320, 0.12);
+      
+      if (this.rhythmMisses >= this.maxAllowedMisses) {
+        this.rhythmFeedback = '💔 Đã hụt 2 nhịp! Món ăn bị cháy khét!';
+        this.rhythmFeedbackType = 'miss';
+        this.updateAuditionScoreUI();
+        this.stopAuditionLoop();
+        this.rhythmActive = false;
+        setTimeout(() => {
+          this.failCookingSession(s.id);
+        }, 400);
+        return;
+      }
+
+      this.rhythmFeedback = `Hụt rồi (${this.rhythmMisses}/${this.maxAllowedMisses} lần)! Bé canh lại nhé!`;
+      this.rhythmFeedbackType = 'miss';
       this.updateAuditionScoreUI();
     }
+  }
+
+
+  failCookingSession(sessionId) {
+    const s = this.system.getState().session;
+    const recipe = s ? getRecipe(s.recipeId) : null;
+    this.failedDishRecipe = recipe;
+    this.stopAuditionLoop();
+    this.rhythmActive = false;
+    
+    if (this.system.failSession) {
+      this.system.failSession(sessionId);
+    } else if (this.system.cancel) {
+      this.system.cancel();
+    }
+    
+    this.tab = 'cook-failed';
+    this.render();
+  }
+
+  renderCookFailed(recipe) {
+    const titleEl = this.root.querySelector('#kitchen-title');
+    const eyebrowEl = this.root.querySelector('.kitchen-eyebrow');
+    if (titleEl) titleEl.innerHTML = 'Món Ăn Bị Cháy Khét! <img src="/assets/ui/custom_kids_ui/icon_heart_empty.png" class="modal-title-3d-icon" alt="⚠️">';
+    if (eyebrowEl) eyebrowEl.textContent = 'BẾP CẦU VỒNG • CHƯA THÀNH CÔNG';
+
+    this.content.innerHTML = `
+      <div class="cook-failed-screen">
+        <div class="failed-header-ribbon">
+          <span class="ribbon-sparkle">⚠️</span>
+          <h3 class="failed-screen-heading">CHÁY KHÉT MẤT RỒI!</h3>
+          <span class="ribbon-sparkle">⚠️</span>
+        </div>
+        
+        <div class="failed-dish-card animate-card-pop">
+          <div class="failed-smoke-fx" aria-hidden="true">💨</div>
+          <div class="failed-dish-avatar-wrap">
+            <span class="failed-dish-burnt-pot">🥘💨💔</span>
+          </div>
+          <h4 class="failed-dish-name">${recipe ? recipe.name : 'Món ăn'}</h4>
+          <div class="failed-reason-pill">
+            <span>💔 Hụt 2/2 nhịp Audition</span>
+          </div>
+          <p class="failed-dish-desc">Bé đã bấm lỡ 2 nhịp nên món ăn bị cháy khét mất rồi! Toàn bộ nguyên liệu nấu đã bị hỏng.</p>
+          <div class="failed-advice-box">
+            💡 Bé hãy ghé <b>Tủ Lạnh</b> lấy thêm nguyên liệu và lần sau canh viên bi vào đúng <b>VÙNG ĐỎ</b> nhé!
+          </div>
+        </div>
+
+        <div class="failed-actions-row">
+          <button type="button" class="btn-failed-go-fridge animate-btn-pulse" data-action="fridge">
+            <span>🧊 Vào Tủ Lạnh Lấy Thêm</span>
+          </button>
+          <button type="button" class="btn-failed-back-recipes" data-action="recipes">
+            <span>📖 Trở Về Danh Sách Món</span>
+          </button>
+        </div>
+      </div>
+    `;
+    this.audio?.playChime?.(220, 0.4);
+    this.say('Cháy khét mất rồi! Bé đã hụt hai nhịp nên món ăn chưa thành công. Toàn bộ nguyên liệu đã bị hỏng mất rồi. Bé hãy thử lại nhé!');
   }
 
   completeCookingSuccess(sessionId) {
@@ -1334,7 +1439,11 @@ evaluateAuditionHit() {
           ghost=document.createElement('div');
           ghost.className='kitchen-pointer-ghost';
           const ing = getIngredient(item.dataset.ingredient);
-          ghost.textContent=ing ? ing.icon : '🥕';
+          if (ing?.image) {
+            ghost.innerHTML = `<img src="${ing.image}" alt="${ing.name}" class="ghost-3d-img" />`;
+          } else {
+            ghost.textContent = ing ? ing.icon : '🥕';
+          }
           document.body.append(ghost);
         }
         ghost.style.left=`${e.clientX}px`; ghost.style.top=`${e.clientY}px`; pot.classList.toggle('kitchen-drop-hover',over(e.clientX,e.clientY));

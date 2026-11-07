@@ -50,7 +50,14 @@ export const RECIPES = [
     effect: { heal: 2, bonus: 1, energy: 2 }, skill: 'Cá câu được · đủ chất' }
 ];
 for (const recipe of RECIPES) {
-  recipe.ingredients = recipe.ingredients.map(item => ({ ...item, id: INGREDIENTS.find(i => i.name === item.name).id }));
+  recipe.ingredients = recipe.ingredients.map(item => {
+    const found = INGREDIENTS.find(i => i.name === item.name || i.id === item.id);
+    return {
+      ...item,
+      id: found?.id || item.id,
+      image: found?.image || null
+    };
+  });
   recipe.durationMs = recipe.ticks * 1000;
 }
 export const getRecipe = id => RECIPES.find(recipe => recipe.id === id);

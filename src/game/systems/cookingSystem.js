@@ -175,6 +175,25 @@ export class CookingSystem {
       state.session = null; return { ok: true };
     });
   }
+  failSession(sessionId) {
+    return this.mutate(state => {
+      const s = state.session;
+      if (!s || s.id !== sessionId) return fail('stale', 'Phiên nấu ăn đã kết thúc.');
+      const recipe = getRecipe(s.recipeId);
+      if (recipe && s.staged) {
+        // Hụt nhịp: nguyên liệu trong nồi bị cháy hỏng ("mất hết")
+        for (const [ingId, count] of Object.entries(s.staged)) {
+          const current = state.ingredients[ingId] || 0;
+          state.ingredients[ingId] = Math.max(0, current - count);
+          if (state.ingredients[ingId] <= 0) {
+            delete state.ingredients[ingId];
+          }
+        }
+      }
+      state.session = null;
+      return { ok: true, burntRecipe: recipe };
+    });
+  }
 
   discardIngredient(ingredientId) {
     return this.mutate(state => {

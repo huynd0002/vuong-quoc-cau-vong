@@ -19,7 +19,7 @@ async function verifyLive() {
                document.getElementById('game-version-badge')?.textContent || '';
       });
       console.log(`Phiên bản live phát hiện: "${ver}" (còn ${retries} lần thử)`);
-      if (ver.includes('3.6.9')) break;
+      if (ver.includes('3.7.0')) break;
     } catch (e) {
       console.log('Chờ Vercel hoàn tất deploy...', e.message);
     }
@@ -28,7 +28,7 @@ async function verifyLive() {
   }
 
   await page.screenshot({ path: 'C:/Users/Admin/.gemini/antigravity/brain/b4d73263-dfb7-48f9-a7e6-9542f5c3bba5/verified_live_vercel_368.png' });
-  console.log('Đã lưu ảnh xác minh live vercel 3.6.9');
+  console.log('Đã lưu ảnh xác minh live vercel 3.7.0');
   await browser.close();
 }
 

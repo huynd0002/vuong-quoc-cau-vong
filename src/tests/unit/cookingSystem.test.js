@@ -50,6 +50,13 @@ export function runCookingSystemTests() {
   assert.equal(cooking.getState().session.staged.banana,0);
   cooking.stage(s.id,'banana'); cooking.cancel();
   assert.equal(cooking.getState().ingredients.banana,1,'cancel preparation preserves paid stock');
+  // Fail session (hụt nhịp) loses staged ingredients
+  cooking.start('fruit_yogurt');
+  const failS = cooking.getState().session;
+  cooking.stage(failS.id, 'banana');
+  assert.equal(cooking.failSession(failS.id).ok, true);
+  assert.equal(cooking.getState().ingredients.banana, undefined, 'failSession burns/deducts staged ingredients');
+  assert.equal(cooking.getState().session, null);
   const fruit=finish('fruit_yogurt');
   const spend=cooking.getState().spentStars;
   adapter.save(stale);
