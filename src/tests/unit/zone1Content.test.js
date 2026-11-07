@@ -92,7 +92,7 @@ export function runZone1ContentTests() {
   assert.equal(correctP2.isBoss, true);
   assert.equal(correctP2.unlockedNewMap, 'map2', 'Boss victory unlocks map2');
   assert.equal(progSys.isMapUnlocked('map2'), true, 'Progression reflects map2 unlock');
-  assert.equal(state.player.stars, 3, 'Player received 3 stars reward');
+  assert.equal(state.player.stars, boss.reward?.stars || 8, 'Player received boss stars reward');
   console.log('✓ Test 4 Passed: Multi-phase Boss victory and Map 2 unlocking');
 }
 

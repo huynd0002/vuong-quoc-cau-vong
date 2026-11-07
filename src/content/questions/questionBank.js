@@ -1648,9 +1648,10 @@ export const QUESTION_BANK = {
     skillId: 'memory',
     type: 'memory_match',
     difficulty: 1,
-    prompt: '🃏 Bé hãy lật tìm 2 thẻ hình con vật giống nhau nhé! ✨',
-    speak: 'Bé hãy lật tìm hai thẻ hình con vật giống nhau nhé!',
+    prompt: '🃏 Bé hãy lật tìm 2 cặp thẻ hình con vật giống nhau nhé! ✨',
+    speak: 'Bé hãy lật tìm hai cặp thẻ hình con vật giống nhau nhé!',
     pairs: 2,
+    maxMistakes: 2,
     cards: [
       { id: 'c1', label: '🐰 Thỏ Con' },
       { id: 'c2', label: '🐶 Cún Vàng' },
@@ -1727,18 +1728,23 @@ export const QUESTION_BANK = {
     skillId: 'memory',
     type: 'memory_match',
     difficulty: 2,
-    prompt: '🃏 Bé hãy lật tìm 2 thẻ nấm và ong rừng giống nhau nhé! 🍄',
-    speak: 'Bé hãy lật tìm hai thẻ nấm và ong rừng giống nhau nhé!',
-    pairs: 2,
+    prompt: '🃏 Bé hãy lật tìm 4 cặp thẻ sinh vật biển và rừng xanh giống nhau nhé! 🍄🦀',
+    speak: 'Bé hãy lật tìm bốn cặp thẻ sinh vật biển và rừng xanh giống nhau nhé!',
+    pairs: 4,
+    maxMistakes: 4,
     cards: [
       { id: 'c1', label: '🍄 Nấm Đỏ' },
       { id: 'c2', label: '🐝 Chú Ong' },
+      { id: 'c3', label: '🦀 Chú Cua' },
+      { id: 'c4', label: '⭐ Sao Biển' },
       { id: 'c1_b', label: '🍄 Nấm Đỏ' },
-      { id: 'c2_b', label: '🐝 Chú Ong' }
+      { id: 'c2_b', label: '🐝 Chú Ong' },
+      { id: 'c3_b', label: '🦀 Chú Cua' },
+      { id: 'c4_b', label: '⭐ Sao Biển' }
     ],
-    choices: ['Nấm Đỏ', 'Chú Ong', 'Cây Thông'],
+    choices: ['Nấm Đỏ', 'Chú Ong', 'Chú Cua', 'Sao Biển'],
     correct: 0,
-    hint: 'Hai cây nấm đỏ có chấm tròn giống hệt nhau, và hai chú ong chăm chỉ!'
+    hint: 'Có 4 cặp bạn nhỏ: nấm đỏ, chú ong, chú cua kẹp và bạn sao biển vàng!'
   },
   q_map2_pair_shapes: {
     id: 'q_map2_pair_shapes',
@@ -1807,20 +1813,23 @@ export const QUESTION_BANK = {
     skillId: 'memory',
     type: 'memory_match',
     difficulty: 3,
-    prompt: '🃏 Bé hãy lật tìm 3 cặp bảo vật pha lê lấp lánh giống nhau nhé! 💎',
-    speak: 'Bé hãy lật tìm ba cặp bảo vật pha lê lấp lánh giống nhau nhé!',
-    pairs: 3,
+    prompt: '🃏 Bé hãy lật tìm 4 cặp bảo vật pha lê lấp lánh giống nhau nhé! 💎🔮',
+    speak: 'Bé hãy lật tìm bốn cặp bảo vật pha lê lấp lánh giống nhau nhé!',
+    pairs: 4,
+    maxMistakes: 4,
     cards: [
       { id: 'c1', label: '💎 Pha Lê' },
       { id: 'c2', label: '🔮 Ngọc Tím' },
       { id: 'c3', label: '🦇 Dơi Ngọc' },
+      { id: 'c4', label: '🦋 Bướm Đêm' },
       { id: 'c1_b', label: '💎 Pha Lê' },
       { id: 'c2_b', label: '🔮 Ngọc Tím' },
-      { id: 'c3_b', label: '🦇 Dơi Ngọc' }
+      { id: 'c3_b', label: '🦇 Dơi Ngọc' },
+      { id: 'c4_b', label: '🦋 Bướm Đêm' }
     ],
-    choices: ['Pha Lê', 'Ngọc Tím', 'Dơi Ngọc'],
+    choices: ['Pha Lê', 'Ngọc Tím', 'Dơi Ngọc', 'Bướm Đêm'],
     correct: 0,
-    hint: 'Có 3 cặp hình: viên pha lê xanh, quả cầu ngọc tím và chú dơi ngọc!'
+    hint: 'Có 4 cặp bảo vật: viên pha lê xanh, quả cầu ngọc tím, chú dơi ngọc và bạn bướm dạ quang!'
   },
   q_map3_pair_quantities: {
     id: 'q_map3_pair_quantities',
@@ -1889,20 +1898,25 @@ export const QUESTION_BANK = {
     skillId: 'memory',
     type: 'memory_match',
     difficulty: 4,
-    prompt: '🃏 Bé hãy lật tìm 3 cặp linh vật ánh dương sa mạc nhé! ☀️',
-    speak: 'Bé hãy lật tìm ba cặp linh vật ánh dương sa mạc nhé!',
-    pairs: 3,
+    prompt: '🃏 Bé hãy lật tìm 5 cặp linh vật ánh dương sa mạc nhé! ☀️🏜️',
+    speak: 'Bé hãy lật tìm năm cặp linh vật ánh dương sa mạc nhé!',
+    pairs: 5,
+    maxMistakes: 5,
     cards: [
       { id: 'c1', label: '🦊 Cáo Cát' },
       { id: 'c2', label: '🪲 Bọ Vàng' },
       { id: 'c3', label: '🦅 Chim Ưng' },
+      { id: 'c4', label: '☀️ Mặt Trời' },
+      { id: 'c5', label: '🌵 Xương Rồng' },
       { id: 'c1_b', label: '🦊 Cáo Cát' },
       { id: 'c2_b', label: '🪲 Bọ Vàng' },
-      { id: 'c3_b', label: '🦅 Chim Ưng' }
+      { id: 'c3_b', label: '🦅 Chim Ưng' },
+      { id: 'c4_b', label: '☀️ Mặt Trời' },
+      { id: 'c5_b', label: '🌵 Xương Rồng' }
     ],
-    choices: ['Cáo Cát', 'Bọ Vàng', 'Chim Ưng'],
+    choices: ['Cáo Cát', 'Bọ Vàng', 'Chim Ưng', 'Mặt Trời', 'Xương Rồng'],
     correct: 0,
-    hint: 'Có 3 cặp bạn nhỏ sa mạc: Cáo cát đuôi dài, Bọ cánh cứng và Chim ưng dũng mãnh!'
+    hint: 'Có 5 cặp linh vật: Cáo cát đuôi dài, Bọ cánh cứng, Chim ưng dũng mãnh, Vầng mặt trời và Cây xương rồng!'
   },
   q_map4_pair_math: {
     id: 'q_map4_pair_math',
@@ -1950,20 +1964,27 @@ export const QUESTION_BANK = {
     skillId: 'memory',
     type: 'memory_match',
     difficulty: 5,
-    prompt: '🃏 Bé hãy lật tìm 3 cặp nốt nhạc gió ngàn lấp lánh nhé! 🎵',
-    speak: 'Bé hãy lật tìm ba cặp nốt nhạc gió ngàn lấp lánh nhé!',
-    pairs: 3,
+    prompt: '🃏 Bé hãy lật tìm 6 cặp giai điệu gió ngàn lấp lánh nhé! 🎵🍃',
+    speak: 'Bé hãy lật tìm sáu cặp giai điệu gió ngàn lấp lánh nhé!',
+    pairs: 6,
+    maxMistakes: 6,
     cards: [
       { id: 'c1', label: '🎵 Nốt Nhạc' },
       { id: 'c2', label: '🍃 Chiếc Lá' },
       { id: 'c3', label: '🔔 Chuông Gió' },
+      { id: 'c4', label: '🦉 Cú Thông Thái' },
+      { id: 'c5', label: '🐿️ Sóc Bay' },
+      { id: 'c6', label: '🌪️ Cơn Gió' },
       { id: 'c1_b', label: '🎵 Nốt Nhạc' },
       { id: 'c2_b', label: '🍃 Chiếc Lá' },
-      { id: 'c3_b', label: '🔔 Chuông Gió' }
+      { id: 'c3_b', label: '🔔 Chuông Gió' },
+      { id: 'c4_b', label: '🦉 Cú Thông Thái' },
+      { id: 'c5_b', label: '🐿️ Sóc Bay' },
+      { id: 'c6_b', label: '🌪️ Cơn Gió' }
     ],
-    choices: ['Nốt Nhạc', 'Chiếc Lá', 'Chuông Gió'],
+    choices: ['Nốt Nhạc', 'Chiếc Lá', 'Chuông Gió', 'Cú Thông Thái', 'Sóc Bay', 'Cơn Gió'],
     correct: 0,
-    hint: 'Tìm cặp nốt nhạc vui ca, chiếc lá bay trong gió và chiếc chuông vàng ngân nga!'
+    hint: '6 cặp âm thanh tuyệt diệu: nốt nhạc vui, chiếc lá bay, chuông reo, cú thông thái, sóc bay và cơn gió mát!'
   },
   q_map5_pair_opposites: {
     id: 'q_map5_pair_opposites',
@@ -2011,22 +2032,27 @@ export const QUESTION_BANK = {
     skillId: 'memory',
     type: 'memory_match',
     difficulty: 5,
-    prompt: '🃏 Bé hãy lật tìm 4 cặp bảo vật Rồng Thần Cầu Vồng nhé! 🌈👑',
-    speak: 'Bé hãy lật tìm bốn cặp bảo vật Rồng Thần Cầu Vồng nhé!',
-    pairs: 4,
+    prompt: '🃏 Bé hãy lật tìm 6 cặp bảo vật Hoàng Gia Rồng Thần nhé! 🌈👑',
+    speak: 'Bé hãy lật tìm sáu cặp bảo vật Hoàng Gia Rồng Thần nhé!',
+    pairs: 6,
+    maxMistakes: 6,
     cards: [
       { id: 'c1', label: '🌈 Cầu Vồng' },
       { id: 'c2', label: '👑 Vương Miện' },
       { id: 'c3', label: '🐉 Rồng Thần' },
       { id: 'c4', label: '🌟 Ngôi Sao' },
+      { id: 'c5', label: '🦄 Kỳ Lân' },
+      { id: 'c6', label: '💎 Kim Cương' },
       { id: 'c1_b', label: '🌈 Cầu Vồng' },
       { id: 'c2_b', label: '👑 Vương Miện' },
       { id: 'c3_b', label: '🐉 Rồng Thần' },
-      { id: 'c4_b', label: '🌟 Ngôi Sao' }
+      { id: 'c4_b', label: '🌟 Ngôi Sao' },
+      { id: 'c5_b', label: '🦄 Kỳ Lân' },
+      { id: 'c6_b', label: '💎 Kim Cương' }
     ],
-    choices: ['Cầu Vồng', 'Vương Miện', 'Rồng Thần', 'Ngôi Sao'],
+    choices: ['Cầu Vồng', 'Vương Miện', 'Rồng Thần', 'Ngôi Sao', 'Kỳ Lân', 'Kim Cương'],
     correct: 0,
-    hint: 'Tìm 4 cặp huy hoàng: dải cầu vồng, vương miện hoàng gia, rồng thần và ngôi sao!'
+    hint: '6 cặp bảo vật hoàng gia: dải cầu vồng, vương miện hoàng gia, rồng thần, ngôi sao, kỳ lân và kim cương lấp lánh!'
   },
   q_map6_pair_logic: {
     id: 'q_map6_pair_logic',
@@ -2441,7 +2467,7 @@ export function shuffleQuestion(question) {
   if (!question || !Array.isArray(question.choices) || question.choices.length <= 1) {
     return question ? { ...question } : question;
   }
-  if (question.isMaze || question.type === 'memory_match' || question.type === 'pair_matching' || question.type === 'drag_sort') {
+  if (question.isMaze || question.isAudition || question.type === 'audition_rhythm' || question.type === 'memory_match' || question.type === 'pair_matching' || question.type === 'drag_sort') {
     return { ...question };
   }
 
@@ -2531,6 +2557,41 @@ export function getRandomZoneQuestion(zoneId, excludeIds = []) {
  * Tạo câu hỏi thử thách Mini Game Mê Cung Kỳ Diệu khi vượt ải
  * Tích hợp chuẩn Schema mầm non cho phép trẻ chạm tay vẽ đường vượt ải
  */
+/**
+ * Tạo câu hỏi thử thách Mini Game Audition Nhịp Điệu Cầu Vồng khi vượt ải
+ * Trẻ canh nhịp bi lăn vào vùng đỏ Perfect và bấm phím Space hoặc nút trên màn hình!
+ */
+export function createAuditionQuestion({ id, encounter, phase = 1, isBoss = false } = {}) {
+  const encName = encounter?.name || 'Quái vật';
+  const mapId = encounter?.mapId || (encounter?.id?.includes('map') ? ('map' + encounter.id.split('map')[1].charAt(0)) : 'map1');
+  const target = isBoss ? 4 : (encounter?.isElite ? 4 : 3);
+
+  const prompt = isBoss
+    ? `🎵 VŨ ĐIỆU AUDITION CẦU VỒNG: Bé hãy canh viên bi vào VÙNG ĐỎ và bấm BẮT NHỊP (hoặc phím CÁCH) ${target} lần để tung Tuyệt Kỹ Âm Nhạc đánh bại ${encName}!`
+    : `🎵 VŨ ĐIỆU AUDITION CẦU VỒNG: Bé hãy canh viên bi vào VÙNG ĐỎ và bấm BẮT NHỊP (hoặc phím CÁCH) ${target} lần để tung chiêu đánh trúng ${encName}!`;
+
+  const speak = isBoss
+    ? `Thử thách vũ điệu Audition! Bé hãy canh viên bi vào vùng đỏ rồi bấm bắt nhịp đúng thời điểm nhé!`
+    : `Vũ điệu Audition sôi động! Bé hãy canh viên bi vào vùng màu đỏ rồi bấm bắt nhịp nhé!`;
+
+  return {
+    id: id || `q_${mapId}_audition_${phase}_${encounter?.id || 'enc'}`,
+    skillId: 'rhythm',
+    difficulty: isBoss ? 2 : 1,
+    type: 'audition_rhythm',
+    isAudition: true,
+    target,
+    prompt,
+    speak,
+    choices: [
+      '🎵 Bắt Đầu Vũ Điệu Bắt Nhịp',
+      '💡 Xem Hướng Dẫn Bắt Nhịp'
+    ],
+    correct: 0,
+    hint: 'Bé quan sát viên bi di chuyển, khi bi lăn vào đúng vạch màu đỏ phát sáng thì bấm nút Bắt Nhịp hoặc phím Cách thật nhanh nhé!'
+  };
+}
+
 export function createMazeQuestion({ id, encounter, phase = 1, isBoss = false } = {}) {
   const encName = encounter?.name || 'Quái vật';
   const mapId = encounter?.mapId || (encounter?.id?.includes('map') ? encounter.id.split('_')[1] : 'map1');

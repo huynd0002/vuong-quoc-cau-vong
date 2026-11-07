@@ -43,9 +43,10 @@ export const MAPS_CONFIG = {
         "y": 505,
         "spriteKey": "mon_mushroom",
         "questionId": "q_map1_memory_animals",
+        "maxHearts": 3,
         "reward": {
-          "stars": 1,
-          "exp": 10
+          "stars": 3,
+          "exp": 15
         }
       },
       {
@@ -55,9 +56,10 @@ export const MAPS_CONFIG = {
         "y": 465,
         "spriteKey": "mon_bee",
         "questionId": "q_map1_pair_food",
+        "maxHearts": 3,
         "reward": {
-          "stars": 1,
-          "exp": 10
+          "stars": 3,
+          "exp": 15
         }
       },
       {
@@ -67,9 +69,11 @@ export const MAPS_CONFIG = {
         "y": 440,
         "spriteKey": "mon_ladybug",
         "questionId": "q_map1_drag_size",
+        "isElite": true,
+        "maxHearts": 5,
         "reward": {
-          "stars": 1,
-          "exp": 10
+          "stars": 5,
+          "exp": 25
         }
       }
     ],
@@ -80,6 +84,7 @@ export const MAPS_CONFIG = {
       "x": 1120,
       "y": 350,
       "questionId": "q_map1_boss",
+      "maxHearts": 5,
       "phases": [
         {
           "phase": 1,
@@ -95,8 +100,8 @@ export const MAPS_CONFIG = {
         }
       ],
       "reward": {
-        "stars": 3,
-        "exp": 30,
+        "stars": 8,
+        "exp": 50,
         "unlockMap": "map2"
       }
     },
@@ -157,9 +162,10 @@ export const MAPS_CONFIG = {
         "y": 490,
         "spriteKey": "mon_crab",
         "questionId": "q_map2_memory_mushrooms",
+        "maxHearts": 3,
         "reward": {
-          "stars": 2,
-          "exp": 15
+          "stars": 5,
+          "exp": 20
         }
       },
       {
@@ -169,9 +175,10 @@ export const MAPS_CONFIG = {
         "y": 460,
         "spriteKey": "mon_starfish",
         "questionId": "q_map2_pair_shapes",
+        "maxHearts": 3,
         "reward": {
-          "stars": 2,
-          "exp": 15
+          "stars": 5,
+          "exp": 20
         }
       },
       {
@@ -181,9 +188,11 @@ export const MAPS_CONFIG = {
         "y": 430,
         "spriteKey": "mon_emerald_crab",
         "questionId": "q_map2_drag_count_sequence",
+        "isElite": true,
+        "maxHearts": 5,
         "reward": {
-          "stars": 2,
-          "exp": 15
+          "stars": 7,
+          "exp": 35
         }
       }
     ],
@@ -194,6 +203,7 @@ export const MAPS_CONFIG = {
       "x": 1080,
       "y": 400,
       "questionId": "q_map2_boss",
+      "maxHearts": 6,
       "phases": [
         {
           "phase": 1,
@@ -209,8 +219,8 @@ export const MAPS_CONFIG = {
         }
       ],
       "reward": {
-        "stars": 5,
-        "exp": 35,
+        "stars": 12,
+        "exp": 70,
         "unlockMap": "map3"
       }
     },
@@ -271,9 +281,10 @@ export const MAPS_CONFIG = {
         "y": 510,
         "spriteKey": "mon_crystal_sprout",
         "questionId": "q_map3_memory_crystals",
+        "maxHearts": 3,
         "reward": {
-          "stars": 2,
-          "exp": 20
+          "stars": 7,
+          "exp": 25
         }
       },
       {
@@ -283,9 +294,10 @@ export const MAPS_CONFIG = {
         "y": 440,
         "spriteKey": "mon_crystal_moth",
         "questionId": "q_map3_pair_quantities",
+        "maxHearts": 4,
         "reward": {
-          "stars": 2,
-          "exp": 20
+          "stars": 7,
+          "exp": 30
         }
       },
       {
@@ -295,9 +307,11 @@ export const MAPS_CONFIG = {
         "y": 310,
         "spriteKey": "mon_crystal_bat",
         "questionId": "q_map3_drag_stars_sequence",
+        "isElite": true,
+        "maxHearts": 5,
         "reward": {
-          "stars": 2,
-          "exp": 20
+          "stars": 9,
+          "exp": 45
         }
       }
     ],
@@ -308,6 +322,7 @@ export const MAPS_CONFIG = {
       "x": 1050,
       "y": 380,
       "questionId": "q_map3_boss",
+      "maxHearts": 7,
       "phases": [
         {
           "phase": 1,
@@ -323,8 +338,8 @@ export const MAPS_CONFIG = {
         }
       ],
       "reward": {
-        "stars": 6,
-        "exp": 40,
+        "stars": 16,
+        "exp": 90,
         "unlockMap": "map4"
       }
     },
@@ -385,9 +400,10 @@ export const MAPS_CONFIG = {
         "y": 550,
         "spriteKey": "mon_desert_fox",
         "questionId": "q_map4_memory_desert",
+        "maxHearts": 3,
         "reward": {
-          "stars": 3,
-          "exp": 25
+          "stars": 10,
+          "exp": 35
         }
       },
       {
@@ -397,9 +413,10 @@ export const MAPS_CONFIG = {
         "y": 550,
         "spriteKey": "mon_scarab",
         "questionId": "q_map4_pair_math",
+        "maxHearts": 4,
         "reward": {
-          "stars": 3,
-          "exp": 25
+          "stars": 10,
+          "exp": 40
         }
       },
       {
@@ -409,9 +426,11 @@ export const MAPS_CONFIG = {
         "y": 410,
         "spriteKey": "mon_desert_falcon",
         "questionId": "q_map4_drag_even_sequence",
+        "isElite": true,
+        "maxHearts": 5,
         "reward": {
-          "stars": 3,
-          "exp": 25
+          "stars": 12,
+          "exp": 55
         }
       }
     ],
@@ -422,6 +441,7 @@ export const MAPS_CONFIG = {
       "x": 970,
       "y": 220,
       "questionId": "q_map4_boss",
+      "maxHearts": 8,
       "phases": [
         {
           "phase": 1,
@@ -433,12 +453,12 @@ export const MAPS_CONFIG = {
           "phase": 2,
           "name": "Thần Nhân Sư (Hào Quang Thái Dương)",
           "questionId": "q_map4_boss_p2",
-          "instruction": "Pha 2: Giải đố nước mát ốc đảo để kết bạn cùng Thần Nhân Sư!"
+          "instruction": "Pha 2: Giải đố phép trừ sa mạc kết bạn cùng Nhân Sư!"
         }
       ],
       "reward": {
-        "stars": 8,
-        "exp": 45,
+        "stars": 22,
+        "exp": 120,
         "unlockMap": "map5"
       }
     },
@@ -498,9 +518,10 @@ export const MAPS_CONFIG = {
         "y": 480,
         "spriteKey": "mon_sprout",
         "questionId": "q_map5_memory_canyon",
+        "maxHearts": 4,
         "reward": {
-          "stars": 3,
-          "exp": 30
+          "stars": 12,
+          "exp": 45
         }
       },
       {
@@ -510,9 +531,11 @@ export const MAPS_CONFIG = {
         "y": 450,
         "spriteKey": "mon_sprout",
         "questionId": "q_map5_pair_opposites",
+        "isElite": true,
+        "maxHearts": 5,
         "reward": {
-          "stars": 3,
-          "exp": 30
+          "stars": 15,
+          "exp": 65
         }
       }
     ],
@@ -522,6 +545,7 @@ export const MAPS_CONFIG = {
       "x": 1060,
       "y": 370,
       "questionId": "q_map5_boss",
+      "maxHearts": 9,
       "phases": [
         {
           "phase": 1,
@@ -537,8 +561,8 @@ export const MAPS_CONFIG = {
         }
       ],
       "reward": {
-        "stars": 9,
-        "exp": 50,
+        "stars": 28,
+        "exp": 160,
         "unlockMap": "map6"
       }
     },
@@ -598,9 +622,10 @@ export const MAPS_CONFIG = {
         "y": 480,
         "spriteKey": "mon_sprout",
         "questionId": "q_map6_memory_rainbow",
+        "maxHearts": 4,
         "reward": {
-          "stars": 4,
-          "exp": 35
+          "stars": 15,
+          "exp": 55
         }
       },
       {
@@ -610,9 +635,11 @@ export const MAPS_CONFIG = {
         "y": 450,
         "spriteKey": "mon_sprout",
         "questionId": "q_map6_pair_logic",
+        "isElite": true,
+        "maxHearts": 5,
         "reward": {
-          "stars": 4,
-          "exp": 35
+          "stars": 20,
+          "exp": 80
         }
       }
     ],
@@ -622,6 +649,7 @@ export const MAPS_CONFIG = {
       "x": 1070,
       "y": 360,
       "questionId": "q_map6_boss",
+      "maxHearts": 10,
       "phases": [
         {
           "phase": 1,
@@ -637,8 +665,8 @@ export const MAPS_CONFIG = {
         }
       ],
       "reward": {
-        "stars": 15,
-        "exp": 60,
+        "stars": 40,
+        "exp": 250,
         "unlockMap": null
       }
     },

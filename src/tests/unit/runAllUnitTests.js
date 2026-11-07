@@ -17,6 +17,7 @@ import { runVirtualJoystickTests } from './virtualJoystick.test.js';
 import { runFishingSkillAndHarderFishTests } from './fishingSkillAndHarderFish.test.js';
 import { runImagePairMatchingNoTextTests } from './imagePairMatchingNoText.test.js';
 import { runDragSortAndAntiRepeatTests } from './dragSortAndAntiRepeat.test.js';
+import { runMapDifficultyAndAuditionTests } from './mapDifficultyAndAudition.test.js';
 
 console.log('====================================================');
 console.log('  CHẠY TẤT CẢ UNIT TESTS (GIAI ĐOẠN 2 ĐẾN 6: REBUILD)');
@@ -59,8 +60,10 @@ try {
   runImagePairMatchingNoTextTests();
   console.log('');
   runDragSortAndAntiRepeatTests();
+  console.log('');
+  runMapDifficultyAndAuditionTests();
   console.log('\n====================================================');
-  console.log('  TẤT CẢ 18/18 BỘ UNIT TESTS ĐÃ VƯỢT QUA!   ');
+  console.log('  TẤT CẢ 19/19 BỘ UNIT TESTS ĐÃ VƯỢT QUA!   ');
   console.log('====================================================');
 } catch (err) {
   console.error('\n❌ TEST THẤT BẠI:', err);

@@ -38,6 +38,7 @@ import { GameLoadingScreen } from '../game/ui/GameLoadingScreen.js';
 import { MapTransitionOverlay } from '../game/ui/MapTransitionOverlay.js';
 import { MapLoadingOverlay } from '../game/ui/MapLoadingOverlay.js';
 import { MazeMinigameModal } from '../game/ui/MazeMinigameModal.js';
+import { AuditionMinigameModal } from '../game/ui/AuditionMinigameModal.js';
 import { VirtualJoystick } from '../game/ui/VirtualJoystick.js';
 import { gameStateMachine, GAME_STATES } from '../game/systems/gameStateMachine.js';
 import { CAMPAIGN_ZONES, SPECIAL_ZONES } from '../content/campaign/campaignGraph.js';
@@ -501,6 +502,14 @@ const mazeMinigameModal = new MazeMinigameModal({
 });
 window.__mazeModal = mazeMinigameModal;
 
+const auditionMinigameModal = new AuditionMinigameModal({
+  progressionSystem,
+  saveAdapter,
+  audioService,
+  hudController
+});
+window.__auditionModal = auditionMinigameModal;
+
 const battleArenaModal = new BattleArenaModal({
   cookingSystem,
   combatSystem,
@@ -792,6 +801,13 @@ if (petBtnTop) {
 }
 
 // Nút mở Mini Game Mê Cung Kỳ Diệu từ topbar
+const btnOpenAudition = document.getElementById('btn-open-audition');
+if (btnOpenAudition) {
+  btnOpenAudition.addEventListener('click', () => {
+    auditionMinigameModal.show();
+  });
+}
+
 const btnOpenMaze = document.getElementById('btn-open-maze');
 if (btnOpenMaze) {
   btnOpenMaze.addEventListener('click', () => {
@@ -1283,7 +1299,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.6.3';
+export const GAME_VERSION = '3.6.4';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {

@@ -1,4 +1,4 @@
-import { getQuestion, getRandomZoneQuestion, createMazeQuestion, shuffleQuestion } from '../../content/questions/questionBank.js';
+import { getQuestion, getRandomZoneQuestion, createMazeQuestion, createAuditionQuestion, shuffleQuestion } from '../../content/questions/questionBank.js';
 import { formatQuestionPromptHtml, resolveChoiceImage, resolveChoiceQuantityAndItem, escapeHtml } from './promptFormatter.js';
 
 // Assets imported directly with ?url so Vite bundles and resolves them with guaranteed valid URLs
@@ -1063,70 +1063,167 @@ export class BattleArenaModal {
    * Tạo bộ câu hỏi cho trận chiến (5 câu cho Boss 5 tim, 3 câu cho Quái thường 3 tim)
    * Tích hợp Mini Game Mê Cung Kỳ Diệu trực tiếp vào các lượt câu hỏi khi vượt ải
    */
+    calculateMonsterHearts(encounter) {
+    if (!encounter) return 3;
+    const isBoss = Boolean(encounter.phases || encounter.isBoss);
+    if (isBoss) {
+      if (encounter.maxHearts) return encounter.maxHearts;
+      const mapNum = encounter.mapOrder || (encounter.mapId ? Number(String(encounter.mapId).replace(/\D/g, '')) : 1) || 1;
+      return 4 + Math.max(1, Math.min(6, mapNum)); // Map 1: 5, Map 2: 6, Map 3: 7, Map 4: 8, Map 5: 9, Map 6: 10
+    }
+    return encounter.maxHearts || (encounter.isElite ? 5 : 3);
+  }
+
+  /**
+   * Tạo chuỗi câu hỏi chiến đấu tương ứng với số tim của quái/Boss
+   * Đảm bảo tính đa dạng, ngẫu nhiên, không trùng lặp và tích hợp Audition + Mê Cung
+   */
   getEncounterQuestions(encounter) {
     const isBoss = Boolean(encounter.phases || encounter.isBoss);
-    const targetCount = isBoss ? 5 : 3;
-    const knowledgeQuestions = [];
+    const targetCount = this.calculateMonsterHearts(encounter);
+    const mapId = encounter.mapId || (encounter.id?.includes('map') ? ('map' + encounter.id.split('map')[1].charAt(0)) : 'map1');
+    const questions = [];
+    const usedIds = new Set();
 
-    // 1. Nếu là Boss có các pha hoặc câu hỏi định sẵn
-    if (encounter.phases && encounter.phases.length > 0) {
+    // 1. Nếu là Boss có các pha chiến đấu định sẵn
+    const bossPhaseQuestions = [];
+    if (isBoss && encounter.phases && encounter.phases.length > 0) {
       encounter.phases.forEach((p) => {
         if (p.questionId) {
           const q = getQuestion(p.questionId);
-          if (q && !knowledgeQuestions.some(item => item.id === q.id)) knowledgeQuestions.push(q);
+          if (q && !usedIds.has(q.id)) {
+            bossPhaseQuestions.push(q);
+            usedIds.add(q.id);
+          }
         }
       });
-      if (encounter.questionId && knowledgeQuestions.length < targetCount) {
-        const q = getQuestion(encounter.questionId);
-        if (q && !knowledgeQuestions.some(item => item.id === q.id)) knowledgeQuestions.push(q);
-      }
-    } else if (encounter.questionId) {
-      const q = getQuestion(encounter.questionId);
-      if (q) knowledgeQuestions.push(q);
     }
 
-    // 2. Điền bổ sung các câu hỏi khác trong ngân hàng câu hỏi
-    const mapId = encounter.mapId || (encounter.id?.includes('map') ? encounter.id.split('_')[1] : 'map1');
-    let safetyCounter = 0;
-    while (knowledgeQuestions.length < targetCount && safetyCounter < 30) {
-      safetyCounter++;
-      const excludeIds = knowledgeQuestions.map(q => q.id);
-      const extraQ = getRandomZoneQuestion(mapId, excludeIds);
-      if (extraQ && !knowledgeQuestions.some(q => q.id === extraQ.id)) {
-        knowledgeQuestions.push(extraQ);
-      } else {
-        break;
-      }
+    // 2. Chuẩn bị các minigame xen kẽ: Audition và Mê Cung
+    const auditionQ = createAuditionQuestion({ encounter, phase: 1, isBoss });
+    const mazeQ = createMazeQuestion({ encounter, phase: 1, isBoss });
+
+    // 3. Chuẩn bị câu hỏi định sẵn của encounter (nếu có)
+    let encounterSpecificQ = null;
+    if (encounter.questionId && !usedIds.has(encounter.questionId)) {
+      encounterSpecificQ = getQuestion(encounter.questionId);
     }
 
-    // 3. Dự phòng câu hỏi nếu ngân hàng chưa đủ số lượng
-    const fallbackCandidates = Object.values(QUESTION_BANK).filter(
-      q => !q.id.includes('boss') && !knowledgeQuestions.some(item => item.id === q.id)
-    );
-    let fbIdx = 0;
-    while (knowledgeQuestions.length < targetCount && fbIdx < fallbackCandidates.length) {
-      knowledgeQuestions.push(fallbackCandidates[fbIdx]);
-      fbIdx++;
-    }
-
-    // 4. Tích hợp Mini Game Mê Cung Kỳ Diệu trực tiếp vào chuỗi câu hỏi vượt ải
-    const list = [];
     if (isBoss) {
-      // Boss 5 tim: Q1 (Pha 1) -> Q2 (Mê cung giải mã) -> Q3 (Pha 2) -> Q4 (Mê cung cao trào) -> Q5 (Dứt điểm)
-      list.push(knowledgeQuestions[0]);
-      list.push(createMazeQuestion({ encounter, phase: 1, isBoss: true }));
-      list.push(knowledgeQuestions[1] || getRandomZoneQuestion(mapId, list.map(q => q?.id)));
-      list.push(createMazeQuestion({ encounter, phase: 2, isBoss: true }));
-      list.push(knowledgeQuestions[2] || getRandomZoneQuestion(mapId, list.map(q => q?.id)));
+      // Cấu trúc Boss Battle (5 đến 10 tim):
+      // Câu 1: Pha 1 của Boss
+      if (bossPhaseQuestions[0]) {
+        questions.push(bossPhaseQuestions[0]);
+      } else {
+        const q = getRandomZoneQuestion(mapId, Array.from(usedIds));
+        if (q) { questions.push(q); usedIds.add(q.id); }
+      }
+
+      // Câu 2: Mini Game Audition Nhịp Điệu Cầu Vồng (khiêu vũ âm nhạc)
+      questions.push(auditionQ);
+      usedIds.add(auditionQ.id);
+
+      // Câu 3: Câu hỏi toán / tư duy ngẫu nhiên từ map
+      const qMid = getRandomZoneQuestion(mapId, Array.from(usedIds));
+      if (qMid) { questions.push(qMid); usedIds.add(qMid.id); }
+
+      // Câu 4: Mini Game Mê Cung Vượt Ải (ma trận kỳ thú)
+      questions.push(mazeQ);
+      usedIds.add(mazeQ.id);
+
+      // Câu 5: Pha 2 của Boss
+      if (bossPhaseQuestions[1]) {
+        questions.push(bossPhaseQuestions[1]);
+      } else {
+        const q = getRandomZoneQuestion(mapId, Array.from(usedIds));
+        if (q) { questions.push(q); usedIds.add(q.id); }
+      }
+
+      // Các câu tiếp theo cho Boss các map cao (6, 7, 8, 9, 10 tim)
+      while (questions.length < targetCount) {
+        if (questions.length === 5) {
+          const auditionQ2 = createAuditionQuestion({ encounter, phase: 2, isBoss: true });
+          questions.push(auditionQ2);
+          usedIds.add(auditionQ2.id);
+        } else if (questions.length === 7) {
+          const mazeQ2 = createMazeQuestion({ encounter, phase: 2, isBoss: true });
+          questions.push(mazeQ2);
+          usedIds.add(mazeQ2.id);
+        } else {
+          const extraQ = getRandomZoneQuestion(mapId, Array.from(usedIds));
+          if (extraQ && !usedIds.has(extraQ.id)) {
+            questions.push(extraQ);
+            usedIds.add(extraQ.id);
+          } else {
+            break;
+          }
+        }
+      }
     } else {
-      // Quái thường 3 tim: Q1 (Kiến thức) -> Q2 (Mê cung vượt ải) -> Q3 (Kiến thức kết liễu)
-      list.push(knowledgeQuestions[0]);
-      list.push(createMazeQuestion({ encounter, phase: 1, isBoss: false }));
-      const q3 = knowledgeQuestions[1] || getRandomZoneQuestion(mapId, [knowledgeQuestions[0]?.id]);
-      list.push(q3);
+      // Quái thường (3 hoặc 5 tim):
+      if (targetCount === 5) {
+        // Quái Tinh Anh 5 tim:
+        // Q1: Câu hỏi toán / logic ngẫu nhiên
+        const q1 = getRandomZoneQuestion(mapId, Array.from(usedIds));
+        if (q1) { questions.push(q1); usedIds.add(q1.id); }
+
+        // Q2: Mini Game Audition Nhịp Điệu
+        questions.push(auditionQ);
+        usedIds.add(auditionQ.id);
+
+        // Q3: Câu hỏi đặc thù của quái (nếu có) hoặc toán tư duy
+        if (encounterSpecificQ && !usedIds.has(encounterSpecificQ.id)) {
+          questions.push(encounterSpecificQ);
+          usedIds.add(encounterSpecificQ.id);
+        } else {
+          const q3 = getRandomZoneQuestion(mapId, Array.from(usedIds));
+          if (q3) { questions.push(q3); usedIds.add(q3.id); }
+        }
+
+        // Q4: Mini Game Mê Cung
+        questions.push(mazeQ);
+        usedIds.add(mazeQ.id);
+
+        // Q5: Câu hỏi kết liễu
+        const q5 = getRandomZoneQuestion(mapId, Array.from(usedIds));
+        if (q5) { questions.push(q5); usedIds.add(q5.id); }
+      } else {
+        // Quái thường 3 tim:
+        // Đan xen ngẫu nhiên giữa Audition và Mê Cung để không lặp lại:
+        const useAudition = Math.random() < 0.5;
+        const miniGame = useAudition ? auditionQ : mazeQ;
+
+        // Q1: 50% câu hỏi đặc thù, 50% câu hỏi ngẫu nhiên từ ngân hàng
+        if (encounterSpecificQ && Math.random() < 0.5 && !usedIds.has(encounterSpecificQ.id)) {
+          questions.push(encounterSpecificQ);
+          usedIds.add(encounterSpecificQ.id);
+        } else {
+          const q1 = getRandomZoneQuestion(mapId, Array.from(usedIds));
+          if (q1) { questions.push(q1); usedIds.add(q1.id); }
+        }
+
+        // Q2: Minigame sôi động
+        questions.push(miniGame);
+        usedIds.add(miniGame.id);
+
+        // Q3: Câu hỏi kết liễu
+        const q3 = getRandomZoneQuestion(mapId, Array.from(usedIds)) || encounterSpecificQ;
+        if (q3) { questions.push(q3); usedIds.add(q3.id); }
+      }
+
+      // Đảm bảo đủ số lượng câu hỏi bằng đúng số tim
+      while (questions.length < targetCount) {
+        const extraQ = getRandomZoneQuestion(mapId, Array.from(usedIds));
+        if (extraQ && !usedIds.has(extraQ.id)) {
+          questions.push(extraQ);
+          usedIds.add(extraQ.id);
+        } else {
+          break;
+        }
+      }
     }
 
-    return list.slice(0, targetCount).map(q => shuffleQuestion(q));
+    return questions.slice(0, targetCount).map(q => shuffleQuestion(q));
   }
 
   /**
@@ -1143,7 +1240,7 @@ export class BattleArenaModal {
     this.energyUsed = false;
     this.mealShield = false;
     this.updateEnergyButton();
-    this.monsterMaxHearts = this.isBoss ? 5 : 3; // 5 tim cho Boss, 3 tim cho quái nhỏ
+    this.monsterMaxHearts = this.calculateMonsterHearts(encounter);
     this.monsterHearts = this.monsterMaxHearts;
     this.isTurnLocked = false;
 
@@ -1159,7 +1256,13 @@ export class BattleArenaModal {
     // Hiển thị tên & Banner
     if (this.arenaMonsterName) this.arenaMonsterName.textContent = encounter.name;
     if (this.arenaTitleBanner) {
-      this.arenaTitleBanner.textContent = this.isBoss ? `🔥 ĐẠI THỬ THÁCH 5 TIM: ${encounter.name}` : `⚔️ ĐẤU TRƯỜNG GIẢI CỨU!`;
+      if (this.isBoss) {
+        this.arenaTitleBanner.textContent = `🔥 ĐẠI THỬ THÁCH ${this.monsterMaxHearts} TIM: ${encounter.name}`;
+      } else if (encounter.isElite || this.monsterMaxHearts >= 5) {
+        this.arenaTitleBanner.textContent = `⭐ QUÁI TINH ANH ${this.monsterMaxHearts} TIM: ${encounter.name}`;
+      } else {
+        this.arenaTitleBanner.textContent = `⚔️ ĐẤU TRƯỜNG GIẢI CỨU (${this.monsterMaxHearts} TIM)`;
+      }
     }
     if (this.arenaBtnBossSkill) {
       this.arenaBtnBossSkill.hidden = !this.isBoss;
@@ -1339,6 +1442,10 @@ export class BattleArenaModal {
       this.renderDragSort(question);
       return;
     }
+    if (question.type === 'audition_rhythm' || question.isAudition) {
+      this.renderAuditionRhythm(question);
+      return;
+    }
 
     if (question.isMaze) {
       const card = document.createElement('div');
@@ -1503,7 +1610,7 @@ export class BattleArenaModal {
     const cards = [...rawCards].sort(() => Math.random() - 0.5);
     const totalPairs = question.pairs || Math.floor(cards.length / 2);
     // Quy tắc số lần sai tối đa: Cho phép bé lật sai nhiều lần (tối thiểu 5 lần hoặc tương ứng với số thẻ) để ghi nhớ vị trí thẻ phù hợp lứa tuổi 5-6 tuổi
-    const maxMistakes = Math.max(5, Math.ceil(cards.length * 0.8));
+    const maxMistakes = question.maxMistakes !== undefined ? question.maxMistakes : Math.max(2, Math.floor(cards.length / 2));
     let matchedPairs = 0;
     let mistakeCount = 0;
     let selected = [];
@@ -2421,6 +2528,221 @@ export class BattleArenaModal {
   /**
    * KỸ NĂNG BÉ SÂU: CẦU XOÁY NĂNG LƯỢNG + VỤ NỔ EXPLOSION_5
    */
+  
+  /**
+   * MINI GAME AUDITION NHỊP ĐIỆU CẦU VỒNG (TRỰC TIẾP TRÊN SÀN ĐẤU BATTLE ARENA)
+   * Trẻ canh viên bi vào vùng đỏ Perfect và bấm nút BẮT NHỊP hoặc phím Space/Enter
+   */
+  renderAuditionRhythm(question) {
+    if (!this.answersGrid || !question) return;
+    this.answersGrid.replaceChildren();
+
+    this.stopBattleAuditionLoop();
+
+    const target = question.target || 3;
+    let score = 0;
+    let ballPos = 10;
+    let ballDir = 1;
+    let ballSpeed = 70; // % per second, tốc độ vừa vặn cho mắt trẻ 5-6 tuổi
+    let lastTime = 0;
+    let isLocked = false;
+    let mistakes = 0;
+    const maxMistakes = 4;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'arena-interactive-card audition-battle-container';
+
+    const banner = document.createElement('div');
+    banner.className = 'interactive-instruction-banner audition-battle-banner';
+    banner.innerHTML = '<span>🎵 <b>VŨ ĐIỆU AUDITION CẦU VỒNG</b>: Canh viên bi vào <b>VÙNG ĐỎ</b> rồi bấm <b>BẮT NHỊP</b> (hoặc phím CÁCH)!</span>';
+    wrap.appendChild(banner);
+
+    const consoleDiv = document.createElement('div');
+    consoleDiv.className = 'audition-console battle-audition-console';
+    consoleDiv.innerHTML = `
+      <div class="audition-header-row">
+        <div class="audition-title-box">
+          <span class="audition-icon">🎶</span>
+          <strong class="audition-title">Bắt đúng nhịp để giải phóng Sức Mạnh Âm Nhạc Cầu Vồng!</strong>
+        </div>
+        <div class="audition-score-pill">
+          <span class="audition-score-label">Nhịp điệu:</span>
+          <strong class="audition-score-text">0/${target}</strong>
+          <div class="audition-stars-meter">
+            ${Array.from({ length: target }).map(() => '<span class="audition-star"><i class="star-bead"></i></span>').join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="audition-rail-track" aria-label="Thanh canh nhịp Audition">
+        <div class="audition-red-target-zone">
+          <span class="zone-label">PERFECT</span>
+        </div>
+        <div class="audition-beat-marble" style="left: ${ballPos}%"></div>
+      </div>
+
+      <div class="audition-trigger-row">
+        <button type="button" class="btn-audition-trigger btn-battle-audition animate-btn-pulse" data-action="battle-rhythm-hit">
+          🎵 BẮT NHỊP (SPACE) ⚡
+        </button>
+        <span class="audition-feedback-badge">Canh bi vào vùng đỏ rồi bấm nhé!</span>
+      </div>
+    `;
+    wrap.appendChild(consoleDiv);
+    this.answersGrid.appendChild(wrap);
+
+    const ballEl = consoleDiv.querySelector('.audition-beat-marble');
+    const scoreValEl = consoleDiv.querySelector('.audition-score-text');
+    const starsMeterEl = consoleDiv.querySelector('.audition-stars-meter');
+    const feedbackEl = consoleDiv.querySelector('.audition-feedback-badge');
+    const triggerBtn = consoleDiv.querySelector('[data-action="battle-rhythm-hit"]');
+    const trackEl = consoleDiv.querySelector('.audition-rail-track');
+    const targetZoneEl = consoleDiv.querySelector('.audition-red-target-zone');
+
+    const updateScoreUI = (feedbackText, feedbackType) => {
+      if (scoreValEl) scoreValEl.textContent = `${score}/${target}`;
+      if (starsMeterEl) {
+        starsMeterEl.innerHTML = Array.from({ length: target }).map((_, i) =>
+          `<span class="audition-star ${i < score ? 'is-lit' : ''}">${i < score ? '⭐' : '☆'}</span>`
+        ).join('');
+      }
+      if (feedbackEl) {
+        feedbackEl.textContent = feedbackText;
+        feedbackEl.className = `audition-feedback-badge ${feedbackType || ''}`;
+      }
+    };
+
+    const triggerHitFX = (isHit) => {
+      if (isHit) {
+        trackEl?.classList.remove('track-hit-flash');
+        void trackEl?.offsetWidth;
+        trackEl?.classList.add('track-hit-flash');
+        targetZoneEl?.classList.add('zone-hit-flash');
+        setTimeout(() => targetZoneEl?.classList.remove('zone-hit-flash'), 250);
+        ballEl?.classList.add('marble-hit-burst');
+        setTimeout(() => ballEl?.classList.remove('marble-hit-burst'), 250);
+      } else {
+        trackEl?.classList.remove('track-miss-shake');
+        void trackEl?.offsetWidth;
+        trackEl?.classList.add('track-miss-shake');
+      }
+    };
+
+    const evaluateHit = () => {
+      if (this.isTurnLocked || isLocked) return;
+
+      const isPerfect = ballPos >= 65 && ballPos <= 85;
+      const isGreat = ballPos >= 58 && ballPos <= 92;
+
+      if (isPerfect || isGreat) {
+        score++;
+        isLocked = true;
+        const isSuper = isPerfect;
+        const msg = isSuper ? `🌟 PERFECT! +1 Nhịp (${score}/${target})` : `✨ GREAT! +1 Nhịp (${score}/${target})`;
+        updateScoreUI(msg, 'hit');
+        triggerHitFX(true);
+
+        if (this.audioService?.playChime) {
+          this.audioService.playChime(600 + score * 100, 0.15);
+        }
+
+        if (score >= target) {
+          this.isTurnLocked = true;
+          this.stopBattleAuditionLoop();
+          banner.innerHTML = '<span>🎉 <b>XUẤT SẮC!</b> Bé đã hoàn thành Vũ Điệu Cầu Vồng! 🌈✨</span>';
+          banner.style.background = '#dcfce7';
+          banner.style.borderColor = '#22c55e';
+          banner.style.color = '#15803d';
+
+          setTimeout(() => {
+            this.executeHeroAttack();
+          }, 600);
+          return;
+        }
+
+        setTimeout(() => {
+          isLocked = false;
+        }, 220);
+      } else {
+        mistakes++;
+        updateScoreUI('Chưa trúng vùng đỏ rồi! Bé canh lại nhé!', 'miss');
+        triggerHitFX(false);
+        if (this.audioService?.playChime) {
+          this.audioService.playChime(280, 0.1);
+        }
+
+        if (mistakes >= maxMistakes) {
+          this.isTurnLocked = true;
+          this.stopBattleAuditionLoop();
+          banner.innerHTML = '<span>💥 Quái vật phản công! Bé hãy giữ nhịp điệu và thử lại nhé! 💥</span>';
+          banner.style.background = '#fee2e2';
+          banner.style.borderColor = '#ef4444';
+          banner.style.color = '#b91c1c';
+
+          if (this.audioService?.playPlayerHurt) {
+            this.audioService.playPlayerHurt();
+          }
+
+          setTimeout(() => {
+            this.executeMonsterAttack();
+          }, 800);
+          return;
+        }
+      }
+    };
+
+    const animate = (now) => {
+      if (!this._battleAuditionActive) return;
+      if (!lastTime) lastTime = now;
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+
+      ballPos += ballDir * ballSpeed * dt;
+      if (ballPos >= 96) {
+        ballPos = 96;
+        ballDir = -1;
+      } else if (ballPos <= 4) {
+        ballPos = 4;
+        ballDir = 1;
+      }
+
+      if (ballEl) {
+        ballEl.style.left = `${ballPos}%`;
+      }
+
+      this._battleAuditionAnimId = requestAnimationFrame(animate);
+    };
+
+    this._battleAuditionActive = true;
+    this._battleAuditionAnimId = requestAnimationFrame(animate);
+
+    triggerBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      evaluateHit();
+    });
+
+    this._battleAuditionKeyHandler = (e) => {
+      if (this.arenaModal?.hidden) return;
+      if (e.code === 'Space' || e.key === ' ' || e.code === 'Enter') {
+        e.preventDefault();
+        evaluateHit();
+      }
+    };
+    window.addEventListener('keydown', this._battleAuditionKeyHandler);
+  }
+
+  stopBattleAuditionLoop() {
+    this._battleAuditionActive = false;
+    if (this._battleAuditionAnimId) {
+      cancelAnimationFrame(this._battleAuditionAnimId);
+      this._battleAuditionAnimId = null;
+    }
+    if (this._battleAuditionKeyHandler) {
+      window.removeEventListener('keydown', this._battleAuditionKeyHandler);
+      this._battleAuditionKeyHandler = null;
+    }
+  }
+
   executeHeroAttack() {
     if (this.audioService) this.audioService.playAttack();
 
@@ -3138,6 +3460,7 @@ export class BattleArenaModal {
   }
 
   closeArena() {
+    this.stopBattleAuditionLoop();
     const defeatOverlay = document.getElementById('arena-defeat-overlay');
     if (defeatOverlay) {
       defeatOverlay.style.display = 'none';
