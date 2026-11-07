@@ -1148,6 +1148,14 @@ export class WorldScene extends Phaser.Scene {
       const station = this.mapConfig?.petStations?.find(s => s.type === type || (type === 'potty' && s.type === 'toilet'));
       if (station) this.handlePetStationInteraction(station);
     });
+
+    // Báo hiệu bản đồ và tài nguyên sẵn sàng 100% để UI / HUD / Loading Screen luôn được kích hoạt
+    try {
+      this.setWorldScale?.();
+    } catch {}
+    window.dispatchEvent(new CustomEvent('game:map-ready', {
+      detail: { mapConfig: this.mapConfig || getMapConfig(this.currentMapId) }
+    }));
   }
 
   /**

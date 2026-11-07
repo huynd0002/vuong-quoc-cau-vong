@@ -5,7 +5,7 @@
 
 // rainbow-kingdom-cache-v1 (legacy support)
 const LEGACY_CACHE = 'rainbow-kingdom-cache-v1';
-const CACHE_NAME = 'rainbow-kingdom-cache-v3.5.8';
+const CACHE_NAME = 'rainbow-kingdom-cache-v3.5.9';
 
 const STATIC_ASSETS = [
   '/',
@@ -76,12 +76,19 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
       return fetch(request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+        if (!networkResponse || networkResponse.status !== 200) {
           return networkResponse;
         }
-        const cloned = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
+        if (networkResponse.type === 'basic' || networkResponse.type === 'cors') {
+          try {
+            const cloned = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned)).catch(() => {});
+          } catch {}
+        }
         return networkResponse;
+      }).catch((err) => {
+        console.warn('[ServiceWorker] Lỗi nạp tài nguyên tĩnh:', err);
+        return caches.match(request);
       });
     })
   );

@@ -29,6 +29,8 @@ export class GameLoadingScreen {
     this.worldReady = false;
     this.animInterval = null;
     this.tipInterval = null;
+    this.heartbeatInterval = null;
+    this.safetyWatchdogTimeout = null;
 
     this.tips = [
       '🌱 Đang gieo mầm hoa thơm trong khu vườn cổ tích...',
@@ -123,6 +125,12 @@ export class GameLoadingScreen {
     };
     this.onLoadComplete = () => {
       this.setProgress(99);
+      setTimeout(() => {
+        if (!this.isDone) {
+          this.worldReady = true;
+          this.finish();
+        }
+      }, 600);
     };
 
     this.onMapReady = () => {
@@ -165,6 +173,26 @@ export class GameLoadingScreen {
         }, 150);
       }
     }, 1200);
+
+    // 3. Heartbeat tiến trình thông minh: Nhẹ nhàng đẩy thanh loading từ 10% đến 88%
+    // để bé không bao giờ bị cảm giác game đơ hay đứng im ở 10%
+    this.heartbeatInterval = setInterval(() => {
+      if (this.isDone) return;
+      if (this.targetProgress < 88) {
+        const nextVal = Math.min(88, this.targetProgress + Math.floor(Math.random() * 3) + 2);
+        this.setProgress(nextVal);
+      }
+    }, 280);
+
+    // 4. Watchdog an toàn: Sau 13 giây nếu chưa xong, tự động kích hoạt vào game
+    this.safetyWatchdogTimeout = setTimeout(() => {
+      if (!this.isDone) {
+        console.warn('[GameLoadingScreen] Watchdog an toàn: Tự động kích hoạt vào game!');
+        this.worldReady = true;
+        this.targetProgress = 100;
+        this.finish();
+      }
+    }, 13000);
   }
 
   setProgress(percent) {
@@ -182,13 +210,15 @@ export class GameLoadingScreen {
   }
 
   finish() {
-    if (!this.worldReady) return;
+    this.worldReady = true;
     this.targetProgress = 100;
   }
 
   handleComplete() {
     clearInterval(this.animInterval);
     clearInterval(this.tipInterval);
+    if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
+    if (this.safetyWatchdogTimeout) clearTimeout(this.safetyWatchdogTimeout);
     window.removeEventListener('game:load-progress', this.onLoadProgress);
     window.removeEventListener('game:load-complete', this.onLoadComplete);
     window.removeEventListener('game:map-ready', this.onMapReady);
