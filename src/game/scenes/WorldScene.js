@@ -1456,23 +1456,33 @@ export class WorldScene extends Phaser.Scene {
       charmedSprite.play('anim_charmed');
     }
 
-    const barWidth = 90;
-    const barHeight = 10;
-    const barBg = this.add.graphics().setDepth(30);
-    barBg.fillStyle(0x0f172a, 0.85);
-    barBg.fillRoundedRect(hx - barWidth / 2, hy - 26, barWidth, barHeight, 5);
-    barBg.lineStyle(1.5, 0x38bdf8, 1);
-    barBg.strokeRoundedRect(hx - barWidth / 2, hy - 26, barWidth, barHeight, 5);
+    // Tính toán tọa độ thanh loading luôn nằm PHÍA TRÊN danh hiệu để không bị che khuất (v3.7.3)
+    const badgeY = (this.hero?.headBadgeContainer?.active && typeof this.hero.headBadgeContainer.y === 'number')
+      ? this.hero.headBadgeContainer.y
+      : (hy - (this.hero?.getHeadBadgeOffsetY ? this.hero.getHeadBadgeOffsetY() : 84));
 
-    const barFill = this.add.graphics().setDepth(31);
-    const label = this.add.text(hx, hy - 36, 'Đang dùng... 0%', {
+    const barY = Math.round(badgeY - 26);
+    const labelY = Math.round(barY - 14);
+
+    const barWidth = 92;
+    const barHeight = 11;
+    const baseDepth = Math.max(1000, Math.floor(hy + 200));
+
+    const barBg = this.add.graphics().setDepth(baseDepth);
+    barBg.fillStyle(0x0f172a, 0.88);
+    barBg.fillRoundedRect(hx - barWidth / 2, barY - barHeight / 2, barWidth, barHeight, 5);
+    barBg.lineStyle(1.5, 0x38bdf8, 1);
+    barBg.strokeRoundedRect(hx - barWidth / 2, barY - barHeight / 2, barWidth, barHeight, 5);
+
+    const barFill = this.add.graphics().setDepth(baseDepth + 1);
+    const label = this.add.text(hx, labelY, 'Đang dùng... 0%', {
       fontSize: '11px',
       fontFamily: 'Nunito, sans-serif',
       fontStyle: 'bold',
       color: '#ffffff',
       stroke: '#0369a1',
       strokeThickness: 3
-    }).setOrigin(0.5, 0.5).setDepth(32);
+    }).setOrigin(0.5, 0.5).setDepth(baseDepth + 2);
 
     const durationMs = 2200;
     const startTime = Date.now();
@@ -1487,7 +1497,7 @@ export class WorldScene extends Phaser.Scene {
         barFill.clear();
         barFill.fillStyle(0x4ade80, 1);
         const fillW = Math.max(0, ((barWidth - 4) * pct) / 100);
-        barFill.fillRoundedRect(hx - (barWidth - 4) / 2, hy - 24, fillW, barHeight - 4, 3);
+        barFill.fillRoundedRect(hx - (barWidth - 4) / 2, barY - (barHeight - 4) / 2, fillW, barHeight - 4, 3);
 
         label.setText(`Đang dùng... ${pct}%`);
 
@@ -1504,7 +1514,7 @@ export class WorldScene extends Phaser.Scene {
           window.__audioService?.playChime?.(659, 0.25);
           setTimeout(() => window.__audioService?.playChime?.(880, 0.35), 150);
 
-          this.spawnFloatingPopup(hx, hy - 50, '❤️ ĐÃ DÙNG MÓN THÀNH CÔNG! Tim đã hồi phục! ✨', '#4ade80');
+          this.spawnFloatingPopup(hx, barY - 14, '❤️ ĐÃ DÙNG MÓN THÀNH CÔNG! Tim đã hồi phục! ✨', '#4ade80');
           if (typeof window.__updateHeroVitalsHud === 'function') {
             window.__updateHeroVitalsHud();
           }

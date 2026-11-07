@@ -708,44 +708,51 @@ export class Hero {
   getX() { return this.sprite.x; }
   getY() { return this.sprite.y; }
 
+  getHeadBadgeOffsetY() {
+    const hasHeadAcc = Boolean(this.accessoryId && ACCESSORY_RENDER_CONFIG[this.accessoryId]?.slot === 'head');
+    // Đẩy danh hiệu lên cao hơn một tí để không che phụ kiện nón/tai thú (v3.7.3)
+    const baseOffset = this.skin === 'knight' ? 74 : 82;
+    return hasHeadAcc ? (baseOffset + 6) : baseOffset;
+  }
+
   setHeadBadge(badgeData) {
     this.clearHeadBadge();
-    this.clearAccessory();
     if (!badgeData || !this.scene?.add) return;
 
     this.headBadgeData = badgeData;
     const badgeText = `${badgeData.icon || '🏅'} ${badgeData.shortTitle || badgeData.title || ''}`;
 
-    const headOffsetY = this.skin === 'knight' ? 58 : 64;
+    const headOffsetY = this.getHeadBadgeOffsetY();
     this.headBadgeContainer = this.scene.add.container(this.getX(), this.getY() - headOffsetY);
     this.headBadgeContainer.setDepth(Math.floor(this.getY() + 85));
 
     // Inner container for smooth bobbing float tween
     const inner = this.scene.add.container(0, 0);
 
+    // Kích thước thu nhỏ 10% theo yêu cầu người dùng (v3.7.3)
     const label = this.scene.add.text(0, 0, badgeText, {
       fontFamily: '"Nunito", "Quicksand", system-ui, sans-serif',
-      fontSize: '12.5px',
+      fontSize: '11px',
       fontStyle: 'bold',
       color: '#ffffff',
       stroke: '#3b1704',
-      strokeThickness: 3,
+      strokeThickness: 2.6,
       shadow: { offsetX: 0, offsetY: 1, color: 'rgba(0,0,0,0.5)', blur: 2, fill: true }
     }).setOrigin(0.5);
 
-    const padX = 12;
-    const padY = 5;
-    const pillWidth = Math.max(74, label.width + padX * 2);
-    const pillHeight = Math.max(25, label.height + padY * 2);
+    const padX = 10;
+    const padY = 4;
+    const pillWidth = Math.max(66, Math.round(label.width + padX * 2));
+    const pillHeight = Math.max(22, Math.round(label.height + padY * 2));
 
     const bg = this.scene.add.graphics();
-    bg.lineStyle(2.5, 0xfbbf24, 0.95);
+    bg.lineStyle(2.2, 0xfbbf24, 0.95);
     bg.fillStyle(0x0f172a, 0.82);
     bg.fillRoundedRect(-pillWidth / 2, -pillHeight / 2, pillWidth, pillHeight, pillHeight / 2);
     bg.strokeRoundedRect(-pillWidth / 2, -pillHeight / 2, pillWidth, pillHeight, pillHeight / 2);
 
-    const leftStar = this.scene.add.text(-pillWidth / 2 + 7, -1, '✨', { fontSize: '9px' }).setOrigin(0.5);
-    const rightStar = this.scene.add.text(pillWidth / 2 - 7, -1, '✨', { fontSize: '9px' }).setOrigin(0.5);
+    const leftStar = this.scene.add.text(-pillWidth / 2 + 6, -1, '✨', { fontSize: '8px' }).setOrigin(0.5);
+    const rightStar = this.scene.add.text(pillWidth / 2 - 6, -1, '✨', { fontSize: '8px' }).setOrigin(0.5);
 
     inner.add([bg, label, leftStar, rightStar]);
     this.headBadgeContainer.add(inner);
@@ -776,7 +783,7 @@ export class Hero {
 
   updateHeadBadge() {
     if (this.headBadgeContainer?.active) {
-      const headOffsetY = this.skin === 'knight' ? 58 : 64;
+      const headOffsetY = this.getHeadBadgeOffsetY();
       this.headBadgeContainer.setPosition(this.getX(), this.getY() - headOffsetY);
       this.headBadgeContainer.setDepth(Math.floor(this.getY() + 85));
     }
@@ -808,6 +815,7 @@ export class Hero {
 
       this.updateAccessory();
     }
+    this.updateHeadBadge();
   }
 
   clearAccessory() {
@@ -820,6 +828,7 @@ export class Hero {
       this.accessorySprite = null;
     }
     this.accessoryId = null;
+    this.updateHeadBadge();
   }
 
   updateAccessory() {
