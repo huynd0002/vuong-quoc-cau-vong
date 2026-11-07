@@ -414,9 +414,10 @@ export class BattleArenaModal {
         hit: bossDragonHitUrl,
         celebrate: bossDragonCelebrateUrl,
         fallback: bossDragonUrl,
-        flipIdle: false, // SỬA: Ảnh gốc Rồng Thần đã nhìn sang trái về phía Bé Sâu (không lật)
-        flipAttack: true, // SỬA: Đòn phun lửa gốc quay sang phải -> Cần lật sang trái về phía Bé Sâu
-        flipHit: true
+        flipIdle: true, // SỬA v3.7.4: Lật sang trái scaleX(-1) để Rồng Thần nhìn thẳng về phía Bé Sam/Bé Sâu!
+        flipAttack: true, // SỬA v3.7.4: Đòn phun lửa gốc quay sang phải -> Cần lật sang trái về phía Bé Sam
+        flipHit: true,
+        flipCelebrate: true
       };
     }
     const key = String(encounter?.spriteKey || encounter?.monsterId || encounter?.id || '').toLowerCase();
@@ -1229,7 +1230,7 @@ export class BattleArenaModal {
   openArena(encounter, isBoss = false) {
     if (this.arenaModal && !this.arenaModal.hidden) return;
     this.currentEncounter = encounter;
-    this.isBoss = Boolean(isBoss || encounter.phases || encounter.isBoss || this.isBoss);
+    this.isBoss = Boolean(isBoss || encounter?.phases || encounter?.isBoss);
     const meal = this.cookingSystem?.beginBattle() || { hearts: 3, maxHearts: 3, bonus: 0 };
     this.heroHearts = meal.hearts;
     this.heroMaxHearts = meal.maxHearts;
@@ -3256,7 +3257,8 @@ export class BattleArenaModal {
     const monsterAssets = this.getMonsterAssets(this.currentEncounter);
     if (this.arenaMonsterImg) {
       this.arenaMonsterImg.src = monsterAssets.celebrate;
-      this.arenaMonsterImg.style.transform = 'none';
+      const celFlip = (monsterAssets.flipCelebrate ?? monsterAssets.flipIdle) ? 'scaleX(-1)' : 'none';
+      this.arenaMonsterImg.style.transform = this.getMonsterTransform(celFlip);
     }
     if (this.arenaHeroImg) {
       this.arenaHeroImg.src = this.getHeroSkinAssets().celebrate;
@@ -3398,7 +3400,7 @@ export class BattleArenaModal {
         const defaultSize = this.isBoss ? '225px' : '170px';
         this.arenaMonsterImg.style.width = defaultSize;
         this.arenaMonsterImg.style.height = defaultSize;
-        this.arenaMonsterImg.style.transform = baseFlip;
+        this.arenaMonsterImg.style.transform = this.getMonsterTransform(baseFlip);
       }
     }
   }
@@ -3504,6 +3506,7 @@ export class BattleArenaModal {
     if (this.arenaHeroBox) this.arenaHeroBox.classList.remove('hero-skill-glow', 'hero-lunging', 'hero-hit');
     if (this.arenaMonsterBox) this.arenaMonsterBox.classList.remove('monster-skill-glow', 'monster-charging', 'monster-lunging', 'monster-hit', 'is-boss-arena', 'boss-enraged');
     this.isTurnLocked = false;
+    this.isBoss = false;
     this.currentEncounter = null;
     this.currentQuestion = null;
     this.encounterQuestions = [];

@@ -1574,9 +1574,20 @@ export class WorldScene extends Phaser.Scene {
     const isAdventureMap = !['map_pet_farm', 'map_kitchen', 'map_fishing_pond', 'map_rainbow_market', 'map_fashion_street'].includes(this.currentMapId);
     if (!isAdventureMap) return;
 
-    const delay = Phaser.Math.Between(16000, 28000);
+    if (this.powerStarSpawnTimer) {
+      this.powerStarSpawnTimer.remove(false);
+      this.powerStarSpawnTimer = null;
+    }
+
+    // Yêu cầu v3.7.4: Xuất hiện với tỉ lệ rất thấp, không xuất hiện liên tục (giãn cách 45-90s, cơ hội 25%)
+    const delay = Phaser.Math.Between(45000, 90000);
     this.powerStarSpawnTimer = this.time.delayedCall(delay, () => {
-      this.spawnPowerStarPickup();
+      if (Math.random() < 0.25) {
+        this.spawnPowerStarPickup();
+      } else {
+        // Nếu không trúng tỉ lệ, tiếp tục đợi chu kỳ dài tiếp theo
+        this.schedulePowerStarSpawn();
+      }
     });
   }
 
@@ -1588,8 +1599,9 @@ export class WorldScene extends Phaser.Scene {
     const x = Phaser.Math.Between(220, 1060);
     const y = Phaser.Math.Between(200, 560);
 
+    // Kích thước to hơn 10% theo yêu cầu v3.7.4 (42x40 -> 47x44)
     const star = this.add.sprite(x, y, 'vfx_power_star')
-      .setDisplaySize(42, 40)
+      .setDisplaySize(47, 44)
       .setDepth(15);
 
     star.play('anim_power_star');
@@ -1604,6 +1616,29 @@ export class WorldScene extends Phaser.Scene {
     });
 
     this.powerStarPickup = star;
+
+    // Tự động biến mất sau 18 giây nếu bé không nhặt (sao bay đi, không tồn tại liên tục)
+    if (this.powerStarDespawnTimer) {
+      this.powerStarDespawnTimer.remove(false);
+    }
+    this.powerStarDespawnTimer = this.time.delayedCall(18000, () => {
+      if (this.powerStarPickup && this.powerStarPickup.active) {
+        this.tweens.add({
+          targets: this.powerStarPickup,
+          alpha: 0,
+          scaleX: 0.1,
+          scaleY: 0.1,
+          duration: 600,
+          onComplete: () => {
+            if (this.powerStarPickup) {
+              this.powerStarPickup.destroy();
+              this.powerStarPickup = null;
+            }
+            this.schedulePowerStarSpawn();
+          }
+        });
+      }
+    });
   }
 
   updatePowerStarPickup(time, delta) {
@@ -1616,9 +1651,14 @@ export class WorldScene extends Phaser.Scene {
       this.powerStarPickup.y
     );
 
-    if (dist < 42) {
+    // Kích thước to hơn 10% -> bán kính chạm nhặt sao tăng lên 46px
+    if (dist < 46) {
       const star = this.powerStarPickup;
       this.powerStarPickup = null;
+      if (this.powerStarDespawnTimer) {
+        this.powerStarDespawnTimer.remove(false);
+        this.powerStarDespawnTimer = null;
+      }
 
       const starsWon = Phaser.Math.Between(1, 10);
       try {
