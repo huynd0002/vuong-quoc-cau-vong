@@ -26,7 +26,7 @@ let browser;
 
 async function assertRendered(page, label) {
   await page.waitForFunction(() => window.__worldScene?.hero?.sprite?.active && window.__worldScene.sys.isActive());
-  await page.evaluate(() => new Promise(resolve => window.__PHASER_GAME__.events.once('postrender', resolve)));
+  await page.evaluate(() => new Promise(resolve => window.__PHASER_GAME__.events.once('postrender', () => resolve())));
   const state = await page.evaluate(() => {
     const game = window.__PHASER_GAME__;
     const scene = window.__worldScene;
@@ -97,14 +97,14 @@ try {
     await mkdir(path.join(root, 'artifacts'), { recursive: true });
     await page.screenshot({ path: path.join(root, 'artifacts', label.startsWith('web') ? 'game-fixed-tablet.png' : 'game-fixed-desktop.png') });
     for (const mapId of ['map1', 'map2', 'map3', 'map4', 'map5', 'map6', 'map_kitchen', 'map_fishing_pond', 'map_rainbow_market', 'map_fashion_street', 'map_pet_farm']) {
-      await page.evaluate(id => window.__worldScene.scene.restart({ mapId: id }), mapId);
+      await page.evaluate(id => { window.__worldScene.scene.restart({ mapId: id }); }, mapId);
       await page.waitForFunction(id => window.__worldScene?.currentMapId === id && window.__worldScene?.sys.isActive(), mapId);
       await assertRendered(page, `${label} ${mapId}`);
     }
-    await page.evaluate(() => window.__worldScene.scene.pause());
+    await page.evaluate(() => { window.__worldScene.scene.pause(); });
     await page.waitForTimeout(1000);
     assert.equal(await page.evaluate(() => window.__worldScene.sys.isPaused()), true);
-    await page.evaluate(() => window.__worldScene.scene.resume());
+    await page.evaluate(() => { window.__worldScene.scene.resume(); });
     await page.setViewportSize({ width: 1180, height: 820 });
     await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
     await assertRendered(page, `${label} resized and resumed`);

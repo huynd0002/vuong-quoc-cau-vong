@@ -15,6 +15,7 @@ import { LakeWaterEffect, isPointInLake, clampOutOfLake } from '../effects/LakeW
 import { PetBathWaterEffect } from '../effects/PetBathWaterEffect.js';
 import { PetBedSleepEffect } from '../effects/PetBedSleepEffect.js';
 import { createGroundShadow } from '../effects/GroundShadow.js';
+import { PIXELFX_SHEETS } from '../effects/pixelfxRegistry.js';
 import { PetSleepModal } from '../ui/PetSleepModal.js';
 import { ToyBall } from '../entities/ToyBall.js';
 import { getMapConfig } from '../../content/maps/mapsConfig.js';
@@ -80,9 +81,13 @@ export class WorldScene extends Phaser.Scene {
     this.petProgressTween = null;
     this.petStationFinishTimer = null;
     this.windowListeners = [];
+    this._sceneTimers = new Set();
     this.propsList = [];
     this.currentMapId = 'map_pet_farm';
     this.isExploring = true;
+    this._stuckFrozenMs = 0;
+    this._lastDragFollowAt = 0;
+    this._lastDragRippleAt = 0;
   }
 
   init(data) {
@@ -114,10 +119,71 @@ export class WorldScene extends Phaser.Scene {
     };
   }
 
+  scheduleSceneTimer(fn, delayMs) {
+    const id = setTimeout(() => {
+      this._sceneTimers?.delete(id);
+      if (!this.sys?.isActive?.()) return;
+      fn();
+    }, delayMs);
+    this._sceneTimers?.add(id);
+    return id;
+  }
+
+  playPixelFx(sheetKey, x, y, options = {}) {
+    try {
+      if (!this.sys?.isActive?.() || !this.add || !this.anims || !this.textures?.exists(sheetKey)) {
+        return null;
+      }
+      this.initPixelFXAnimations?.();
+      const animKey = `anim_${sheetKey.replace(/^vfx_/, '')}`;
+      if (!this.anims.exists(animKey)) return null;
+
+      const fx = this.add.sprite(x, y, sheetKey);
+      fx.setDepth(options.depth ?? 25);
+      if (options.scale !== undefined) fx.setScale(options.scale);
+      if (options.alpha !== undefined) fx.setAlpha(options.alpha);
+      if (options.tint !== undefined) fx.setTint(options.tint);
+      fx.play(animKey);
+      fx.once('animationcomplete', () => {
+        if (fx.scene) fx.destroy();
+      });
+      return fx;
+    } catch {
+      return null;
+    }
+  }
+
+  walkHeroToTarget(targetX, targetY, { ripple = true } = {}) {
+    if (!this.hero) return;
+    this.kitchenStationVisit = null;
+    this.activeFishingStationVisit = null;
+    this.activeMarketStationVisit = null;
+    this.activeFashionStationVisit = null;
+
+    let safeX = targetX;
+    let safeY = targetY;
+    if (this.currentMapId === 'map1' || !this.currentMapId) {
+      if (isPointInLake(safeX, safeY)) {
+        const safe = clampOutOfLake(safeX, safeY, 15);
+        safeX = safe.x;
+        safeY = safe.y;
+      }
+    } else if (this.currentMapId === 'map_fishing_pond' && this.mapConfig?.pondWaterZone) {
+      const clamped = this.clampOutOfFishingPondWater(safeX, safeY, this.mapConfig.pondWaterZone);
+      safeX = clamped.x;
+      safeY = clamped.y;
+    }
+
+    if (ripple) {
+      this.showTouchRipple(safeX, safeY);
+    }
+    this.hero.moveTo(safeX, safeY);
+  }
+
   isWorldPointer(pointer) {
-    // Không cho tương tác di chuyển ngoài map nếu đang mở modal
+    // Không cho tương tác di chuyển ngoài map nếu đang mở modal hoặc đang chuyển cảnh
     const activeModal = document.querySelector(
-      '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden])'
+      '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden]), #map-loading-overlay.active, #warp-overlay-container.active'
     );
     if (activeModal) return false;
 
@@ -140,7 +206,10 @@ export class WorldScene extends Phaser.Scene {
 
   showTouchRipple(x, y) {
     try {
-      if (!this.add) return;
+      if (!this.add || !this.sys?.isActive?.()) return;
+      const fx = this.playPixelFx('vfx_tap_ripple', x, y, { scale: 0.56, depth: 2000, alpha: 0.92 });
+      if (fx) return;
+
       const ripple = this.add.circle(x, y, 6, 0xffffff, 0.9);
       ripple.setStrokeStyle(3.5, 0x38bdf8, 0.95);
       ripple.setDepth(2000);
@@ -253,8 +322,7 @@ export class WorldScene extends Phaser.Scene {
       this.createDecorations();
       this.initPixelFXAnimations();
 
-      // Kích hoạt vfx glitch-wipe chuyển cảnh (v3.7.1)
-      this.playGlitchWipeTransition();
+      // Chuyển cảnh thống nhất đã xử lý bởi MapTransitionOverlay + MapLoadingOverlay (bỏ glitch-wipe nặng 4x)
 
       // Kích hoạt hồi sinh respawn-beam nếu bé vừa hết tim hồi sinh (v3.7.1)
       if (this.currentMapId === 'map_pet_farm' && typeof window !== 'undefined' && window.__triggerRespawnBeam) {
@@ -541,9 +609,9 @@ export class WorldScene extends Phaser.Scene {
 
         this.petBathSprite.on('pointerdown', (pointer) => {
           if (!this.isWorldPointer(pointer)) return;
-          pointer?.event?.stopPropagation?.();
+          pointer._handledStationTap = true;
           const st = mapConfig.petStations?.find(s => s.type === 'bath');
-          if (st) this.handlePetStationInteraction(st);
+          if (st) this.walkHeroToTarget(st.interactionPoint?.x ?? st.x, st.interactionPoint?.y ?? (st.y + 30));
         });
         // Reuse the actual front of the tub as an occlusion layer. The dog is
         // between the rear water and this lip, rather than pasted on the step.
@@ -574,9 +642,9 @@ export class WorldScene extends Phaser.Scene {
 
         this.petToiletSprite.on('pointerdown', (pointer) => {
           if (!this.isWorldPointer(pointer)) return;
-          pointer?.event?.stopPropagation?.();
+          pointer._handledStationTap = true;
           const st = mapConfig.petStations?.find(s => s.type === 'potty');
-          if (st) this.handlePetStationInteraction(st);
+          if (st) this.walkHeroToTarget(st.interactionPoint?.x ?? st.x, st.interactionPoint?.y ?? (st.y + 30));
         });
       }
 
@@ -598,8 +666,9 @@ export class WorldScene extends Phaser.Scene {
 
         this.petBedSprite.on('pointerdown', (pointer) => {
           if (!this.isWorldPointer(pointer)) return;
-          pointer?.event?.stopPropagation?.();
-          this.openPetSleepConfirmDialog();
+          pointer._handledStationTap = true;
+          const st = mapConfig.petStations?.find(s => s.type === 'sleep' || s.type === 'bed');
+          this.walkHeroToTarget(st?.interactionPoint?.x ?? bedX, st?.interactionPoint?.y ?? (bedY + 45));
         });
       }
 
@@ -718,6 +787,54 @@ export class WorldScene extends Phaser.Scene {
       }
       document.getElementById('basket-full-notice-modal')?.remove();
       this.stopOnMapFishing?.();
+
+      if (this._sceneTimers) {
+        for (const tid of this._sceneTimers) clearTimeout(tid);
+        this._sceneTimers.clear();
+      }
+      if (Array.isArray(this.kitchenSteamTimers)) {
+        this.kitchenSteamTimers.forEach(t => t?.remove?.(false));
+        this.kitchenSteamTimers = [];
+      }
+      if (Array.isArray(this.portals)) {
+        this.portals.forEach(p => p?.destroy?.());
+        this.portals = [];
+      }
+      this.teleportPortal = null;
+      this.returnPortal = null;
+      if (Array.isArray(this.monsters)) {
+        this.monsters.forEach(m => m?.destroy?.());
+        this.monsters = [];
+      }
+      if (this.boss) {
+        this.boss.destroy?.();
+        this.boss = null;
+      }
+      if (this.propsPuzzle) {
+        this.propsPuzzle.destroy?.();
+        this.propsPuzzle = null;
+      }
+      if (Array.isArray(this.propsList)) {
+        this.propsList.forEach(p => p?.destroy?.());
+        this.propsList = [];
+      }
+      if (this.pet) {
+        this.pet.destroy?.();
+        this.pet = null;
+      }
+      if (this.hero) {
+        this.hero.destroy?.();
+        this.hero = null;
+      }
+      this.kitchenStationVisit = null;
+      this.activeKitchenProximityId = null;
+      this.activeFishingStationVisit = null;
+      this.activeMarketStationVisit = null;
+      this.activeFashionStationVisit = null;
+      try {
+        this.tweens?.killAll?.();
+        this.time?.removeAllEvents?.();
+      } catch {}
     });
 
     this._onBasketFullNotice = () => this.showBasketFullNoticeModal();
@@ -738,12 +855,11 @@ export class WorldScene extends Phaser.Scene {
     this.kitchenStationContainers = [];
     if (Array.isArray(mapConfig.kitchenStations) && mapConfig.kitchenStations.length > 0) {
       this.initKitchenStations(mapConfig.kitchenStations);
-      // Tự động mở Pop-up Chào Mừng & Hướng Dẫn khi bé vừa bước vào Căn Bếp
-      this.time.delayedCall(450, () => {
+      this.scheduleSceneTimer(() => {
         if (this.currentMapId === 'map_kitchen' && this.sys?.isActive()) {
           window.dispatchEvent(new CustomEvent('game:open-kitchen-station-popup', { detail: { station: 'kitchen_enter' } }));
         }
-      });
+      }, 450);
     }
 
     // 5i. Khởi tạo các Trạm Hồ Câu Lá Sen (Fishing Pond Stations)
@@ -855,104 +971,93 @@ export class WorldScene extends Phaser.Scene {
       stopFishingBtn.ontouchend = handleStopClick;
     }
 
-    // 9. Điều khiển cảm ứng (Tap/Click to move & Drag-to-move tối ưu cho iPad)
+    // 9. Điều khiển cảm ứng (Tap-to-move & Giữ-kéo liên tục tối ưu mượt cho iPad)
+    const resolveStationApproach = (st) => {
+      if (!st) return null;
+      if (st.interactionPoint) return { x: st.interactionPoint.x, y: st.interactionPoint.y };
+      if (this.currentMapId === 'map_kitchen') {
+        if (st.type === 'cook') return { x: 940, y: 290 };
+        if (st.type === 'dining') return { x: st.x - 55, y: st.y };
+        if (st.type === 'bag') return { x: st.x, y: st.y - 60 };
+        return { x: st.x, y: st.y };
+      }
+      if (this.currentMapId === 'map_pet_farm') {
+        return { x: st.x, y: Math.min(640, st.y + 34) };
+      }
+      if (st.type === 'dock') return { x: 688, y: 360 };
+      return { x: st.x, y: st.y };
+    };
+
     const handleWorldPointerAction = (pointer, isDrag = false) => {
       if (!this.isWorldPointer(pointer)) return;
       if (this.isFishingSpotLocked || !this.hero) return;
+      if (!isDrag && pointer._handledStationTap) return;
 
       const point = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
 
-      // Khi vuốt ngón tay: chỉ di chuyển nhân vật nếu khoảng cách di chuyển đủ lớn (> 22px)
       if (isDrag) {
+        const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+        if (now - (this._lastDragFollowAt || 0) < 55) return;
         const curX = this.hero.getX();
         const curY = this.hero.getY();
-        if (Math.hypot(point.x - curX, point.y - curY) < 22) return;
-      } else {
-        // Chỉ khi chạm nhấp (pointerdown) mới kiểm tra click trực diện vào Portal, Boss, Quái vật hoặc Icon Trạm
-        const clickedPortal = (this.portals && this.portals.length > 0)
-          ? this.portals.find(p => p && Math.hypot(point.x - p.x, point.y - p.y) < 55)
-          : (this.teleportPortal && Math.hypot(point.x - this.teleportPortal.x, point.y - this.teleportPortal.y) < 55 ? this.teleportPortal : null);
-        if (clickedPortal) {
-          clickedPortal.handleInteract();
-          return;
-        }
-
-        // Bấm trực tiếp vào quái vật
-        const directClickedMonster = this.monsters.find(m => m.sprite?.active && Math.hypot(point.x - m.sprite.x, point.y - m.sprite.y) < 45);
-        if (directClickedMonster && !directClickedMonster.isRescued) {
-          this.triggerEncounterPrompt(directClickedMonster.data, false);
-          return;
-        }
-        if (this.boss && this.boss.isAppeared && !this.boss.isRescued && this.boss.sprite?.active && Math.hypot(point.x - this.boss.sprite.x, point.y - this.boss.sprite.y) < 55) {
-          const phaseConfig = this.boss.data.phases ? this.boss.data.phases[this.boss.phase - 1] : null;
-          const questionId = phaseConfig ? phaseConfig.questionId : this.boss.data.questionId;
-          this.triggerEncounterPrompt({
-            ...this.boss.data,
-            questionId,
-            name: phaseConfig ? phaseConfig.name : this.boss.data.name
-          }, true);
-          return;
-        }
-
-        // Bấm trực diện vào tâm icon của trạm (bán kính nhỏ < 42px, không chặn sàn đi bộ của bé)
-        if (this.currentMapId === 'map_kitchen' && this.kitchenStationContainers) {
-          const clickedKitchen = this.kitchenStationContainers.find(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 42);
-          if (clickedKitchen) {
-            this.handleKitchenStationInteraction(clickedKitchen.data);
-            return;
-          }
-        }
-        if (this.currentMapId === 'map_pet_farm' && this.petStationContainers) {
-          const clickedPet = this.petStationContainers.find(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 45);
-          if (clickedPet) {
-            this.handlePetStationInteraction(clickedPet.data);
-            return;
-          }
-        }
-        if (this.currentMapId === 'map_fishing_pond' && this.fishingStationContainers) {
-          const clickedFishing = this.fishingStationContainers.find(st =>
-            st.container?.visible !== false && Math.hypot(point.x - st.data.x, point.y - st.data.y) < 45
-          );
-          if (clickedFishing) {
-            this.handleFishingStationInteraction(clickedFishing.data);
-            return;
-          }
-        }
-        if (this.currentMapId === 'map_rainbow_market' && this.marketStationContainers) {
-          const clickedMarket = this.marketStationContainers.find(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 48);
-          if (clickedMarket) {
-            this.handleMarketStationInteraction(clickedMarket.data);
-            return;
-          }
-        }
-        if (this.currentMapId === 'map_fashion_street' && this.fashionStationContainers) {
-          const clickedFashion = this.fashionStationContainers.find(st => Math.hypot(point.x - st.data.x, point.y - st.data.y) < 48);
-          if (clickedFashion) {
-            this.handleFashionStationInteraction(clickedFashion.data);
-            return;
-          }
-        }
-
-        // Tạo hiệu ứng vòng tròn chạm trực quan trên iPad
-        this.showTouchRipple(point.x, point.y);
+        if (Math.hypot(point.x - curX, point.y - curY) < 10) return;
+        this._lastDragFollowAt = now;
+        const showDragSpark = now - (this._lastDragRippleAt || 0) >= 180;
+        if (showDragSpark) this._lastDragRippleAt = now;
+        this.walkHeroToTarget(point.x, point.y, { ripple: showDragSpark });
+        return;
       }
 
-      // Di chuyển nhân vật êm dịu đến điểm chạm an toàn
-      let targetX = point.x;
-      let targetY = point.y;
-      if (this.currentMapId === 'map1' || !this.currentMapId) {
-        if (isPointInLake(targetX, targetY)) {
-          const safe = clampOutOfLake(targetX, targetY, 15);
-          targetX = safe.x;
-          targetY = safe.y;
-        }
-      } else if (this.currentMapId === 'map_fishing_pond' && mapConfig.pondWaterZone) {
-        const clamped = this.clampOutOfFishingPondWater(targetX, targetY, mapConfig.pondWaterZone);
-        targetX = clamped.x;
-        targetY = clamped.y;
+      // Chạm trực diện vào Portal: Chỉ dẫn bé đi lại gần vùng E — không tự động chuyển vùng
+      const clickedPortal = (this.portals && this.portals.length > 0)
+        ? this.portals.find(p => p && Math.hypot(point.x - p.x, point.y - p.y) < 58)
+        : (this.teleportPortal && Math.hypot(point.x - this.teleportPortal.x, point.y - this.teleportPortal.y) < 58 ? this.teleportPortal : null);
+      if (clickedPortal) {
+        this.showTouchRipple(clickedPortal.x, clickedPortal.y + 18);
+        clickedPortal.walkToRange?.();
+        return;
       }
 
-      this.hero.moveTo(targetX, targetY);
+      // Bấm trực tiếp vào quái vật hoặc Boss để mở thử thách
+      const directClickedMonster = this.monsters.find(m => m.sprite?.active && Math.hypot(point.x - m.sprite.x, point.y - m.sprite.y) < 48);
+      if (directClickedMonster && !directClickedMonster.isRescued) {
+        this.triggerEncounterPrompt(directClickedMonster.data, false);
+        return;
+      }
+      if (this.boss && this.boss.isAppeared && !this.boss.isRescued && this.boss.sprite?.active && Math.hypot(point.x - this.boss.sprite.x, point.y - this.boss.sprite.y) < 58) {
+        const phaseConfig = this.boss.data.phases ? this.boss.data.phases[this.boss.phase - 1] : null;
+        const questionId = phaseConfig ? phaseConfig.questionId : this.boss.data.questionId;
+        this.triggerEncounterPrompt({
+          ...this.boss.data,
+          questionId,
+          name: phaseConfig ? phaseConfig.name : this.boss.data.name
+        }, true);
+        return;
+      }
+
+      // Chạm vào trạm ở các bản đồ: Chỉ đi bộ tới vùng chọn để hiện nút E to — không tự mở modal/chuyển cảnh
+      const stationGroups = {
+        map_kitchen: { list: this.kitchenStationContainers, radius: 46 },
+        map_pet_farm: { list: this.petStationContainers, radius: 48 },
+        map_fishing_pond: { list: this.fishingStationContainers, radius: 48 },
+        map_rainbow_market: { list: this.marketStationContainers, radius: 52 },
+        map_fashion_street: { list: this.fashionStationContainers, radius: 52 }
+      };
+      const group = stationGroups[this.currentMapId];
+      if (group && Array.isArray(group.list)) {
+        const clickedStation = group.list.find(st =>
+          st?.data && (st.container?.visible !== false || st.data.type === 'dock') &&
+          Math.hypot(point.x - st.data.x, point.y - st.data.y) < group.radius
+        );
+        if (clickedStation) {
+          const dest = resolveStationApproach(clickedStation.data);
+          this.walkHeroToTarget(dest.x, dest.y, { ripple: true });
+          return;
+        }
+      }
+
+      // Chạm bất kỳ đâu trên sàn: Bé đi bộ mượt + nở vòng PixelFX tại điểm chạm
+      this.walkHeroToTarget(point.x, point.y, { ripple: true });
     };
 
     this.input.on('pointerdown', (pointer) => handleWorldPointerAction(pointer, false));
@@ -1006,6 +1111,10 @@ export class WorldScene extends Phaser.Scene {
       const { encounterId } = e.detail || {};
       const monster = this.monsters.find(m => m.data.id === encounterId);
       if (monster) {
+        const mx = monster.sprite?.x ?? monster.data.x;
+        const my = monster.sprite?.y ?? monster.data.y;
+        this.playPixelFx('vfx_poof', mx, my - 10, { scale: 1.05, depth: 25 });
+        this.playPixelFx('vfx_collect_burst', mx, my - 26, { scale: 0.9, depth: 26 });
         monster.isRescued = true;
         monster.playRescueAnimation();
       }
@@ -1043,7 +1152,8 @@ export class WorldScene extends Phaser.Scene {
       const canBossAppear = totalSmallMonsters > 0 && rescuedCount >= totalSmallMonsters;
 
       if (canBossAppear && this.boss && !this.boss.isRescued && !this.boss.isAppeared) {
-        setTimeout(() => {
+        this.scheduleSceneTimer(() => {
+          if (!this.boss || this.boss.isRescued || this.boss.isAppeared) return;
           this.boss.appearWithCinematic(() => {
             window.dispatchEvent(new CustomEvent('game:show-toast', {
               detail: { message: `🔥 ${this.boss.data.name.toUpperCase()} ĐÃ XUẤT HIỆN! Bé hãy sẵn sàng cho Đại Thử Thách nhé!` }
@@ -1052,6 +1162,7 @@ export class WorldScene extends Phaser.Scene {
         }, 900);
       }
       this.isExploring = true;
+      this._stuckFrozenMs = 0;
     });
 
     // 2. Boss chuyển sang Pha 2
@@ -1095,7 +1206,11 @@ export class WorldScene extends Phaser.Scene {
         this.pet.celebrate();
       }
 
-      // Kích hoạt pháo hoa PixelFX (explosions/firework-rocket) ăn mừng hạ gục Boss rực rỡ!
+      // PixelFX ăn mừng vượt ải & mở Cổng Dịch Chuyển
+      this.playPixelFx('vfx_quest_complete', bossDeathX, bossDeathY - 42, { scale: 1.05, depth: 27 });
+      this.playPixelFx('vfx_confetti', DESIGN_WIDTH / 2, 210, { scale: 1.35, depth: 26 });
+
+      // Kích hoạt pháo hoa PixelFX ăn mừng hạ gục Boss rực rỡ!
       if (!this.fireworkCelebration) {
         this.fireworkCelebration = new FireworkCelebrationEffect();
         window.__fireworkCelebration = this.fireworkCelebration;
@@ -1115,6 +1230,7 @@ export class WorldScene extends Phaser.Scene {
         try { navigator.vibrate([80, 50, 120, 60, 200]); } catch {}
       }
       this.isExploring = true;
+      this._stuckFrozenMs = 0;
 
       if (mapCfg.teleportPortal) {
         if (!this.teleportPortal) {
@@ -1139,7 +1255,7 @@ export class WorldScene extends Phaser.Scene {
       const nextMapId = unlockedNewMap || currentZoneConfig.nextZoneId || 'map2';
       const nextMapName = CAMPAIGN_ZONES[nextMapId]?.name || 'Vùng Đất Mới';
 
-      setTimeout(() => {
+      this.scheduleSceneTimer(() => {
         window.dispatchEvent(new CustomEvent('game:show-recap', {
           detail: {
             title: `CHIẾN THẮNG ${zoneDisplayName.toUpperCase()}! 🎉`,
@@ -1150,7 +1266,7 @@ export class WorldScene extends Phaser.Scene {
             unlockedMapName: nextMapName
           }
         }));
-      }, 2200);
+      }, 2100);
     });
 
     // 4. Khi đóng dialog câu hỏi hoặc bấm "Để sau nhé"
@@ -1395,6 +1511,19 @@ export class WorldScene extends Phaser.Scene {
         frameRate: 22,
         repeat: -1
       });
+    }
+
+    // 10. Đăng ký tự động bộ hiệu ứng pixelfx-repo mới (vfx_tap_ripple, vfx_collect_burst, ...)
+    for (const [key, meta] of Object.entries(PIXELFX_SHEETS)) {
+      const animKey = `anim_${key.replace(/^vfx_/, '')}`;
+      if (!this.anims.exists(animKey) && this.textures.exists(key)) {
+        this.anims.create({
+          key: animKey,
+          frames: this.anims.generateFrameNumbers(key, { start: 0, end: Math.max(0, meta.frames - 1) }),
+          frameRate: meta.fps || 20,
+          repeat: 0
+        });
+      }
     }
   }
 
@@ -1735,6 +1864,7 @@ export class WorldScene extends Phaser.Scene {
       }
 
       window.__audioService?.playChime?.(1174, 0.3);
+      this.playPixelFx('vfx_collect_burst', star.x, star.y, { scale: 1.0, depth: 25 });
       this.spawnFloatingPopup(star.x, star.y - 30, `+${starsWon} ⭐ NGÔI SAO MAY MẮN!`, '#facc15');
 
       this.tweens.add({
@@ -1822,7 +1952,8 @@ export class WorldScene extends Phaser.Scene {
     }
 
     if (this.anims.exists('vfx_implosion_anim')) {
-      // 1. Sprite VFX Implosion chính (51 frames pixel-art VFX)
+      // 1. Sprite VFX Implosion + PixelFX Portal Warp
+      this.playPixelFx('vfx_portal_warp', x, y - 6, { scale: 1.05, depth: 27 });
       const implosion = this.add.sprite(x, y - 6, 'vfx_implosion_sheet');
       implosion.setDepth(26); // Nổi rõ rệt trên Hero (depth 10) và Cổng (depth 8)
       implosion.setScale(1.25); // Phóng nhẹ để bao trọn Cổng 84px và ôm trọn nhân vật
@@ -1897,24 +2028,6 @@ export class WorldScene extends Phaser.Scene {
 
     const heroX = this.hero.getX();
     const heroY = this.hero.getY();
-
-    if (this.currentMapId === 'map_kitchen' && Array.isArray(this.mapConfig?.kitchenStations)) {
-      const targetStations = this.mapConfig.kitchenStations.filter(s => s.type === 'pantry' || s.type === 'prep');
-      if (this.activeKitchenProximityId) {
-        const activeSt = targetStations.find(s => s.id === this.activeKitchenProximityId);
-        if (!activeSt || Math.hypot(heroX - activeSt.x, heroY - activeSt.y) > 70) {
-          this.activeKitchenProximityId = null;
-        }
-      } else if (dirX !== 0 || dirY !== 0) {
-        const enteredSt = targetStations.find(s => Math.hypot(heroX - s.x, heroY - s.y) <= 45);
-        if (enteredSt) {
-          this.activeKitchenProximityId = enteredSt.id;
-          this.hero.stop();
-          this.openKitchenStationInteraction(enteredSt);
-          return;
-        }
-      }
-    }
 
     let dx = heroX - (targetX ?? heroX);
     let dy = heroY - (targetY ?? heroY);
@@ -2045,7 +2158,30 @@ export class WorldScene extends Phaser.Scene {
         }
       }
     }
-    if (!this.isExploring || !this.hero?.sprite?.active) return;
+    if (!this.isExploring) {
+      const hasBlockingOverlay = Boolean(
+        document.querySelector(
+          '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden]), #map-loading-overlay.active, #warp-overlay-container.active, .modal-overlay.active'
+        ) ||
+        this.isFishingSpotLocked ||
+        window.__mapTransitionOverlay?.isTransitioning ||
+        window.__mapLoadingOverlay?.isLoading
+      );
+      if (hasBlockingOverlay) {
+        this._stuckFrozenMs = 0;
+        return;
+      }
+      this._stuckFrozenMs = (this._stuckFrozenMs || 0) + (Number(delta) || 16);
+      if (this._stuckFrozenMs >= 1600) {
+        this.isExploring = true;
+        this._stuckFrozenMs = 0;
+      } else {
+        return;
+      }
+    } else {
+      this._stuckFrozenMs = 0;
+    }
+    if (!this.hero?.sprite?.active) return;
     if (this.currentMapId === 'map_kitchen' && this.kitchenMotes && this.hero?.sprite) {
       const offsetX = (this.hero.sprite.x - 640);
       const offsetY = (this.hero.sprite.y - 360);
@@ -2110,23 +2246,7 @@ export class WorldScene extends Phaser.Scene {
     const heroX = this.hero.getX();
     const heroY = this.hero.getY();
 
-    if (this.currentMapId === 'map_kitchen' && Array.isArray(this.mapConfig?.kitchenStations)) {
-      const targetStations = this.mapConfig.kitchenStations.filter(s => s.type === 'pantry' || s.type === 'prep');
-      if (this.activeKitchenProximityId) {
-        const activeSt = targetStations.find(s => s.id === this.activeKitchenProximityId);
-        if (!activeSt || Math.hypot(heroX - activeSt.x, heroY - activeSt.y) > 70) {
-          this.activeKitchenProximityId = null;
-        }
-      } else if (dirX !== 0 || dirY !== 0) {
-        const enteredSt = targetStations.find(s => Math.hypot(heroX - s.x, heroY - s.y) <= 45);
-        if (enteredSt) {
-          this.activeKitchenProximityId = enteredSt.id;
-          this.hero.stop();
-          this.openKitchenStationInteraction(enteredSt);
-          return;
-        }
-      }
-    }
+    // Không tự động mở trạm bếp khi đi ngang — bắt buộc ấn phím E hoặc chạm nút [E] khi đứng trong vùng chọn.
 
     const isUnderEncounterCooldown = this.encounterCooldownUntil && Date.now() < this.encounterCooldownUntil;
 
@@ -2216,19 +2336,18 @@ export class WorldScene extends Phaser.Scene {
       // Vòng hào quang sàn bếp: Đã xóa để sàn gỗ tự nhiên luôn sạch bóng theo yêu cầu người dùng
       const aura = null;
 
-      // Vùng chạm cảm ứng tương tác rộng rãi (nổi trên bề mặt, bắt chạm nhạy bén)
-      const touchZone = this.add.zone(st.x, st.y, 150, 120).setInteractive({ useHandCursor: true }).setDepth(15);
-      touchZone.on('pointerdown', (pointer) => {
+      // Vùng chạm cảm ứng: chỉ đưa bé lại gần trạm bếp — bắt buộc ấn E để mở (không chặn kéo-di chuyển trên iPad)
+      const touchZone = this.add.zone(st.x, st.y, 110, 90).setInteractive({ useHandCursor: true }).setDepth(15);
+      const walkToKitchenApproach = (pointer) => {
         if (!this.isWorldPointer(pointer)) return;
-        pointer?.event?.stopPropagation?.();
-        this.handleKitchenStationInteraction(st);
-      });
-      container.setSize(184, 90).setInteractive({ useHandCursor: true });
-      container.on('pointerdown', (pointer) => {
-        if (!this.isWorldPointer(pointer)) return;
-        pointer?.event?.stopPropagation?.();
-        this.handleKitchenStationInteraction(st);
-      });
+        pointer._handledStationTap = true;
+        const approachX = st.type === 'cook' ? 940 : (st.type === 'dining' ? st.x - 55 : st.x);
+        const approachY = st.type === 'cook' ? 290 : (st.type === 'bag' ? st.y - 60 : st.y);
+        this.walkHeroToTarget(approachX, approachY);
+      };
+      touchZone.on('pointerdown', walkToKitchenApproach);
+      container.setSize(130, 76).setInteractive({ useHandCursor: true });
+      container.on('pointerdown', walkToKitchenApproach);
 
       // Hiệu ứng hơi khói bốc nhẹ trên Nồi Bếp Lò (Đợt B: Căn bếp sinh động)
       if (st.type === 'cook') {
@@ -2554,16 +2673,16 @@ export class WorldScene extends Phaser.Scene {
     stations.forEach((st, idx) => {
       const container = this.add.container(st.x, st.y).setDepth(4);
 
-      // Only the scene artwork and invisible touch zones identify stations.
-      const zoneW = st.type === 'water' ? 140 : 115;
-      const zoneH = st.type === 'water' ? 120 : 115;
+      // Chỉ đi bộ lại gần trạm thú cưng khi chạm — bắt buộc ấn E để tương tác hoặc qua cổng
+      const zoneW = st.type === 'water' ? 110 : 96;
+      const zoneH = st.type === 'water' ? 96 : 96;
       const touchZone = this.add.zone(st.x, st.y, zoneW, zoneH)
         .setInteractive({ useHandCursor: true })
         .setDepth(15);
       touchZone.on('pointerdown', (pointer) => {
         if (!this.isWorldPointer(pointer)) return;
-        pointer?.event?.stopPropagation?.();
-        this.handlePetStationInteraction(st);
+        pointer._handledStationTap = true;
+        this.walkHeroToTarget(st.x, Math.min(640, st.y + 30));
       });
 
       // Hiển thị huy hiệu hình ảnh tinh gọn nếu chưa có Cổng TeleportPortal chuyên biệt
@@ -3605,13 +3724,13 @@ export class WorldScene extends Phaser.Scene {
       interactionPoint: { x: dockSpotX, y: dockSpotY },
       castTarget: { x: 485, y: 445 }
     };
-    const dockTouchZone = this.add.zone(dockSpotX, 375, 140, 100)
+    const dockTouchZone = this.add.zone(dockSpotX, 375, 110, 86)
       .setInteractive({ useHandCursor: true })
       .setDepth(16);
     dockTouchZone.on('pointerdown', (pointer) => {
       if (!this.isWorldPointer(pointer)) return;
-      pointer?.event?.stopPropagation?.();
-      this.handleFishingStationInteraction(dockStation);
+      pointer._handledStationTap = true;
+      this.walkHeroToTarget(dockSpotX, dockSpotY);
     });
 
     // Khởi tạo nút DOM "🎣 Bắt đầu câu cá"
@@ -3659,13 +3778,13 @@ export class WorldScene extends Phaser.Scene {
         ease: 'Sine.easeInOut'
       });
 
-      const touchZone = this.add.zone(st.x, st.y, 100, 80)
+      const touchZone = this.add.zone(st.x, st.y, 96, 76)
         .setInteractive({ useHandCursor: true })
         .setDepth(16);
       touchZone.on('pointerdown', (pointer) => {
         if (!this.isWorldPointer(pointer)) return;
-        pointer?.event?.stopPropagation?.();
-        this.handleFishingStationInteraction(st);
+        pointer._handledStationTap = true;
+        this.walkHeroToTarget(st.interactionPoint?.x ?? st.x, st.interactionPoint?.y ?? st.y);
       });
 
       this.fishingStationContainers.push({ data: st, container, touchZone });
@@ -3698,6 +3817,8 @@ export class WorldScene extends Phaser.Scene {
 
   /**
    * Tự động khóa vị trí nhân vật khi đứng vào bến câu (688, 360) và tự động câu cá luôn (v3.7.5)
+  /**
+   * Quản lý hiển thị nút "Không câu nữa" & cooldown bến câu (KHÔNG tự động khóa câu khi đi ngang — bắt buộc ấn E).
    */
   updateDockFishingAutoFlow(heroX, heroY) {
     if (this.currentMapId !== 'map_fishing_pond') {
@@ -3715,46 +3836,43 @@ export class WorldScene extends Phaser.Scene {
       stopBtn.style.display = (this.isFishingSpotLocked || this.onMapFishingState) ? 'inline-flex' : 'none';
     }
 
-    // Nếu vừa mới thoát hoặc hụt cá: kiểm tra cooldown hoặc bước ra xa (>70px)
-    if (this.fishingSpotCooldownUntil) {
-      if (Date.now() > this.fishingSpotCooldownUntil || dist > 70) {
-        this.fishingSpotCooldownUntil = null;
-      } else {
-        return;
-      }
+    if (this.fishingSpotCooldownUntil && (Date.now() > this.fishingSpotCooldownUntil || dist > 70)) {
+      this.fishingSpotCooldownUntil = null;
+    }
+  }
+
+  startDockFishingManually(dockStation) {
+    if (!this.hero || this.isFishingSpotLocked || this.onMapFishingState) return;
+    const curFishing = window.__fishingSystem?.getState?.() || {};
+    if ((curFishing.basket?.length || 0) >= 6) {
+      this.showBasketFullNoticeModal();
+      return;
     }
 
-    // Khi bé đi vào đúng vị trí bến câu (dist <= 48px) và chưa câu: TỰ ĐỘNG KHÓA VÀ BẮT ĐẦU CÂU LUÔN!
-    if (dist <= 48 && !this.isFishingSpotLocked && !this.onMapFishingState && this.isExploring) {
-      const curFishing = window.__fishingSystem?.getState?.() || {};
-      if ((curFishing.basket?.length || 0) >= 6) {
-        this.showBasketFullNoticeModal();
-        this.exitFishingSpot('basket_full');
-        return;
-      }
-
-      this.isFishingSpotLocked = true;
-      this.hero.setPosition(dockX, dockY);
-      this.hero.stop();
-      this.hero.facing = 'left';
-      if (this.hero.sprite) {
-        this.hero.sprite.setFlipX(false);
-        const idleLeftKey = `${this.hero.getAnimPrefix()}_idle_left`;
-        if (this.anims.exists(idleLeftKey)) this.hero.sprite.play(idleLeftKey, true);
-      }
-      this.hero.updateShadow?.();
-
-      if (stopBtn) stopBtn.style.display = 'inline-flex';
-
-      const dockStation = (this.mapConfig?.fishingStations || []).find(s => s.id === 'station_lotus_dock') || {
-        id: 'station_lotus_dock',
-        dockId: 'lotus_dock',
-        x: dockX,
-        y: dockY,
-        castTarget: { x: 485, y: 445 }
-      };
-      this.startOnMapFishing(dockStation);
+    const dockX = 688;
+    const dockY = 360;
+    this.isFishingSpotLocked = true;
+    this.hero.setPosition(dockX, dockY);
+    this.hero.stop();
+    this.hero.facing = 'left';
+    if (this.hero.sprite) {
+      this.hero.sprite.setFlipX(false);
+      const idleLeftKey = `${this.hero.getAnimPrefix()}_idle_left`;
+      if (this.anims.exists(idleLeftKey)) this.hero.sprite.play(idleLeftKey, true);
     }
+    this.hero.updateShadow?.();
+
+    const stopBtn = document.getElementById('btn-stop-fishing-dock');
+    if (stopBtn) stopBtn.style.display = 'inline-flex';
+
+    const station = dockStation || (this.mapConfig?.fishingStations || []).find(s => s.id === 'station_lotus_dock') || {
+      id: 'station_lotus_dock',
+      dockId: 'lotus_dock',
+      x: dockX,
+      y: dockY,
+      castTarget: { x: 485, y: 445 }
+    };
+    this.startOnMapFishing(station);
   }
 
   /**
@@ -3805,14 +3923,21 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Cập nhật nút bấm tương tác [⚡ E] trên màn hình cảm ứng & iPad khi đứng đúng vùng chọn (v3.7.5)
+   * Cập nhật nút bấm tương tác [E] lớn trên màn hình & iPad với vùng chọn mở rộng (~135-145px)
    */
   updateProximityInteractionE(heroX, heroY) {
     const eBtn = document.getElementById('btn-interactive-e');
-    const eLabel = document.getElementById('interactive-e-label');
-    if (!eBtn || !eLabel) return;
+    if (!eBtn) return;
 
-    // Không hiển thị nếu đang câu cá hoặc có modal đang mở
+    const hx = typeof heroX === 'number' ? heroX : this.hero?.getX?.();
+    const hy = typeof heroY === 'number' ? heroY : this.hero?.getY?.();
+    if (typeof hx !== 'number' || typeof hy !== 'number') {
+      eBtn.hidden = true;
+      this.activeProximityInteractStation = null;
+      return;
+    }
+
+    // Không hiển thị nếu đang câu cá hoặc không ở trạng thái khám phá tự do
     if (this.isFishingSpotLocked || this.onMapFishingState || !this.isExploring) {
       eBtn.hidden = true;
       this.activeProximityInteractStation = null;
@@ -3820,117 +3945,143 @@ export class WorldScene extends Phaser.Scene {
     }
 
     let nearestInteractable = null;
-    let minDistance = 75;
+    let minDistance = Infinity;
+
+    const consider = (dist, radius, label, action) => {
+      if (dist <= radius && dist < minDistance) {
+        minDistance = dist;
+        nearestInteractable = { label, action };
+      }
+    };
+
+    heroX = hx;
+    heroY = hy;
 
     // 1. Bản đồ Bếp Cầu Vồng (map_kitchen)
     if (this.currentMapId === 'map_kitchen' && Array.isArray(this.mapConfig?.kitchenStations)) {
       for (const st of this.mapConfig.kitchenStations) {
         let sx = st.x;
         let sy = st.y;
-        let label = 'Mở';
-        let radius = 70;
+        let label = 'Mở trạm bếp';
+        let radius = 135;
 
         if (st.type === 'pantry') {
-          sx = 398; sy = 291; label = 'Mở Tủ Lạnh 🍎'; radius = 75;
+          sx = 398; sy = 291; label = 'Mở Tủ Lạnh';
         } else if (st.type === 'prep') {
-          sx = 605; sy = 131; label = 'Rửa Tay 🧼'; radius = 75;
+          sx = 605; sy = 131; label = 'Rửa Tay';
         } else if (st.type === 'cook') {
-          sx = 940; sy = 290; label = 'Vào Bếp Nấu 🍳'; radius = 90;
+          sx = 940; sy = 290; label = 'Vào Bếp Nấu'; radius = 145;
         } else if (st.type === 'dining') {
-          sx = 905; sy = 570; label = 'Bàn Ăn 🍰'; radius = 75;
+          sx = 905; sy = 570; label = 'Bàn Ăn';
         }
 
-        const d = Math.hypot(heroX - sx, heroY - sy);
-        if (d <= radius && d < minDistance) {
-          minDistance = d;
-          nearestInteractable = {
-            label,
-            action: () => this.handleKitchenStationInteraction(st)
-          };
-        }
+        consider(Math.hypot(heroX - sx, heroY - sy), radius, label, () => this.openKitchenStationInteraction(st));
       }
     }
 
     // 2. Bản đồ Nông Trại Thú Cưng (map_pet_farm)
     if (this.currentMapId === 'map_pet_farm' && Array.isArray(this.mapConfig?.petStations)) {
       for (const st of this.mapConfig.petStations) {
-        let label = 'Chăm Sóc';
-        if (st.type === 'water') label = 'Uống Nước 💧';
-        else if (st.type === 'bath') label = 'Tắm Cho Cún 🛁';
-        else if (st.type === 'sleep') label = 'Đi Ngủ 💤';
-        else if (st.type === 'potty') label = 'Đi Vệ Sinh 🚽';
+        const hasDedicatedPortal = (this.portals || []).some(p =>
+          (st.type === 'kitchen' && p.targetMapId === 'map_kitchen') ||
+          (st.type === 'fishing_pond' && p.targetMapId === 'map_fishing_pond') ||
+          (st.type === 'rainbow_market' && p.targetMapId === 'map_rainbow_market') ||
+          (st.type === 'fashion_street' && p.targetMapId === 'map_fashion_street')
+        );
+        if (hasDedicatedPortal) continue;
 
-        const d = Math.hypot(heroX - st.x, heroY - st.y);
-        const radius = st.type === 'water' ? 85 : 75;
-        if (d <= radius && d < minDistance) {
-          minDistance = d;
-          nearestInteractable = {
-            label,
-            action: () => this.handlePetStationInteraction(st)
-          };
-        }
+        let label = 'Chăm Sóc Thú Cưng';
+        if (st.type === 'water') label = 'Uống Nước';
+        else if (st.type === 'bath') label = 'Tắm Cho Cún';
+        else if (st.type === 'sleep' || st.type === 'bed') label = 'Đi Ngủ';
+        else if (st.type === 'potty' || st.type === 'toilet') label = 'Đi Vệ Sinh';
+        else if (st.type === 'fishing_pond') label = 'Đi Hồ Câu';
+        else if (st.type === 'rainbow_market') label = 'Đi Chợ Cầu Vồng';
+        else if (st.type === 'fashion_street') label = 'Đi Phố Thời Trang';
+
+        consider(Math.hypot(heroX - st.x, heroY - st.y), 135, label, () => this.handlePetStationInteraction(st));
       }
     }
 
     // 3. Bản đồ Hồ Câu Lá Sen (map_fishing_pond)
     if (this.currentMapId === 'map_fishing_pond' && Array.isArray(this.mapConfig?.fishingStations)) {
+      const dockSt = this.mapConfig.fishingStations.find(s => s.id === 'station_lotus_dock') || {
+        id: 'station_lotus_dock',
+        dockId: 'lotus_dock',
+        x: 688,
+        y: 360,
+        castTarget: { x: 485, y: 445 }
+      };
+      consider(Math.hypot(heroX - 688, heroY - 360), 145, 'Bắt đầu câu cá', () => this.startDockFishingManually(dockSt));
+
       const bookSt = this.mapConfig.fishingStations.find(s => s.type === 'fish_book');
       if (bookSt) {
-        const d = Math.hypot(heroX - bookSt.x, heroY - bookSt.y);
-        if (d <= 75 && d < minDistance) {
-          minDistance = d;
-          nearestInteractable = {
-            label: 'Sổ Huy Hiệu 🏅',
-            action: () => this.handleFishingStationInteraction(bookSt)
-          };
-        }
+        consider(
+          Math.hypot(heroX - bookSt.x, heroY - bookSt.y),
+          135,
+          'Sổ Huy Hiệu',
+          () => window.dispatchEvent(new CustomEvent('game:open-fishing-station', { detail: { station: bookSt } }))
+        );
       }
     }
 
     // 4. Bản đồ Chợ Cầu Vồng (map_rainbow_market)
     if (this.currentMapId === 'map_rainbow_market' && Array.isArray(this.mapConfig?.marketStations)) {
       for (const st of this.mapConfig.marketStations) {
-        const d = Math.hypot(heroX - st.x, heroY - st.y);
-        if (d <= 80 && d < minDistance) {
-          minDistance = d;
-          nearestInteractable = {
-            label: st.name || 'Gian Hàng 🛍️',
-            action: () => this.handleMarketStationInteraction(st)
-          };
-        }
+        consider(
+          Math.hypot(heroX - st.x, heroY - st.y),
+          140,
+          st.name || 'Gian Hàng',
+          () => window.dispatchEvent(new CustomEvent('game:open-market-station', { detail: { station: st } }))
+        );
       }
     }
 
     // 5. Bản đồ Phố Thời Trang (map_fashion_street)
     if (this.currentMapId === 'map_fashion_street' && Array.isArray(this.mapConfig?.fashionStations)) {
       for (const st of this.mapConfig.fashionStations) {
-        const d = Math.hypot(heroX - st.x, heroY - st.y);
-        if (d <= 80 && d < minDistance) {
-          minDistance = d;
-          nearestInteractable = {
-            label: st.name || 'Thời Trang 👒',
-            action: () => this.handleFashionStationInteraction(st)
-          };
-        }
+        consider(
+          Math.hypot(heroX - st.x, heroY - st.y),
+          140,
+          st.name || 'Thời Trang',
+          () => {
+            if (st.type === 'backpack_stall') {
+              window.dispatchEvent(new CustomEvent('game:open-market-station', { detail: { station: st } }));
+            } else {
+              window.dispatchEvent(new CustomEvent('game:open-fashion-modal', {
+                detail: { station: st, tabIndex: st.tabIndex ?? 0 }
+              }));
+            }
+          }
+        );
       }
     }
 
-    // 6. Cổng dịch chuyển (Portals)
+    // 6. Cổng hoa / PropsPuzzle tương tác trên map phiêu lưu
+    if (this.propsPuzzle && typeof this.propsPuzzle.x === 'number') {
+      consider(
+        Math.hypot(heroX - this.propsPuzzle.x, heroY - this.propsPuzzle.y),
+        135,
+        'Kiểm tra Cổng Hoa',
+        () => this.propsPuzzle.handleTouch?.()
+      );
+    }
+
+    // 7. Cổng dịch chuyển (Portals)
     const portals = this.portals || (this.teleportPortal ? [this.teleportPortal] : []);
     for (const portal of portals) {
-      if (!portal?.x) continue;
-      const d = Math.hypot(heroX - portal.x, heroY - portal.y);
-      if (d <= 70 && d < minDistance) {
-        minDistance = d;
-        nearestInteractable = {
-          label: portal.targetMapName ? `Vào ${portal.targetMapName} 🌀` : 'Vào Cổng 🌀',
-          action: () => portal.handleInteract?.()
-        };
-      }
+      if (!portal || typeof portal.x !== 'number' || !portal.isUnlocked) continue;
+      consider(
+        Math.hypot(heroX - portal.x, heroY - portal.y),
+        145,
+        portal.targetMapName ? `Vào ${portal.targetMapName}` : 'Vào Cổng',
+        () => portal.handleInteract?.()
+      );
     }
 
     if (nearestInteractable) {
-      eLabel.textContent = nearestInteractable.label;
+      eBtn.setAttribute('aria-label', nearestInteractable.label);
+      eBtn.title = `Ấn E: ${nearestInteractable.label}`;
       eBtn.hidden = false;
       this.activeProximityInteractStation = nearestInteractable;
     } else {
@@ -3940,10 +4091,23 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Kích hoạt tương tác trạm khi bấm nút [⚡ E] hoặc gõ phím E (v3.7.5)
+   * Kích hoạt tương tác trạm khi bấm nút [E] hoặc gõ phím E (có chống nhấn đúp cảm ứng/chuột)
    */
   triggerActiveProximityInteraction() {
-    if (!this.activeProximityInteractStation) return;
+    if (!this.sys?.isActive?.() || !this.isExploring || !this.activeProximityInteractStation) return;
+    if (this.isFishingSpotLocked || this.onMapFishingState) return;
+    const blockingModal = document.querySelector(
+      '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden]), #map-loading-overlay.active, #warp-overlay-container.active'
+    );
+    if (blockingModal) return;
+
+    const now = Date.now();
+    if (this._lastInteractEAt && now - this._lastInteractEAt < 220) return;
+    this._lastInteractEAt = now;
+
+    if (this.hero?.sprite?.active) {
+      this.playPixelFx('vfx_collect_burst', this.hero.sprite.x, this.hero.sprite.y - 18, { scale: 0.72, depth: 28 });
+    }
     window.__audioService?.playChime?.(680, 0.15);
     const act = this.activeProximityInteractStation.action;
     if (typeof act === 'function') {
@@ -5457,13 +5621,13 @@ export class WorldScene extends Phaser.Scene {
         ease: 'Sine.easeInOut'
       });
 
-      const touchZone = this.add.zone(st.x, st.y, Math.max(195, w + 30), 125)
+      const touchZone = this.add.zone(st.x, st.y, Math.max(115, w - 10), 82)
         .setInteractive({ useHandCursor: true })
         .setDepth(16);
       touchZone.on('pointerdown', (pointer) => {
         if (!this.isWorldPointer(pointer)) return;
-        pointer?.event?.stopPropagation?.();
-        this.handleMarketStationInteraction(st);
+        pointer._handledStationTap = true;
+        this.walkHeroToTarget(st.interactionPoint?.x ?? st.x, st.interactionPoint?.y ?? st.y);
       });
 
       this.marketStationContainers.push({ data: st, container, touchZone });
@@ -5523,13 +5687,13 @@ export class WorldScene extends Phaser.Scene {
         ease: 'Sine.easeInOut'
       });
 
-      const touchZone = this.add.zone(st.x, st.y, Math.max(180, w + 24), 115)
+      const touchZone = this.add.zone(st.x, st.y, Math.max(115, w - 10), 78)
         .setInteractive({ useHandCursor: true })
         .setDepth(16);
       touchZone.on('pointerdown', (pointer) => {
         if (!this.isWorldPointer(pointer)) return;
-        pointer?.event?.stopPropagation?.();
-        this.handleFashionStationInteraction(st);
+        pointer._handledStationTap = true;
+        this.walkHeroToTarget(st.interactionPoint?.x ?? st.x, st.interactionPoint?.y ?? st.y);
       });
 
       this.fashionStationContainers.push({ data: st, container, touchZone });

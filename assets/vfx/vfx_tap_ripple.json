@@ -1,0 +1,831 @@
+{
+  "frames": [
+    {
+      "filename": "vfx_tap_ripple 0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 1",
+      "frame": {
+        "x": 136,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 2",
+      "frame": {
+        "x": 272,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 3",
+      "frame": {
+        "x": 408,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 4",
+      "frame": {
+        "x": 0,
+        "y": 52,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 5",
+      "frame": {
+        "x": 136,
+        "y": 52,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 6",
+      "frame": {
+        "x": 272,
+        "y": 52,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 7",
+      "frame": {
+        "x": 408,
+        "y": 52,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 8",
+      "frame": {
+        "x": 0,
+        "y": 104,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 9",
+      "frame": {
+        "x": 136,
+        "y": 104,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 10",
+      "frame": {
+        "x": 272,
+        "y": 104,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 11",
+      "frame": {
+        "x": 408,
+        "y": 104,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 12",
+      "frame": {
+        "x": 0,
+        "y": 156,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 13",
+      "frame": {
+        "x": 136,
+        "y": 156,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 14",
+      "frame": {
+        "x": 272,
+        "y": 156,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 15",
+      "frame": {
+        "x": 408,
+        "y": 156,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 16",
+      "frame": {
+        "x": 0,
+        "y": 208,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 17",
+      "frame": {
+        "x": 136,
+        "y": 208,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 18",
+      "frame": {
+        "x": 272,
+        "y": 208,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 19",
+      "frame": {
+        "x": 408,
+        "y": 208,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 20",
+      "frame": {
+        "x": 0,
+        "y": 260,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 21",
+      "frame": {
+        "x": 136,
+        "y": 260,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 22",
+      "frame": {
+        "x": 272,
+        "y": 260,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 23",
+      "frame": {
+        "x": 408,
+        "y": 260,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 24",
+      "frame": {
+        "x": 0,
+        "y": 312,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 25",
+      "frame": {
+        "x": 136,
+        "y": 312,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 26",
+      "frame": {
+        "x": 272,
+        "y": 312,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 27",
+      "frame": {
+        "x": 408,
+        "y": 312,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 28",
+      "frame": {
+        "x": 0,
+        "y": 364,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 29",
+      "frame": {
+        "x": 136,
+        "y": 364,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 30",
+      "frame": {
+        "x": 272,
+        "y": 364,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 31",
+      "frame": {
+        "x": 408,
+        "y": 364,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 32",
+      "frame": {
+        "x": 0,
+        "y": 416,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 33",
+      "frame": {
+        "x": 136,
+        "y": 416,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 34",
+      "frame": {
+        "x": 272,
+        "y": 416,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    },
+    {
+      "filename": "vfx_tap_ripple 35",
+      "frame": {
+        "x": 408,
+        "y": 416,
+        "w": 136,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 136,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 52
+      },
+      "duration": 56
+    }
+  ],
+  "meta": {
+    "app": "https://github.com/patch-gg/pixelfx",
+    "version": "1",
+    "image": "vfx_tap_ripple.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 544,
+      "h": 468
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "vfx_tap_ripple",
+        "from": 0,
+        "to": 35,
+        "direction": "forward"
+      }
+    ],
+    "pixelfx": {
+      "id": "water/ripples",
+      "name": "Ripples",
+      "fps": 18,
+      "loop": true,
+      "frames": 36,
+      "frameSize": [
+        136,
+        52
+      ],
+      "pivot": [
+        68,
+        30
+      ],
+      "columns": 4
+    }
+  }
+}

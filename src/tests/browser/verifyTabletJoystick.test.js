@@ -72,10 +72,21 @@ const __dirname = path.dirname(__filename);
     });
 
     assert.ok(joystickInfo.zoneExists, 'Vùng virtual-joystick-zone phải tồn tại');
-    assert.ok(joystickInfo.zoneVisible, 'Vùng virtual-joystick-zone phải hiển thị');
+    assert.strictEqual(joystickInfo.zoneVisible, false, 'Mặc định virtual-joystick-zone phải TẮT (ưu tiên chạm iPad)');
     assert.ok(joystickInfo.baseExists, 'Đế xoay virtual-joystick-base phải tồn tại');
     assert.ok(joystickInfo.knobExists, 'Núm gạt virtual-joystick-knob phải tồn tại');
     assert.ok(joystickInfo.toggleBtnExists, 'Nút bật/tắt joystick trên topbar phải tồn tại');
+
+    // Bật Joystick qua nút Topbar để test kéo cần gạt ảo
+    await page.evaluate(async () => {
+      document.getElementById('btn-toggle-joystick')?.click();
+      await new Promise(r => setTimeout(r, 150));
+    });
+    const enabledAfterClick = await page.evaluate(() => {
+      const zone = document.getElementById('virtual-joystick-zone');
+      return !!zone && !zone.classList.contains('hidden');
+    });
+    assert.ok(enabledAfterClick, 'Sau khi bấm bật trên topbar, virtual-joystick-zone phải hiển thị');
 
     // 2. Lấy vị trí ban đầu của nhân vật Bé Sâu
     const initialPos = await page.evaluate(() => {
@@ -146,13 +157,13 @@ const __dirname = path.dirname(__filename);
     assert.strictEqual(moveResult.stoppedVector.y, 0, 'Vector Y sau khi thả tay phải trở về 0');
     assert.strictEqual(moveResult.heroIsMoving, false, 'Nhân vật phải dừng lại sau khi buông cần gạt');
 
-    // 4. Kiểm tra nút Bật / Tắt Cần gạt ảo trên Topbar
+    // 4. Kiểm tra nút Bật / Tắt Cần gạt ảo trên Topbar (đang Bật -> Tắt -> Bật lại để chụp ảnh)
     console.log(`[${vp.name}] Kiểm tra nút Bật / Tắt Cần Gạt trên Topbar...`);
     const toggleTest = await page.evaluate(async () => {
       const toggleBtn = document.getElementById('btn-toggle-joystick');
       const zone = document.getElementById('virtual-joystick-zone');
 
-      // Click tắt
+      // Đang Bật -> Click để Tắt
       toggleBtn.click();
       await new Promise(r => setTimeout(r, 150));
       const isHiddenAfterClick = zone.classList.contains('hidden');

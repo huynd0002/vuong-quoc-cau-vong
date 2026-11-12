@@ -1,0 +1,1379 @@
+{
+  "frames": [
+    {
+      "filename": "vfx_level_up 0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 1",
+      "frame": {
+        "x": 176,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 2",
+      "frame": {
+        "x": 352,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 3",
+      "frame": {
+        "x": 528,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 4",
+      "frame": {
+        "x": 704,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 5",
+      "frame": {
+        "x": 880,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 6",
+      "frame": {
+        "x": 1056,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 7",
+      "frame": {
+        "x": 0,
+        "y": 138,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 8",
+      "frame": {
+        "x": 176,
+        "y": 138,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 9",
+      "frame": {
+        "x": 352,
+        "y": 138,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 10",
+      "frame": {
+        "x": 528,
+        "y": 138,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 11",
+      "frame": {
+        "x": 704,
+        "y": 138,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 12",
+      "frame": {
+        "x": 880,
+        "y": 138,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 13",
+      "frame": {
+        "x": 1056,
+        "y": 138,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 14",
+      "frame": {
+        "x": 0,
+        "y": 276,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 15",
+      "frame": {
+        "x": 176,
+        "y": 276,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 16",
+      "frame": {
+        "x": 352,
+        "y": 276,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 17",
+      "frame": {
+        "x": 528,
+        "y": 276,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 18",
+      "frame": {
+        "x": 704,
+        "y": 276,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 19",
+      "frame": {
+        "x": 880,
+        "y": 276,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 20",
+      "frame": {
+        "x": 1056,
+        "y": 276,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 21",
+      "frame": {
+        "x": 0,
+        "y": 414,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 22",
+      "frame": {
+        "x": 176,
+        "y": 414,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 23",
+      "frame": {
+        "x": 352,
+        "y": 414,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 24",
+      "frame": {
+        "x": 528,
+        "y": 414,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 25",
+      "frame": {
+        "x": 704,
+        "y": 414,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 26",
+      "frame": {
+        "x": 880,
+        "y": 414,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 27",
+      "frame": {
+        "x": 1056,
+        "y": 414,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 28",
+      "frame": {
+        "x": 0,
+        "y": 552,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 29",
+      "frame": {
+        "x": 176,
+        "y": 552,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 30",
+      "frame": {
+        "x": 352,
+        "y": 552,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 31",
+      "frame": {
+        "x": 528,
+        "y": 552,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 32",
+      "frame": {
+        "x": 704,
+        "y": 552,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 33",
+      "frame": {
+        "x": 880,
+        "y": 552,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 34",
+      "frame": {
+        "x": 1056,
+        "y": 552,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 35",
+      "frame": {
+        "x": 0,
+        "y": 690,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 36",
+      "frame": {
+        "x": 176,
+        "y": 690,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 37",
+      "frame": {
+        "x": 352,
+        "y": 690,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 38",
+      "frame": {
+        "x": 528,
+        "y": 690,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 39",
+      "frame": {
+        "x": 704,
+        "y": 690,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 40",
+      "frame": {
+        "x": 880,
+        "y": 690,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 41",
+      "frame": {
+        "x": 1056,
+        "y": 690,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 42",
+      "frame": {
+        "x": 0,
+        "y": 828,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 43",
+      "frame": {
+        "x": 176,
+        "y": 828,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 44",
+      "frame": {
+        "x": 352,
+        "y": 828,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 45",
+      "frame": {
+        "x": 528,
+        "y": 828,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 46",
+      "frame": {
+        "x": 704,
+        "y": 828,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 47",
+      "frame": {
+        "x": 880,
+        "y": 828,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 48",
+      "frame": {
+        "x": 1056,
+        "y": 828,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 49",
+      "frame": {
+        "x": 0,
+        "y": 966,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 50",
+      "frame": {
+        "x": 176,
+        "y": 966,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_level_up 51",
+      "frame": {
+        "x": 352,
+        "y": 966,
+        "w": 176,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 176,
+        "h": 138
+      },
+      "duration": 63
+    }
+  ],
+  "meta": {
+    "app": "https://github.com/patch-gg/pixelfx",
+    "version": "1",
+    "image": "vfx_level_up.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1232,
+      "h": 1104
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "vfx_level_up",
+        "from": 0,
+        "to": 51,
+        "direction": "forward"
+      }
+    ],
+    "pixelfx": {
+      "id": "ui/level-up",
+      "name": "Level up",
+      "fps": 16,
+      "loop": false,
+      "frames": 52,
+      "frameSize": [
+        176,
+        138
+      ],
+      "pivot": [
+        88,
+        114
+      ],
+      "columns": 7,
+      "act": {
+        "windup": 0.3,
+        "recovery": 0,
+        "onBody": true,
+        "targets": [],
+        "hits": [
+          {
+            "t": 0.28,
+            "freeze": 0.05,
+            "shake": 0.14,
+            "amp": 2,
+            "push": 1.2
+          }
+        ],
+        "poses": [
+          {
+            "t": -0.3,
+            "how": "smooth",
+            "pose": {
+              "crouch": 3,
+              "fx": 11,
+              "fy": -21,
+              "bx": 9,
+              "by": -21,
+              "ffx": 7,
+              "fbx": -7
+            }
+          },
+          {
+            "t": 0.28,
+            "how": "smooth",
+            "pose": {
+              "turn": 0.9,
+              "crouch": 7,
+              "lean": 2,
+              "fx": -6,
+              "fy": -13,
+              "bx": 7,
+              "by": -13,
+              "ffx": -5,
+              "fbx": 6
+            }
+          },
+          {
+            "t": 0.3,
+            "how": "snap",
+            "pose": {
+              "turn": 1.1,
+              "y": -16,
+              "crouch": -1,
+              "fx": -6,
+              "fy": -45,
+              "bx": 7,
+              "by": -44,
+              "ffx": -2,
+              "ffy": -8,
+              "fbx": 5,
+              "fby": -3,
+              "toeB": true
+            }
+          },
+          {
+            "t": 0.46,
+            "how": "smooth",
+            "pose": {
+              "turn": 1.1,
+              "y": -19,
+              "crouch": -1,
+              "fx": -6,
+              "fy": -45,
+              "bx": 7,
+              "by": -44,
+              "ffx": -2,
+              "ffy": -8,
+              "fbx": 5,
+              "fby": -3,
+              "toeB": true
+            }
+          },
+          {
+            "t": 0.72,
+            "how": "in",
+            "pose": {
+              "turn": 1.1,
+              "y": 0,
+              "crouch": -1,
+              "fx": -6,
+              "fy": -45,
+              "bx": 7,
+              "by": -44,
+              "ffx": -2,
+              "ffy": -4,
+              "fbx": 5,
+              "fby": -4,
+              "toeB": true
+            }
+          },
+          {
+            "t": 0.74,
+            "how": "snap",
+            "pose": {
+              "turn": 0.9,
+              "crouch": 5,
+              "lean": 2,
+              "fx": -6,
+              "fy": -13,
+              "bx": 7,
+              "by": -13,
+              "ffx": -5,
+              "fbx": 6
+            }
+          },
+          {
+            "t": 0.95,
+            "how": "out",
+            "pose": {
+              "turn": 0.9,
+              "crouch": 0,
+              "fx": -6,
+              "fy": -45,
+              "bx": 9,
+              "by": -15,
+              "ffx": -3,
+              "fbx": 4
+            }
+          },
+          {
+            "t": 1.2,
+            "how": "smooth",
+            "pose": {
+              "turn": 0.9,
+              "crouch": 1,
+              "fx": -6,
+              "fy": -43,
+              "bx": 9,
+              "by": -15,
+              "ffx": -3,
+              "fbx": 4
+            }
+          },
+          {
+            "t": 1.45,
+            "how": "smooth",
+            "pose": {
+              "turn": 0.9,
+              "crouch": 0,
+              "fx": -6,
+              "fy": -45,
+              "bx": 9,
+              "by": -15,
+              "ffx": -3,
+              "fbx": 4
+            }
+          },
+          {
+            "t": 2.3,
+            "how": "smooth",
+            "pose": {
+              "turn": 0.9,
+              "crouch": 0,
+              "fx": -6,
+              "fy": -41,
+              "bx": 9,
+              "by": -15,
+              "ffx": -3,
+              "fbx": 4
+            }
+          },
+          {
+            "t": 2.8,
+            "how": "smooth",
+            "pose": {
+              "crouch": 3,
+              "fx": 11,
+              "fy": -21,
+              "bx": 9,
+              "by": -21,
+              "ffx": 7,
+              "fbx": -7
+            }
+          },
+          {
+            "t": 3.2,
+            "how": "smooth",
+            "pose": {
+              "crouch": 3,
+              "fx": 11,
+              "fy": -21,
+              "bx": 9,
+              "by": -21,
+              "ffx": 7,
+              "fbx": -7
+            }
+          }
+        ]
+      }
+    }
+  }
+}

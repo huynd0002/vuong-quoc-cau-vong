@@ -101,6 +101,7 @@ import vfxPowerStarUrl from '../../../assets/vfx/vfx_power_star.png?url';
 import vfxGlitchWipeUrl from '../../../assets/vfx/vfx_glitch_wipe.png?url';
 import vfxButterflyUrl from '../../../assets/vfx/vfx_butterfly.png?url';
 import vfxFrogUrl from '../../../assets/vfx/vfx_frog.png?url';
+import { PIXELFX_SHEETS } from '../effects/pixelfxRegistry.js';
 
 // Phụ Kiện Nhân Vật Thời Trang Mua Bằng Sao (Chibi Accessories)
 import accRainbowCrownUrl from '../../../assets/fashion/accessories/acc_rainbow_crown.png?url';
@@ -201,6 +202,13 @@ export class PreloadScene extends Phaser.Scene {
     this.load.spritesheet('vfx_glitch_wipe', vfxGlitchWipeUrl, { frameWidth: 320, frameHeight: 180 });
     this.load.spritesheet('vfx_butterfly', vfxButterflyUrl, { frameWidth: 128, frameHeight: 88 });
     this.load.spritesheet('vfx_frog', vfxFrogUrl, { frameWidth: 112, frameHeight: 88 });
+
+    // Mở rộng bộ PixelFX Gameplay Pack (điểm chạm, vượt ải, chiến đấu, chuyển cảnh)
+    Object.entries(PIXELFX_SHEETS).forEach(([key, spec]) => {
+      if (!this.textures.exists(key)) {
+        this.load.spritesheet(key, spec.url, { frameWidth: spec.frameWidth, frameHeight: spec.frameHeight });
+      }
+    });
 
     // 1b. Tài nguyên các bản đồ còn lại
     this.load.image('map_2_bg', map2BgUrl);

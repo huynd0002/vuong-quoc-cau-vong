@@ -1,4 +1,5 @@
 import { validateQuestion } from '../schema/validator.js';
+import { EXPANDED_QUESTIONS } from './expandedQuestions.js';
 
 /**
  * Question Bank
@@ -2433,13 +2434,15 @@ export const QUESTION_BANK = {
     choices: ['Sư Tử', 'Voi', 'Hươu Cao Cổ'],
     correct: 0,
     hint: 'Nối bạn Sư tử với Sư tử, Voi với Voi, Hươu với Hươu nhé!'
-  }
+  },
+
+  ...EXPANDED_QUESTIONS
 
 };
 
 // Bộ nhớ câu hỏi đã gặp trong phiên chơi để chống trùng lặp tuyệt đối
 export const sessionQuestionHistory = [];
-const MAX_SESSION_HISTORY = 18;
+const MAX_SESSION_HISTORY = 45;
 
 let lastShuffledCorrectIndex = -1;
 
@@ -2515,11 +2518,14 @@ export function getAllQuestions() {
 /**
  * Chọn câu hỏi ngẫu nhiên trong vùng, ưu tiên loại trừ các câu vừa xuất hiện cả trong trận lẫn trong phiên chơi
  */
-export function getRandomZoneQuestion(zoneId, excludeIds = []) {
+export function getRandomZoneQuestion(zoneId, excludeIds = [], options = {}) {
   const prefix = `q_${zoneId}_`;
   const allZone = Object.values(QUESTION_BANK).filter(
     q => q.id.startsWith(prefix) && !q.id.includes('boss')
   );
+  const preferTypes = Array.isArray(options?.preferTypes) && options.preferTypes.length > 0
+    ? options.preferTypes
+    : null;
 
   // 1. Ưu tiên số 1: Các câu hỏi CHƯA gặp trong excludeIds VÀ CHƯA gặp trong sessionQuestionHistory
   const unseenCandidates = allZone.filter(
@@ -2527,7 +2533,11 @@ export function getRandomZoneQuestion(zoneId, excludeIds = []) {
   );
 
   if (unseenCandidates.length > 0) {
-    const chosen = unseenCandidates[Math.floor(Math.random() * unseenCandidates.length)];
+    const preferredUnseen = preferTypes
+      ? unseenCandidates.filter(q => preferTypes.includes(q.type || 'multiple_choice'))
+      : [];
+    const pool = preferredUnseen.length > 0 ? preferredUnseen : unseenCandidates;
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
     recordQuestionSeen(chosen.id);
     return chosen;
   }
@@ -2535,13 +2545,14 @@ export function getRandomZoneQuestion(zoneId, excludeIds = []) {
   // 2. Nếu đã gặp gần hết ngân hàng, chọn trong các câu không nằm trong excludeIds của trận hiện tại
   const eligible = allZone.filter(q => !excludeIds.includes(q.id));
   if (eligible.length > 0) {
-    // Sắp xếp ưu tiên câu nào xuất hiện lâu nhất trong quá khứ lên trước
+    // Sắp xếp ưu tiên câu nào xuất hiện lâu nhất trong quá khứ lên trước (cùng nhóm ưu tiên xáo nhẹ)
     eligible.sort((a, b) => {
       const idxA = sessionQuestionHistory.indexOf(a.id);
       const idxB = sessionQuestionHistory.indexOf(b.id);
       return idxA - idxB;
     });
-    const chosen = eligible[0];
+    const topPool = eligible.slice(0, Math.min(4, eligible.length));
+    const chosen = topPool[Math.floor(Math.random() * topPool.length)];
     recordQuestionSeen(chosen.id);
     return chosen;
   }

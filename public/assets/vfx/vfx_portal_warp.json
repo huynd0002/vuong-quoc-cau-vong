@@ -1,0 +1,875 @@
+{
+  "frames": [
+    {
+      "filename": "vfx_portal_warp 0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 1",
+      "frame": {
+        "x": 152,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 2",
+      "frame": {
+        "x": 304,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 3",
+      "frame": {
+        "x": 456,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 4",
+      "frame": {
+        "x": 608,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 5",
+      "frame": {
+        "x": 760,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 6",
+      "frame": {
+        "x": 0,
+        "y": 116,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 7",
+      "frame": {
+        "x": 152,
+        "y": 116,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 8",
+      "frame": {
+        "x": 304,
+        "y": 116,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 9",
+      "frame": {
+        "x": 456,
+        "y": 116,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 10",
+      "frame": {
+        "x": 608,
+        "y": 116,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 11",
+      "frame": {
+        "x": 760,
+        "y": 116,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 12",
+      "frame": {
+        "x": 0,
+        "y": 232,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 13",
+      "frame": {
+        "x": 152,
+        "y": 232,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 14",
+      "frame": {
+        "x": 304,
+        "y": 232,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 15",
+      "frame": {
+        "x": 456,
+        "y": 232,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 16",
+      "frame": {
+        "x": 608,
+        "y": 232,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 17",
+      "frame": {
+        "x": 760,
+        "y": 232,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 18",
+      "frame": {
+        "x": 0,
+        "y": 348,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 19",
+      "frame": {
+        "x": 152,
+        "y": 348,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 20",
+      "frame": {
+        "x": 304,
+        "y": 348,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 21",
+      "frame": {
+        "x": 456,
+        "y": 348,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 22",
+      "frame": {
+        "x": 608,
+        "y": 348,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 23",
+      "frame": {
+        "x": 760,
+        "y": 348,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 24",
+      "frame": {
+        "x": 0,
+        "y": 464,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 25",
+      "frame": {
+        "x": 152,
+        "y": 464,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 26",
+      "frame": {
+        "x": 304,
+        "y": 464,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 27",
+      "frame": {
+        "x": 456,
+        "y": 464,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 28",
+      "frame": {
+        "x": 608,
+        "y": 464,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 29",
+      "frame": {
+        "x": 760,
+        "y": 464,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 30",
+      "frame": {
+        "x": 0,
+        "y": 580,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 31",
+      "frame": {
+        "x": 152,
+        "y": 580,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 32",
+      "frame": {
+        "x": 304,
+        "y": 580,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 33",
+      "frame": {
+        "x": 456,
+        "y": 580,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 34",
+      "frame": {
+        "x": 608,
+        "y": 580,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 35",
+      "frame": {
+        "x": 760,
+        "y": 580,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 36",
+      "frame": {
+        "x": 0,
+        "y": 696,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_portal_warp 37",
+      "frame": {
+        "x": 152,
+        "y": 696,
+        "w": 152,
+        "h": 116
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 116
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 116
+      },
+      "duration": 63
+    }
+  ],
+  "meta": {
+    "app": "https://github.com/patch-gg/pixelfx",
+    "version": "1",
+    "image": "vfx_portal_warp.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 912,
+      "h": 812
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "vfx_portal_warp",
+        "from": 0,
+        "to": 37,
+        "direction": "forward"
+      }
+    ],
+    "pixelfx": {
+      "id": "arcane/portal",
+      "name": "Portal",
+      "fps": 16,
+      "loop": true,
+      "frames": 38,
+      "frameSize": [
+        152,
+        116
+      ],
+      "pivot": [
+        76,
+        106
+      ],
+      "columns": 6
+    }
+  }
+}

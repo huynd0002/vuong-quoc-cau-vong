@@ -1,0 +1,1249 @@
+{
+  "frames": [
+    {
+      "filename": "vfx_confetti 0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 1",
+      "frame": {
+        "x": 200,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 2",
+      "frame": {
+        "x": 400,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 3",
+      "frame": {
+        "x": 600,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 4",
+      "frame": {
+        "x": 800,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 5",
+      "frame": {
+        "x": 1000,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 6",
+      "frame": {
+        "x": 1200,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 7",
+      "frame": {
+        "x": 0,
+        "y": 140,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 8",
+      "frame": {
+        "x": 200,
+        "y": 140,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 9",
+      "frame": {
+        "x": 400,
+        "y": 140,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 10",
+      "frame": {
+        "x": 600,
+        "y": 140,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 11",
+      "frame": {
+        "x": 800,
+        "y": 140,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 12",
+      "frame": {
+        "x": 1000,
+        "y": 140,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 13",
+      "frame": {
+        "x": 1200,
+        "y": 140,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 14",
+      "frame": {
+        "x": 0,
+        "y": 280,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 15",
+      "frame": {
+        "x": 200,
+        "y": 280,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 16",
+      "frame": {
+        "x": 400,
+        "y": 280,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 17",
+      "frame": {
+        "x": 600,
+        "y": 280,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 18",
+      "frame": {
+        "x": 800,
+        "y": 280,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 19",
+      "frame": {
+        "x": 1000,
+        "y": 280,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 20",
+      "frame": {
+        "x": 1200,
+        "y": 280,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 21",
+      "frame": {
+        "x": 0,
+        "y": 420,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 22",
+      "frame": {
+        "x": 200,
+        "y": 420,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 23",
+      "frame": {
+        "x": 400,
+        "y": 420,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 24",
+      "frame": {
+        "x": 600,
+        "y": 420,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 25",
+      "frame": {
+        "x": 800,
+        "y": 420,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 26",
+      "frame": {
+        "x": 1000,
+        "y": 420,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 27",
+      "frame": {
+        "x": 1200,
+        "y": 420,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 28",
+      "frame": {
+        "x": 0,
+        "y": 560,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 29",
+      "frame": {
+        "x": 200,
+        "y": 560,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 30",
+      "frame": {
+        "x": 400,
+        "y": 560,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 31",
+      "frame": {
+        "x": 600,
+        "y": 560,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 32",
+      "frame": {
+        "x": 800,
+        "y": 560,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 33",
+      "frame": {
+        "x": 1000,
+        "y": 560,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 34",
+      "frame": {
+        "x": 1200,
+        "y": 560,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 35",
+      "frame": {
+        "x": 0,
+        "y": 700,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 36",
+      "frame": {
+        "x": 200,
+        "y": 700,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 37",
+      "frame": {
+        "x": 400,
+        "y": 700,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 38",
+      "frame": {
+        "x": 600,
+        "y": 700,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 39",
+      "frame": {
+        "x": 800,
+        "y": 700,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 40",
+      "frame": {
+        "x": 1000,
+        "y": 700,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 41",
+      "frame": {
+        "x": 1200,
+        "y": 700,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 42",
+      "frame": {
+        "x": 0,
+        "y": 840,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 43",
+      "frame": {
+        "x": 200,
+        "y": 840,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 44",
+      "frame": {
+        "x": 400,
+        "y": 840,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 45",
+      "frame": {
+        "x": 600,
+        "y": 840,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 46",
+      "frame": {
+        "x": 800,
+        "y": 840,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 47",
+      "frame": {
+        "x": 1000,
+        "y": 840,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 48",
+      "frame": {
+        "x": 1200,
+        "y": 840,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 49",
+      "frame": {
+        "x": 0,
+        "y": 980,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 50",
+      "frame": {
+        "x": 200,
+        "y": 980,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 51",
+      "frame": {
+        "x": 400,
+        "y": 980,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 52",
+      "frame": {
+        "x": 600,
+        "y": 980,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 53",
+      "frame": {
+        "x": 800,
+        "y": 980,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    },
+    {
+      "filename": "vfx_confetti 54",
+      "frame": {
+        "x": 1000,
+        "y": 980,
+        "w": 200,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 140
+      },
+      "duration": 63
+    }
+  ],
+  "meta": {
+    "app": "https://github.com/patch-gg/pixelfx",
+    "version": "1",
+    "image": "vfx_confetti.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1400,
+      "h": 1120
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "vfx_confetti",
+        "from": 0,
+        "to": 54,
+        "direction": "forward"
+      }
+    ],
+    "pixelfx": {
+      "id": "ui/confetti",
+      "name": "Confetti",
+      "fps": 16,
+      "loop": false,
+      "frames": 55,
+      "frameSize": [
+        200,
+        140
+      ],
+      "pivot": [
+        100,
+        126
+      ],
+      "columns": 7
+    }
+  }
+}

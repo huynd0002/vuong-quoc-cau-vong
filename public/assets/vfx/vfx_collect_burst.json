@@ -1,0 +1,655 @@
+{
+  "frames": [
+    {
+      "filename": "vfx_collect_burst 0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 1",
+      "frame": {
+        "x": 112,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 2",
+      "frame": {
+        "x": 224,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 3",
+      "frame": {
+        "x": 336,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 4",
+      "frame": {
+        "x": 448,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 5",
+      "frame": {
+        "x": 560,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 6",
+      "frame": {
+        "x": 0,
+        "y": 108,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 7",
+      "frame": {
+        "x": 112,
+        "y": 108,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 8",
+      "frame": {
+        "x": 224,
+        "y": 108,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 9",
+      "frame": {
+        "x": 336,
+        "y": 108,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 10",
+      "frame": {
+        "x": 448,
+        "y": 108,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 11",
+      "frame": {
+        "x": 560,
+        "y": 108,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 12",
+      "frame": {
+        "x": 0,
+        "y": 216,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 13",
+      "frame": {
+        "x": 112,
+        "y": 216,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 14",
+      "frame": {
+        "x": 224,
+        "y": 216,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 15",
+      "frame": {
+        "x": 336,
+        "y": 216,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 16",
+      "frame": {
+        "x": 448,
+        "y": 216,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 17",
+      "frame": {
+        "x": 560,
+        "y": 216,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 18",
+      "frame": {
+        "x": 0,
+        "y": 324,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 19",
+      "frame": {
+        "x": 112,
+        "y": 324,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 20",
+      "frame": {
+        "x": 224,
+        "y": 324,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 21",
+      "frame": {
+        "x": 336,
+        "y": 324,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 22",
+      "frame": {
+        "x": 448,
+        "y": 324,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 23",
+      "frame": {
+        "x": 560,
+        "y": 324,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 24",
+      "frame": {
+        "x": 0,
+        "y": 432,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 25",
+      "frame": {
+        "x": 112,
+        "y": 432,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 26",
+      "frame": {
+        "x": 224,
+        "y": 432,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    },
+    {
+      "filename": "vfx_collect_burst 27",
+      "frame": {
+        "x": 336,
+        "y": 432,
+        "w": 112,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 108
+      },
+      "duration": 50
+    }
+  ],
+  "meta": {
+    "app": "https://github.com/patch-gg/pixelfx",
+    "version": "1",
+    "image": "vfx_collect_burst.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 672,
+      "h": 540
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "vfx_collect_burst",
+        "from": 0,
+        "to": 27,
+        "direction": "forward"
+      }
+    ],
+    "pixelfx": {
+      "id": "pickups/collect-burst",
+      "name": "Collect burst",
+      "fps": 20,
+      "loop": false,
+      "frames": 28,
+      "frameSize": [
+        112,
+        108
+      ],
+      "pivot": [
+        56,
+        94
+      ],
+      "columns": 6
+    }
+  }
+}

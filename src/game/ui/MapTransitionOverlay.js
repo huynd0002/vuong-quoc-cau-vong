@@ -1,14 +1,9 @@
+import { PIXELFX_SHEETS, preloadSheetImage, drawPixelFxFrame } from '../effects/pixelfxRegistry.js';
+
 /**
- * MapTransitionOverlay (Hiệu ứng Dịch Chuyển Bản Đồ Cầu Vồng 8 Bước)
- * Quản lý chuỗi hoạt ảnh chuyển cảnh 8 bước hoành tráng, nhiều màu sắc:
- * - Bước 1: Kích hoạt Cổng Thần Cầu Vồng
- * - Bước 2: Bé Sâu tiến vào tâm vòng xoáy
- * - Bước 3: Vòng hào quang 7 sắc bùng nở
- * - Bước 4: Cơn mưa bụi sao ma thuật
- * - Bước 5: Mở đường hầm không gian Cầu Vồng
- * - Bước 6: Dịch chuyển lượng tử sang Vùng Đất Mới
- * - Bước 7: Hạ cánh an toàn tại miền đất mới
- * - Bước 8: Khúc khải hoàn & Lời chào rực rỡ
+ * MapTransitionOverlay (Hiệu ứng Chuyển Cảnh & Dịch Chuyển Bản Đồ Cầu Vồng Thống Nhất)
+ * Kết hợp PixelFX Star Iris + sóng xung kích + màn hình Loading thật (game:map-ready)
+ * mượt mà trong ~1.1–1.5s cho mọi thao tác chuyển map.
  */
 export class MapTransitionOverlay {
   constructor(options = {}) {
@@ -22,12 +17,46 @@ export class MapTransitionOverlay {
     this.textEl = null;
     this.tunnelEl = null;
     this.flashEl = null;
+    this.fxCanvas = null;
+
+    this._timers = new Set();
+    this._fxRafId = null;
+    this._irisSheetImg = null;
+    this.isTransitioning = false;
 
     this.initDOM();
   }
 
+  schedule(fn, delayMs) {
+    const id = setTimeout(() => {
+      this._timers.delete(id);
+      fn();
+    }, delayMs);
+    this._timers.add(id);
+    return id;
+  }
+
+  clearPending() {
+    for (const id of this._timers) {
+      clearTimeout(id);
+    }
+    this._timers.clear();
+    if (this._fxRafId && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(this._fxRafId);
+      this._fxRafId = null;
+    }
+    if (this.fxCanvas) {
+      const ctx = this.fxCanvas.getContext('2d');
+      ctx?.clearRect(0, 0, this.fxCanvas.width, this.fxCanvas.height);
+    }
+  }
+
   initDOM() {
     if (typeof document === 'undefined') return;
+
+    preloadSheetImage(PIXELFX_SHEETS.vfx_star_iris)
+      .then((img) => { this._irisSheetImg = img; })
+      .catch(() => {});
 
     let el = document.getElementById('warp-overlay-container');
     if (!el) {
@@ -37,18 +66,14 @@ export class MapTransitionOverlay {
       el.innerHTML = `
         <div class="warp-tunnel-effect" id="warp-tunnel-effect"></div>
         <div class="warp-flash-burst" id="warp-flash-burst"></div>
+        <canvas class="warp-pixelfx-canvas" id="warp-pixelfx-canvas" width="320" height="180" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated;z-index:2;opacity:0.92;"></canvas>
         <div class="warp-hud-banner" id="warp-hud-banner">
           <div class="warp-hud-badge-row">
-            <span class="warp-hud-step-badge" id="warp-hud-step-badge">BƯỚC 1/8</span>
+            <span class="warp-hud-step-badge" id="warp-hud-step-badge">CHUYỂN CẢNH</span>
             <div class="warp-hud-dots" id="warp-hud-dots">
               <span class="warp-dot active" data-step="1"></span>
               <span class="warp-dot" data-step="2"></span>
               <span class="warp-dot" data-step="3"></span>
-              <span class="warp-dot" data-step="4"></span>
-              <span class="warp-dot" data-step="5"></span>
-              <span class="warp-dot" data-step="6"></span>
-              <span class="warp-dot" data-step="7"></span>
-              <span class="warp-dot" data-step="8"></span>
             </div>
           </div>
           <span class="warp-hud-text" id="warp-hud-text">Kích hoạt Cổng Thần Cầu Vồng...</span>
@@ -64,6 +89,44 @@ export class MapTransitionOverlay {
     this.textEl = document.getElementById('warp-hud-text');
     this.tunnelEl = document.getElementById('warp-tunnel-effect');
     this.flashEl = document.getElementById('warp-flash-burst');
+    this.fxCanvas = document.getElementById('warp-pixelfx-canvas');
+  }
+
+  playStarIrisFx(reverse = false, durationMs = 340) {
+    if (!this.fxCanvas || !this._irisSheetImg) return;
+    const ctx = this.fxCanvas.getContext('2d');
+    if (!ctx) return;
+
+    if (this._fxRafId && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(this._fxRafId);
+      this._fxRafId = null;
+    }
+
+    const meta = PIXELFX_SHEETS.vfx_star_iris;
+    const startTime = performance.now();
+    const tick = (now) => {
+      const progress = Math.min(1, Math.max(0, (now - startTime) / durationMs));
+      const norm = reverse ? 1 - progress : progress;
+      const frame = Math.min(meta.frames - 1, Math.floor(norm * (meta.frames - 1)));
+      ctx.clearRect(0, 0, this.fxCanvas.width, this.fxCanvas.height);
+      ctx.imageSmoothingEnabled = false;
+      drawPixelFxFrame(
+        ctx,
+        this._irisSheetImg,
+        meta,
+        frame,
+        this.fxCanvas.width / 2,
+        this.fxCanvas.height / 2,
+        1
+      );
+      if (progress < 1) {
+        this._fxRafId = requestAnimationFrame(tick);
+      } else {
+        ctx.clearRect(0, 0, this.fxCanvas.width, this.fxCanvas.height);
+        this._fxRafId = null;
+      }
+    };
+    this._fxRafId = requestAnimationFrame(tick);
   }
 
   updateDots(currentStep) {
@@ -78,142 +141,88 @@ export class MapTransitionOverlay {
     });
   }
 
-  execute8StepWarp({ targetMapId = 'map2', targetMapName = 'Vịnh Biển Pha Lê', onComplete } = {}) {
+  executeUnifiedTransition({ targetMapId = 'map2', targetMapName = 'Vùng Đất Mới', onExecuteSwitch, onComplete } = {}) {
     if (!this.container) this.initDOM();
+    this.clearPending();
+    this.isTransitioning = true;
 
-    this.container.classList.add('active');
-    this.banner.classList.add('active');
+    this.container?.classList.add('active');
+    this.banner?.classList.add('active');
+    if (this.flashEl) this.flashEl.classList.remove('flash');
+    if (this.tunnelEl) this.tunnelEl.classList.add('spinning');
     this.updateDots(1);
 
-    const steps = [
-      {
-        step: 1,
-        time: 0,
-        badge: '⚡ BƯỚC 1/8',
-        text: '🌀 Kích hoạt Cổng Thần Cầu Vồng ma thuật!',
-        action: () => {
-          this.audioService?.playPortalStep(1);
-          this.spawnShockwave();
-          if (this.hudController) this.hudController.setStatus('🌀 Cổng Dịch Chuyển đã kích hoạt!');
-        }
-      },
-      {
-        step: 2,
-        time: 480,
-        badge: '🌟 BƯỚC 2/8',
-        text: '✨ Bé Sâu nhẹ nhàng bước vào tâm vòng xoáy!',
-        action: () => {
-          this.audioService?.playPortalStep(2);
-          this.spawnShockwave();
-          this.spawnStardust(12);
-        }
-      },
-      {
-        step: 3,
-        time: 980,
-        badge: '💫 BƯỚC 3/8',
-        text: '🌈 Vòng hào quang 7 sắc bùng nở rực rỡ!',
-        action: () => {
-          this.audioService?.playPortalStep(3);
-          this.spawnShockwave();
-          this.spawnShockwave();
-          this.spawnStardust(16);
-        }
-      },
-      {
-        step: 4,
-        time: 1480,
-        badge: '🌠 BƯỚC 4/8',
-        text: '⭐ Cơn mưa bụi sao ma thuật xoay tròn!',
-        action: () => {
-          this.audioService?.playPortalStep(4);
-          this.spawnStardust(36);
-        }
-      },
-      {
-        step: 5,
-        time: 1980,
-        badge: '🚀 BƯỚC 5/8',
-        text: '🌌 Mở đường hầm không gian Cầu Vồng siêu tốc!',
-        action: () => {
-          this.audioService?.playPortalStep(5);
-          if (this.tunnelEl) {
-            this.tunnelEl.classList.add('spinning');
-          }
-          this.spawnStardust(24);
-        }
-      },
-      {
-        step: 6,
-        time: 2500,
-        badge: '🏝️ BƯỚC 6/8',
-        text: `🗺️ Dịch chuyển không gian sang ${targetMapName}!`,
-        action: () => {
-          this.audioService?.playPortalStep(6);
-          // Chớp sáng lượng tử & Chuyển scene bản đồ
-          if (this.flashEl) {
-            this.flashEl.classList.add('flash');
-          }
-          if (typeof this.onExecuteMapSwitch === 'function') {
-            this.onExecuteMapSwitch(targetMapId);
-          }
-        }
-      },
-      {
-        step: 7,
-        time: 3000,
-        badge: '✨ BƯỚC 7/8',
-        text: `🌱 Hạ cánh an toàn tại ${targetMapName}!`,
-        action: () => {
-          this.audioService?.playPortalStep(7);
-          if (this.flashEl) {
-            this.flashEl.classList.remove('flash');
-          }
-          if (this.tunnelEl) {
-            this.tunnelEl.classList.remove('spinning');
-          }
-          this.spawnStardust(18);
-        }
-      },
-      {
-        step: 8,
-        time: 3500,
-        badge: '🌈 BƯỚC 8/8',
-        text: `🎉 Chào mừng bé đến với ${targetMapName}! 🌈⭐`,
-        action: () => {
-          this.audioService?.playPortalStep(8);
-          if (this.audioService) {
-            this.audioService.speak(`Chào mừng bé đến với ${targetMapName}!`);
-          }
-          if (this.hudController) {
-            this.hudController.setStatus(`Chào mừng bé đến với ${targetMapName}! 🌈🎉`);
-            this.hudController.updatePlayerHud();
-          }
-          this.spawnStardust(40);
-        }
-      }
-    ];
+    if (this.badgeEl) this.badgeEl.textContent = '✨ BƯỚC 1/3';
+    if (this.textEl) this.textEl.textContent = `🌀 Mở Cổng Cầu Vồng tới ${targetMapName}!`;
 
-    steps.forEach(({ step, time, badge, text, action }) => {
-      setTimeout(() => {
-        if (this.badgeEl) this.badgeEl.textContent = badge;
-        if (this.textEl) this.textEl.textContent = text;
-        this.updateDots(step);
-        action();
-      }, time);
+    this.audioService?.playPortalStep?.(2);
+    this.spawnShockwave();
+    this.spawnStardust(14);
+    this.playStarIrisFx(false, 320);
+    if (this.hudController) {
+      this.hudController.setStatus(`🌀 Đang chuyển cảnh tới ${targetMapName}...`);
+    }
+
+    let finished = false;
+    const finishTransition = () => {
+      if (finished) return;
+      finished = true;
+      this.clearPending();
+      if (this.flashEl) this.flashEl.classList.remove('flash');
+      if (this.tunnelEl) this.tunnelEl.classList.remove('spinning');
+      if (this.badgeEl) this.badgeEl.textContent = '🌈 BƯỚC 3/3';
+      if (this.textEl) this.textEl.textContent = `🎉 Chào mừng bé đến với ${targetMapName}! ⭐`;
+      this.updateDots(3);
+      this.playStarIrisFx(true, 320);
+      this.spawnStardust(22);
+      this.audioService?.playPortalStep?.(8);
+      if (this.hudController) {
+        this.hudController.setStatus(`Chào mừng bé đến với ${targetMapName}! 🌈🎉`);
+        this.hudController.updatePlayerHud();
+      }
+
+      this.schedule(() => {
+        this.banner?.classList.remove('active');
+        this.container?.classList.remove('active');
+        this.isTransitioning = false;
+        if (typeof onComplete === 'function') {
+          onComplete();
+        }
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('game:portal-warp-complete', {
+            detail: { targetMapId, targetMapName }
+          }));
+        }
+      }, 360);
+    };
+
+    this.schedule(() => {
+      this.updateDots(2);
+      if (this.badgeEl) this.badgeEl.textContent = '🗺️ BƯỚC 2/3';
+      if (this.textEl) this.textEl.textContent = `✨ Đang dịch chuyển tới ${targetMapName}...`;
+      this.audioService?.playPortalStep?.(6);
+      if (this.flashEl) this.flashEl.classList.add('flash');
+
+      if (typeof onExecuteSwitch === 'function') {
+        onExecuteSwitch(finishTransition);
+      } else {
+        if (typeof this.onExecuteMapSwitch === 'function') {
+          this.onExecuteMapSwitch(targetMapId);
+        }
+        this.schedule(finishTransition, 550);
+      }
+    }, 260);
+
+    // Watchdog 5.5s đảm bảo overlay không bao giờ kẹt vô hạn
+    this.schedule(finishTransition, 5500);
+  }
+
+  execute8StepWarp({ targetMapId = 'map2', targetMapName = 'Vịnh Biển Pha Lê', onComplete } = {}) {
+    this.executeUnifiedTransition({
+      targetMapId,
+      targetMapName,
+      onComplete
     });
-
-    // Kết thúc chuỗi sau 4.6s và phục hồi điều khiển
-    setTimeout(() => {
-      if (this.banner) this.banner.classList.remove('active');
-      if (this.container) this.container.classList.remove('active');
-      if (typeof onComplete === 'function') {
-        onComplete();
-      }
-      window.dispatchEvent(new CustomEvent('game:portal-warp-complete', {
-        detail: { targetMapId, targetMapName }
-      }));
-    }, 4600);
   }
 
   spawnShockwave() {
@@ -224,10 +233,10 @@ export class MapTransitionOverlay {
     wave.style.top = '50%';
     wave.style.transform = 'translate(-50%, -50%)';
     this.container.appendChild(wave);
-    setTimeout(() => wave.remove(), 800);
+    this.schedule(() => wave.remove(), 750);
   }
 
-  spawnStardust(count = 20) {
+  spawnStardust(count = 18) {
     if (!this.container) return;
     const stars = ['✦', '⭐', '✨', '🌈', '💎', '💫', '🌟'];
     const colors = ['#fde047', '#38bdf8', '#f43f5e', '#a855f7', '#4ade80', '#fb923c', '#ffffff'];
@@ -241,15 +250,12 @@ export class MapTransitionOverlay {
       p.style.top = '50%';
 
       const angle = Math.random() * Math.PI * 2;
-      const distance = 120 + Math.random() * 380;
-      const dx = `${Math.cos(angle) * distance}px`;
-      const dy = `${Math.sin(angle) * distance}px`;
-
-      p.style.setProperty('--dx', dx);
-      p.style.setProperty('--dy', dy);
+      const distance = 120 + Math.random() * 340;
+      p.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+      p.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
 
       this.container.appendChild(p);
-      setTimeout(() => p.remove(), 900);
+      this.schedule(() => p.remove(), 800);
     }
   }
 }

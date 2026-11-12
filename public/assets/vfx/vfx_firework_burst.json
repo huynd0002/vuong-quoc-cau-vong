@@ -1,0 +1,1161 @@
+{
+  "frames": [
+    {
+      "filename": "vfx_firework_burst 0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 1",
+      "frame": {
+        "x": 240,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 2",
+      "frame": {
+        "x": 480,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 3",
+      "frame": {
+        "x": 720,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 4",
+      "frame": {
+        "x": 960,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 5",
+      "frame": {
+        "x": 1200,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 6",
+      "frame": {
+        "x": 1440,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 7",
+      "frame": {
+        "x": 1680,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 8",
+      "frame": {
+        "x": 0,
+        "y": 248,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 9",
+      "frame": {
+        "x": 240,
+        "y": 248,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 10",
+      "frame": {
+        "x": 480,
+        "y": 248,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 11",
+      "frame": {
+        "x": 720,
+        "y": 248,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 12",
+      "frame": {
+        "x": 960,
+        "y": 248,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 13",
+      "frame": {
+        "x": 1200,
+        "y": 248,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 14",
+      "frame": {
+        "x": 1440,
+        "y": 248,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 15",
+      "frame": {
+        "x": 1680,
+        "y": 248,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 16",
+      "frame": {
+        "x": 0,
+        "y": 496,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 17",
+      "frame": {
+        "x": 240,
+        "y": 496,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 18",
+      "frame": {
+        "x": 480,
+        "y": 496,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 19",
+      "frame": {
+        "x": 720,
+        "y": 496,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 20",
+      "frame": {
+        "x": 960,
+        "y": 496,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 21",
+      "frame": {
+        "x": 1200,
+        "y": 496,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 22",
+      "frame": {
+        "x": 1440,
+        "y": 496,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 23",
+      "frame": {
+        "x": 1680,
+        "y": 496,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 24",
+      "frame": {
+        "x": 0,
+        "y": 744,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 25",
+      "frame": {
+        "x": 240,
+        "y": 744,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 26",
+      "frame": {
+        "x": 480,
+        "y": 744,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 27",
+      "frame": {
+        "x": 720,
+        "y": 744,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 28",
+      "frame": {
+        "x": 960,
+        "y": 744,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 29",
+      "frame": {
+        "x": 1200,
+        "y": 744,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 30",
+      "frame": {
+        "x": 1440,
+        "y": 744,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 31",
+      "frame": {
+        "x": 1680,
+        "y": 744,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 32",
+      "frame": {
+        "x": 0,
+        "y": 992,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 33",
+      "frame": {
+        "x": 240,
+        "y": 992,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 34",
+      "frame": {
+        "x": 480,
+        "y": 992,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 35",
+      "frame": {
+        "x": 720,
+        "y": 992,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 36",
+      "frame": {
+        "x": 960,
+        "y": 992,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 37",
+      "frame": {
+        "x": 1200,
+        "y": 992,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 38",
+      "frame": {
+        "x": 1440,
+        "y": 992,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 39",
+      "frame": {
+        "x": 1680,
+        "y": 992,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 40",
+      "frame": {
+        "x": 0,
+        "y": 1240,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 41",
+      "frame": {
+        "x": 240,
+        "y": 1240,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 42",
+      "frame": {
+        "x": 480,
+        "y": 1240,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 43",
+      "frame": {
+        "x": 720,
+        "y": 1240,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 44",
+      "frame": {
+        "x": 960,
+        "y": 1240,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 45",
+      "frame": {
+        "x": 1200,
+        "y": 1240,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 46",
+      "frame": {
+        "x": 1440,
+        "y": 1240,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 47",
+      "frame": {
+        "x": 1680,
+        "y": 1240,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 48",
+      "frame": {
+        "x": 0,
+        "y": 1488,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 49",
+      "frame": {
+        "x": 240,
+        "y": 1488,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    },
+    {
+      "filename": "vfx_firework_burst 50",
+      "frame": {
+        "x": 480,
+        "y": 1488,
+        "w": 240,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 248
+      },
+      "duration": 71
+    }
+  ],
+  "meta": {
+    "app": "https://github.com/patch-gg/pixelfx",
+    "version": "1",
+    "image": "vfx_firework_burst.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1920,
+      "h": 1736
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "vfx_firework_burst",
+        "from": 0,
+        "to": 50,
+        "direction": "forward"
+      }
+    ],
+    "pixelfx": {
+      "id": "explosions/firework-burst",
+      "name": "Firework burst",
+      "fps": 14,
+      "loop": false,
+      "frames": 51,
+      "frameSize": [
+        240,
+        248
+      ],
+      "pivot": [
+        120,
+        100
+      ],
+      "columns": 8
+    }
+  }
+}

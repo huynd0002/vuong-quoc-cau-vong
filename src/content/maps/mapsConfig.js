@@ -43,6 +43,13 @@ export const MAPS_CONFIG = {
         "y": 505,
         "spriteKey": "mon_mushroom",
         "questionId": "q_map1_memory_animals",
+        "questionPool": [
+          "q_map1_memory_animals",
+          "q_map1_mem_x1",
+          "q_map1_mem_x2",
+          "q_map1_colors_x1",
+          "q_map1_shadow_x1"
+        ],
         "maxHearts": 3,
         "reward": {
           "stars": 3,
@@ -56,6 +63,13 @@ export const MAPS_CONFIG = {
         "y": 465,
         "spriteKey": "mon_bee",
         "questionId": "q_map1_pair_food",
+        "questionPool": [
+          "q_map1_pair_food",
+          "q_map1_pair_x1",
+          "q_map1_pair_x2",
+          "q_map1_pair_x3",
+          "q_map1_pair_x4"
+        ],
         "maxHearts": 3,
         "reward": {
           "stars": 3,
@@ -69,6 +83,13 @@ export const MAPS_CONFIG = {
         "y": 440,
         "spriteKey": "mon_ladybug",
         "questionId": "q_map1_drag_size",
+        "questionPool": [
+          "q_map1_drag_size",
+          "q_map1_drag_x1",
+          "q_map1_drag_x2",
+          "q_map1_shapes_x2",
+          "q_map1_shadow_x3"
+        ],
         "isElite": true,
         "maxHearts": 5,
         "reward": {
@@ -162,6 +183,12 @@ export const MAPS_CONFIG = {
         "y": 490,
         "spriteKey": "mon_crab",
         "questionId": "q_map2_memory_mushrooms",
+        "questionPool": [
+          "q_map2_memory_mushrooms",
+          "q_map2_mem_x1",
+          "q_map2_count_x1",
+          "q_map2_shadow_x2"
+        ],
         "maxHearts": 3,
         "reward": {
           "stars": 5,
@@ -175,6 +202,12 @@ export const MAPS_CONFIG = {
         "y": 460,
         "spriteKey": "mon_starfish",
         "questionId": "q_map2_pair_shapes",
+        "questionPool": [
+          "q_map2_pair_shapes",
+          "q_map2_pair_x1",
+          "q_map2_pair_x2",
+          "q_map2_count_x5"
+        ],
         "maxHearts": 3,
         "reward": {
           "stars": 5,
@@ -188,6 +221,12 @@ export const MAPS_CONFIG = {
         "y": 430,
         "spriteKey": "mon_emerald_crab",
         "questionId": "q_map2_drag_count_sequence",
+        "questionPool": [
+          "q_map2_drag_count_sequence",
+          "q_map2_drag_x1",
+          "q_map2_seq_x3",
+          "q_map2_count_x8"
+        ],
         "isElite": true,
         "maxHearts": 5,
         "reward": {
@@ -281,6 +320,12 @@ export const MAPS_CONFIG = {
         "y": 510,
         "spriteKey": "mon_crystal_sprout",
         "questionId": "q_map3_memory_crystals",
+        "questionPool": [
+          "q_map3_memory_crystals",
+          "q_map3_mem_x1",
+          "q_map3_mem_x2",
+          "q_map3_add_x4"
+        ],
         "maxHearts": 3,
         "reward": {
           "stars": 7,
@@ -294,6 +339,12 @@ export const MAPS_CONFIG = {
         "y": 440,
         "spriteKey": "mon_crystal_moth",
         "questionId": "q_map3_pair_quantities",
+        "questionPool": [
+          "q_map3_pair_quantities",
+          "q_map3_pair_x1",
+          "q_map3_pair_x2",
+          "q_map3_add_x7"
+        ],
         "maxHearts": 4,
         "reward": {
           "stars": 7,
@@ -307,6 +358,12 @@ export const MAPS_CONFIG = {
         "y": 310,
         "spriteKey": "mon_crystal_bat",
         "questionId": "q_map3_drag_stars_sequence",
+        "questionPool": [
+          "q_map3_drag_stars_sequence",
+          "q_map3_drag_x1",
+          "q_map3_drag_x2",
+          "q_map3_make5_x1"
+        ],
         "isElite": true,
         "maxHearts": 5,
         "reward": {
@@ -400,6 +457,12 @@ export const MAPS_CONFIG = {
         "y": 550,
         "spriteKey": "mon_desert_fox",
         "questionId": "q_map4_memory_desert",
+        "questionPool": [
+          "q_map4_memory_desert",
+          "q_map4_mem_x1",
+          "q_map4_sub_x3",
+          "q_map4_shadow_x2"
+        ],
         "maxHearts": 3,
         "reward": {
           "stars": 10,
@@ -413,6 +476,12 @@ export const MAPS_CONFIG = {
         "y": 550,
         "spriteKey": "mon_scarab",
         "questionId": "q_map4_pair_math",
+        "questionPool": [
+          "q_map4_pair_math",
+          "q_map4_pair_x1",
+          "q_map4_pair_x2",
+          "q_map4_submiss_x2"
+        ],
         "maxHearts": 4,
         "reward": {
           "stars": 10,
@@ -426,6 +495,12 @@ export const MAPS_CONFIG = {
         "y": 410,
         "spriteKey": "mon_desert_falcon",
         "questionId": "q_map4_drag_even_sequence",
+        "questionPool": [
+          "q_map4_drag_even_sequence",
+          "q_map4_drag_x1",
+          "q_map4_sub_x10",
+          "q_map4_submiss_x3"
+        ],
         "isElite": true,
         "maxHearts": 5,
         "reward": {
@@ -505,19 +580,26 @@ export const MAPS_CONFIG = {
       "y": 430,
       "requiredRescues": [
         "enc_map5_1",
-        "enc_map5_2"
+        "enc_map5_2",
+        "enc_map5_3"
       ],
-      "hintLocked": "Chuông Gió chưa ngân vang! Bé hãy giúp Bạn Chim Lông Xù và Sóc Bay để gọi Cú Thông Thái nhé!",
+      "hintLocked": "Chuông Gió chưa ngân vang! Bé hãy giúp 3 bạn muông thú Hẻm Núi để gọi Cú Thông Thái nhé!",
       "hintUnlocked": "Chuông Gió đã ngân vang khúc nhạc êm đềm! Cú Thông Thái đã xuất hiện!"
     },
     "encounters": [
       {
         "id": "enc_map5_1",
-        "name": "Chim Lông Xù",
-        "x": 640,
-        "y": 480,
-        "spriteKey": "mon_sprout",
+        "name": "Chim Ưng Gió Núi",
+        "x": 620,
+        "y": 495,
+        "spriteKey": "mon_desert_falcon",
         "questionId": "q_map5_memory_canyon",
+        "questionPool": [
+          "q_map5_memory_canyon",
+          "q_map5_mem_x1",
+          "q_map5_mem_x2",
+          "q_map5_cmp_x1"
+        ],
         "maxHearts": 4,
         "reward": {
           "stars": 12,
@@ -526,16 +608,41 @@ export const MAPS_CONFIG = {
       },
       {
         "id": "enc_map5_2",
-        "name": "Sóc Bay Nhanh Nhẹn",
-        "x": 830,
-        "y": 450,
-        "spriteKey": "mon_sprout",
+        "name": "Bướm Gió Hẻm Núi",
+        "x": 790,
+        "y": 430,
+        "spriteKey": "mon_crystal_moth",
         "questionId": "q_map5_pair_opposites",
+        "questionPool": [
+          "q_map5_pair_opposites",
+          "q_map5_pair_x1",
+          "q_map5_pair_x2",
+          "q_map5_opp_x1"
+        ],
         "isElite": true,
         "maxHearts": 5,
         "reward": {
           "stars": 15,
           "exp": 65
+        }
+      },
+      {
+        "id": "enc_map5_3",
+        "name": "Dơi Bạc Đỉnh Mây",
+        "x": 700,
+        "y": 325,
+        "spriteKey": "mon_crystal_bat",
+        "questionId": "q_map5_drag_x1",
+        "questionPool": [
+          "q_map5_drag_x1",
+          "q_map5_drag_x2",
+          "q_map5_cmp_x6",
+          "q_map5_shadow_x1"
+        ],
+        "maxHearts": 4,
+        "reward": {
+          "stars": 13,
+          "exp": 55
         }
       }
     ],
@@ -609,19 +716,26 @@ export const MAPS_CONFIG = {
       "y": 440,
       "requiredRescues": [
         "enc_map6_1",
-        "enc_map6_2"
+        "enc_map6_2",
+        "enc_map6_3"
       ],
-      "hintLocked": "Cung Đàn Cầu Vồng chưa đủ 7 dải màu! Bé hãy giúp Rồng Con và Kỳ Lân thắp sáng cung đàn nhé!",
+      "hintLocked": "Cung Đàn Cầu Vồng chưa đủ 7 dải màu! Bé hãy giúp 3 bạn nhỏ Cung Đình thắp sáng cung đàn nhé!",
       "hintUnlocked": "Cung Đàn đã tấu lên khúc ca khải hoàn rực rỡ! Thần Long Cầu Vồng đã giáng trần!"
     },
     "encounters": [
       {
         "id": "enc_map6_1",
-        "name": "Rồng Con Mây Trắng",
-        "x": 650,
-        "y": 480,
-        "spriteKey": "mon_sprout",
+        "name": "Tinh Linh Pha Lê Mây",
+        "x": 620,
+        "y": 495,
+        "spriteKey": "mon_crystal_sprout",
         "questionId": "q_map6_memory_rainbow",
+        "questionPool": [
+          "q_map6_memory_rainbow",
+          "q_map6_mem_x1",
+          "q_map6_mem_x2",
+          "q_map6_mem_x3"
+        ],
         "maxHearts": 4,
         "reward": {
           "stars": 15,
@@ -630,16 +744,42 @@ export const MAPS_CONFIG = {
       },
       {
         "id": "enc_map6_2",
-        "name": "Kỳ Lân Ánh Sáng",
-        "x": 840,
-        "y": 450,
-        "spriteKey": "mon_sprout",
+        "name": "Cáo Hoàng Kim Ánh Sáng",
+        "x": 830,
+        "y": 460,
+        "spriteKey": "mon_desert_fox",
         "questionId": "q_map6_pair_logic",
+        "questionPool": [
+          "q_map6_pair_logic",
+          "q_map6_pair_x1",
+          "q_map6_pair_x2",
+          "q_map6_pair_x3",
+          "q_map6_pair_x4"
+        ],
         "isElite": true,
         "maxHearts": 5,
         "reward": {
           "stars": 20,
           "exp": 80
+        }
+      },
+      {
+        "id": "enc_map6_3",
+        "name": "Cua Ngọc Bích Cung Đình",
+        "x": 725,
+        "y": 335,
+        "spriteKey": "mon_emerald_crab",
+        "questionId": "q_map6_drag_x1",
+        "questionPool": [
+          "q_map6_drag_x1",
+          "q_map6_drag_x2",
+          "q_map6_drag_x3",
+          "q_map6_pat_x3"
+        ],
+        "maxHearts": 4,
+        "reward": {
+          "stars": 16,
+          "exp": 65
         }
       }
     ],

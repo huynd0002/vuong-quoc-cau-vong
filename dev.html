@@ -113,8 +113,8 @@
           <button class="stat-pill clickable-pill btn-coords-pill active-coords" id="btn-toggle-coords" type="button" aria-label="Tọa Độ X/Y" title="Tọa độ vị trí X/Y (Phím tắt: C)">
             <span class="btn-icon">📍</span> <span id="coords-display-text">X: 260 | Y: 620</span>
           </button>
-          <button class="stat-pill clickable-pill btn-joystick-pill active-joystick" id="btn-toggle-joystick" type="button" aria-label="Bật/Tắt Cần Gạt" title="Bật hoặc Tắt Cần gạt ảo (Phím tắt: J)">
-            <span class="btn-icon">🕹️</span> <span id="joystick-toggle-text">Cần Gạt</span>
+          <button class="stat-pill clickable-pill btn-joystick-pill inactive-joystick" id="btn-toggle-joystick" type="button" aria-label="Bật/Tắt Cần Gạt" title="Bật hoặc Tắt Cần gạt ảo (Phím tắt: J)">
+            <span class="btn-icon">🕹️</span> <span id="joystick-toggle-text">Cần Gạt: Tắt</span>
           </button>
           <span class="stat-pill" id="load-status" role="status">Đang chuẩn bị...</span>
           <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Bật âm thanh">
@@ -153,11 +153,9 @@
             <span class="floating-bag-badge" id="floating-bag-badge" style="display:none;">0</span>
           </button>
 
-          <!-- NÚT TƯƠNG TÁC [E] TRÊN MÀN HÌNH CẢM ỨNG & IPAD -->
-          <button class="interactive-e-action-btn" id="btn-interactive-e" type="button" aria-label="Tương tác nhanh" hidden>
+          <!-- NÚT TƯƠNG TÁC [E] TO ĐƠN GIẢN TRÊN MÀN HÌNH CẢM ỨNG & IPAD -->
+          <button class="interactive-e-action-btn" id="btn-interactive-e" type="button" aria-label="Ấn E để tương tác" hidden>
             <span class="interactive-e-key">E</span>
-            <span class="interactive-e-icon">⚡</span>
-            <span class="interactive-e-label" id="interactive-e-label">Mở</span>
           </button>
 
           <!-- NÚT DỪNG CÂU CÁ Ở GÓC HỒ CÂU -->
@@ -167,7 +165,7 @@
           </button>
 
           <!-- PHIÊN BẢN TRÒ CHƠI Ở GÓC PHẢI MÀN HÌNH (WATERMARK) -->
-          <div class="stage-version-watermark" id="stage-version-watermark" aria-label="Phiên bản trò chơi">ver 3.7.6</div>
+          <div class="stage-version-watermark" id="stage-version-watermark" aria-label="Phiên bản trò chơi">ver 3.8.0</div>
 
           <!-- VÒNG TRÒN TRẠNG THÁI THÚ CƯNG TRÊN NÔNG TRẠI (DẠNG %) -->
           <aside id="pet-farm-hud" class="pet-farm-hud" aria-label="Trạng thái thú cưng nông trại" hidden>
@@ -664,7 +662,7 @@
               <span class="progress-star" aria-hidden="true">✦</span>
               <span id="progress-copy">Vùng 1: Làng Quê Yên Bình</span>
             </div>
-            <span class="game-version-badge" id="game-version-badge" title="Phiên bản trò chơi">ver 3.7.6</span>
+            <span class="game-version-badge" id="game-version-badge" title="Phiên bản trò chơi">ver 3.8.0</span>
           </div>
         </footer>
       </section>

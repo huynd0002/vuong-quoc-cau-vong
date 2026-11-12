@@ -64,13 +64,17 @@ export class TeleportPortal {
       ease: 'Sine.easeInOut'
     });
 
-    // 4. Vùng cảm ứng / Click tương tác vừa vặn, không chèn ép các nút xung quanh
-    this.touchZone = scene.add.zone(this.x, this.y - 6, 74, 96)
+    // 4. Vùng cảm ứng / Click tương tác (chỉ dẫn bé lại gần cổng, không tự động chuyển vùng)
+    this.touchZone = scene.add.zone(this.x, this.y - 6, 86, 102)
       .setInteractive({ useHandCursor: true });
 
     this.touchZone.on('pointerdown', (pointer) => {
-      pointer?.event?.stopPropagation?.();
-      this.handleInteract();
+      if (this.scene && typeof this.scene.isWorldPointer === 'function' && !this.scene.isWorldPointer(pointer)) {
+        return;
+      }
+      pointer._handledStationTap = true;
+      this.scene?.showTouchRipple?.(this.x, this.y + 18);
+      this.walkToRange();
     });
 
     // 5. Các hạt sao lơ lửng quanh cổng
@@ -186,16 +190,18 @@ export class TeleportPortal {
     }
   }
 
-  update(heroX, heroY) {
-    if (this.isWarping || !this.isUnlocked) return;
+  update() {
+    // Bắt buộc phải ấn phím E hoặc chạm nút [E] khi đứng gần — không tự động chuyển vùng khi bước sát cổng.
+  }
 
-    // Chỉ khi nhân vật bước đến sát trước cửa thần kỳ (<32px) mới kích hoạt hiệu ứng hút vào
+  walkToRange() {
+    if (this.isWarping || !this.isUnlocked) return;
+    const hero = this.scene?.hero;
+    if (!hero) return;
+
     const targetStandX = this.x;
-    const targetStandY = Math.min(650, Math.max(75, this.y + 15));
-    const dist = Math.hypot(heroX - targetStandX, heroY - targetStandY);
-    if (dist < 32) {
-      this.enterPortal();
-    }
+    const targetStandY = Math.min(650, Math.max(75, this.y + 28));
+    hero.moveTo(targetStandX, targetStandY);
   }
 
   setPosition(x, y) {
@@ -251,21 +257,16 @@ export class TeleportPortal {
     const heroX = hero.getX();
     const heroY = hero.getY();
     const targetStandX = this.x;
-    const targetStandY = Math.min(650, Math.max(75, this.y + 15));
+    const targetStandY = Math.min(650, Math.max(75, this.y + 28));
     const dist = Math.hypot(heroX - targetStandX, heroY - targetStandY);
 
-    // Nếu đã ở sát trước cửa thần kỳ (<= 35px), kích hoạt hiệu ứng hút vào ngay
-    if (dist <= 35) {
+    // Chỉ kích hoạt dịch chuyển khi đã ở trong vùng chọn E (<= 150px); nếu ở xa chỉ đi bộ lại gần rồi đợi ấn E
+    if (dist <= 150) {
       this.enterPortal();
       return;
     }
 
-    // Nếu nhân vật còn ở xa: Di chuyển đến trước cửa thần kỳ, khi đến gần mới bị hút vào!
-    hero.moveTo(targetStandX, targetStandY, () => {
-      if (!this.isWarping && this.isUnlocked) {
-        this.enterPortal();
-      }
-    });
+    this.walkToRange();
   }
 
   enterPortal() {

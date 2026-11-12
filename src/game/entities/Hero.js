@@ -532,6 +532,10 @@ export class Hero {
   }
 
   stop() {
+    if (this.moveTween) {
+      this.moveTween.stop();
+      this.moveTween = null;
+    }
     this.isMoving = false;
     if (this.sprite?.anims) {
       this.sprite.anims.stop();
@@ -633,6 +637,10 @@ export class Hero {
     const clampedX = Math.max(40, Math.min(1240, safeTargetX));
     const clampedY = Math.max(65, Math.min(665, safeTargetY));
 
+    if (this.moveTween) {
+      this.moveTween.stop();
+      this.moveTween = null;
+    }
     this.scene.tweens.killTweensOf(this.sprite);
     const deltaX = clampedX - this.getX();
     const deltaY = clampedY - this.getY();
@@ -661,7 +669,7 @@ export class Hero {
     const moveSpeed = this.speed || 165;
     const duration = Math.max(60, Math.round((dist / moveSpeed) * 1000));
 
-    this.scene.tweens.add({
+    this.moveTween = this.scene.tweens.add({
       targets: this.sprite,
       x: clampedX,
       y: clampedY,
@@ -684,6 +692,7 @@ export class Hero {
     this.updateAccessory();
       },
       onComplete: () => {
+        this.moveTween = null;
         this.stop();
         if (onComplete) onComplete();
       }
@@ -1213,6 +1222,10 @@ export class Hero {
 
   destroy() {
     this.clearHeadBadge();
+    if (this.moveTween) {
+      this.moveTween.stop();
+      this.moveTween = null;
+    }
     if (this.idleTween) this.idleTween.stop();
     if (this.coordGuide) {
       this.coordGuide.destroy();

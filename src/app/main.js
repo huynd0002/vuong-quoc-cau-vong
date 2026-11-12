@@ -302,41 +302,18 @@ window.addEventListener('game:portal-teleport', (e) => {
   }
 });
 function enterKitchenMapDirect() {
-  const scene = window.__worldScene;
-  if (!scene?.sys.isActive()) return;
-  scene.hero?.stop();
-  const state = saveAdapter.load() || {};
-  saveAdapter.save({
-    ...state,
-    campaign: {
-      ...(state.campaign || {}),
-      currentMapId: 'map_kitchen'
-    }
+  navigateToMap('map_kitchen', {
+    bypassUnlock: true,
+    targetMapName: 'Bếp Cầu Vồng',
+    toastMessage: '🍳 Chào mừng bạn bước vào Bếp Cầu Vồng!'
   });
-  scene.scene.restart({ mapId: 'map_kitchen' });
-  audioService.playChime(640, 0.15);
-  window.dispatchEvent(new CustomEvent('game:show-toast', {
-    detail: { message: '🍳 Chào mừng bạn bước vào Bếp Cầu Vồng!' }
-  }));
 }
 
 function returnFarmMapDirect() {
-  const scene = window.__worldScene;
-  if (!scene?.sys.isActive()) return;
-  scene.hero?.stop();
-  // Rửa tay 1 lần duy nhất trong suốt quá trình chơi
-  // cookingSystem.resetHandWash?.();
-  const state = saveAdapter.load() || {};
-  saveAdapter.save({
-    ...state,
-    campaign: {
-      ...(state.campaign || {}),
-      currentMapId: 'map_pet_farm'
-    }
+  navigateToMap('map_pet_farm', {
+    bypassUnlock: true,
+    targetMapName: 'Nông Trại Thú Cưng'
   });
-  scene.scene.restart({ mapId: 'map_pet_farm' });
-  audioService.playChime(640, 0.15);
-  
 }
 
  kitchenStationModal = new KitchenStationModal({
@@ -403,13 +380,10 @@ window.addEventListener('game:open-kitchen-station-popup', (e) => {
   } else if (station === 'kitchen_enter' || station === 'welcome') {
     const isWashed = Boolean(cookingSystem.getState()?.handsWashed);
     if (!isWashed) {
-      if (isGameStarted || window.__worldScene?.sys?.isActive()) {
-        audioService.playChime(640, 0.2);
-        kitchenStationModal.showSinkModal();
-        audioService.speak('Bé ơi, hãy rửa tay sạch sẽ trước khi vào bếp nấu ăn nhé!');
-      } else {
-        pendingKitchenWelcome = true;
-      }
+      window.dispatchEvent(new CustomEvent('game:show-toast', {
+        detail: { message: '🧼 Chạm để đi đến Bồn Rửa Tay rồi ấn E để rửa tay nhé!' }
+      }));
+      audioService?.speak?.('Bé ơi, hãy đi đến Bồn Rửa Tay và ấn nút E để rửa tay nhé!');
     }
   } else if (station === 'sink') {
     kitchenStationModal.showSinkModal();
@@ -607,38 +581,104 @@ const mapLoadingOverlay = new MapLoadingOverlay({
 });
 window.__mapLoadingOverlay = mapLoadingOverlay;
 
-// Hàm chuyển map mượt mà có màn hình loading sinh động
-function travelToZone(zoneId, onComplete) {
-  // Duy trì trạng thái rửa tay một lần xuyên suốt session
-  // Refresh the shared snapshot before map travel saves it; challenge rewards
-  // and kitchen purchases may have committed through a different controller.
+let isMapSwitching = false;
+let mapSwitchSafetyTimer = null;
+
+function resolveMapDisplayName(zoneId, fallbackName) {
+  return CAMPAIGN_ZONES[zoneId]?.name || SPECIAL_ZONES[zoneId]?.name || getMapConfig(zoneId)?.name || fallbackName || zoneId;
+}
+
+function commitSceneMapSwitch(zoneId, { toastMessage = null } = {}) {
   Object.assign(gameState, saveAdapter.load());
   progressionSystem.state = gameState;
-  if (!progressionSystem.isMapUnlocked(zoneId)) return;
   progressionSystem.setCurrentMap(zoneId);
   if (gameState?.campaign) {
     gameState.campaign.currentMapId = zoneId;
   }
   saveAdapter.save(gameState);
 
-  const targetName = CAMPAIGN_ZONES[zoneId]?.name || SPECIAL_ZONES[zoneId]?.name || getMapConfig(zoneId)?.name || zoneId;
+  const targetName = resolveMapDisplayName(zoneId);
   hudController.setStatus(`Đang chuyển đến ${targetName}...`);
   hudController.setProgress(targetName);
 
-  // Chỉ dùng Màn Hình Dịch Chuyển 8 Bước phía trước (MapTransitionOverlay), đã xóa bỏ loading phía sau
-  const worldScene = game.scene.getScene('WorldScene');
-  if (worldScene) {
+  const worldScene = window.__worldScene || game?.scene?.getScene?.('WorldScene');
+  if (worldScene?.scene) {
+    worldScene.hero?.stop?.();
     worldScene.scene.restart({ mapId: zoneId });
   }
-  if (typeof onComplete === 'function') onComplete();
+  audioService.playChime?.(640, 0.15);
+  if (toastMessage) {
+    window.dispatchEvent(new CustomEvent('game:show-toast', {
+      detail: { message: toastMessage }
+    }));
+  }
 }
 
-// Khởi tạo Bộ Hiệu Ứng Dịch Chuyển Bản Đồ 8 Bước
+function navigateToMap(zoneId, { bypassUnlock = false, targetMapName = null, onComplete = null, toastMessage = null } = {}) {
+  if (!zoneId) return;
+  Object.assign(gameState, saveAdapter.load());
+  progressionSystem.state = gameState;
+
+  if (bypassUnlock && !progressionSystem.isMapUnlocked(zoneId)) {
+    progressionSystem.unlockMap(zoneId);
+    saveAdapter.save(gameState);
+  } else if (!bypassUnlock && !progressionSystem.isMapUnlocked(zoneId)) {
+    return;
+  }
+
+  if (isMapSwitching) return;
+  isMapSwitching = true;
+  if (mapSwitchSafetyTimer) clearTimeout(mapSwitchSafetyTimer);
+  mapSwitchSafetyTimer = setTimeout(() => {
+    isMapSwitching = false;
+    mapSwitchSafetyTimer = null;
+  }, 5800);
+
+  const resolvedName = resolveMapDisplayName(zoneId, targetMapName);
+  const doneAll = () => {
+    isMapSwitching = false;
+    if (mapSwitchSafetyTimer) {
+      clearTimeout(mapSwitchSafetyTimer);
+      mapSwitchSafetyTimer = null;
+    }
+    if (typeof onComplete === 'function') onComplete();
+  };
+
+  if (mapTransitionOverlay && mapLoadingOverlay) {
+    mapTransitionOverlay.executeUnifiedTransition({
+      targetMapId: zoneId,
+      targetMapName: resolvedName,
+      onExecuteSwitch: (finishTransition) => {
+        mapLoadingOverlay.show({
+          targetMapId: zoneId,
+          targetMapName: resolvedName,
+          onSwitch: () => commitSceneMapSwitch(zoneId, { toastMessage }),
+          onComplete: finishTransition
+        });
+      },
+      onComplete: doneAll
+    });
+  } else {
+    commitSceneMapSwitch(zoneId, { toastMessage });
+    doneAll();
+  }
+}
+
+// Hàm chuyển map mượt mà có chuyển cảnh + màn hình loading thống nhất
+function travelToZone(zoneId, onComplete) {
+  navigateToMap(zoneId, { onComplete });
+}
+
+// Khởi tạo Bộ Hiệu Ứng Chuyển Cảnh & Dịch Chuyển Bản Đồ Thống Nhất
 const mapTransitionOverlay = new MapTransitionOverlay({
   audioService,
   hudController,
   onExecuteMapSwitch: (targetMapId) => {
-    travelToZone(targetMapId);
+    mapLoadingOverlay.show({
+      targetMapId,
+      targetMapName: resolveMapDisplayName(targetMapId),
+      onSwitch: () => commitSceneMapSwitch(targetMapId)
+    });
   }
 });
 window.__travelToZone = travelToZone;
@@ -649,16 +689,9 @@ window.__mapTransitionOverlay = mapTransitionOverlay;
 window.addEventListener('game:portal-warp-start', (e) => {
   const { targetMapId, portalData } = e.detail || {};
   const nextId = targetMapId || 'map2';
-  const targetZone = CAMPAIGN_ZONES[nextId] || SPECIAL_ZONES[nextId] || { name: portalData?.targetMapName || 'Nông Trại Thú Cưng' };
-
-  if (!progressionSystem.isMapUnlocked(nextId)) {
-    progressionSystem.unlockMap(nextId);
-    saveAdapter.save(gameState);
-  }
-
-  mapTransitionOverlay.execute8StepWarp({
-    targetMapId: nextId,
-    targetMapName: targetZone.name || portalData?.targetMapName || 'Vùng Đất Mới'
+  navigateToMap(nextId, {
+    bypassUnlock: true,
+    targetMapName: portalData?.targetMapName || 'Vùng Đất Mới'
   });
 });
 
@@ -758,9 +791,9 @@ const gameLoadingScreen = new GameLoadingScreen({
           pendingKitchenWelcome = false;
           const isWashed = Boolean(cookingSystem.getState()?.handsWashed);
           if (!isWashed) {
-            audioService.playChime(640, 0.2);
-            kitchenStationModal.showSinkModal();
-            audioService.speak('Bé ơi, hãy rửa tay sạch sẽ trước khi vào bếp nấu ăn nhé!');
+            window.dispatchEvent(new CustomEvent('game:show-toast', {
+              detail: { message: '🧼 Chạm để đi đến Bồn Rửa Tay rồi ấn E để rửa tay nhé!' }
+            }));
           }
         }
       }
@@ -1092,7 +1125,13 @@ try {
   console.warn('[VirtualJoystick] Lỗi khởi tạo cần gạt ảo:', vjErr);
 }
 
-// Nút Bật / Tắt Cần Gạt Ảo trên Topbar
+// Nút Bật / Tắt Cần Gạt Ảo trên Topbar (Mặc định TẮT để ưu tiên chạm đi trên iPad)
+let joystickEnabled = false;
+try {
+  joystickEnabled = localStorage.getItem('rkr_joystick_enabled') === 'true';
+} catch {}
+virtualJoystick?.setVisible(joystickEnabled);
+
 const btnToggleJoystick = document.getElementById('btn-toggle-joystick');
 if (btnToggleJoystick) {
   const updateJoystickUI = (enabled) => {
@@ -1105,11 +1144,6 @@ if (btnToggleJoystick) {
     }
   };
 
-  // Mặc định luôn BẬT cho trải nghiệm máy tính bảng sẵn sàng xuất sắc
-  let joystickEnabled = true;
-  try {
-    joystickEnabled = localStorage.getItem('rkr_joystick_enabled') !== 'false';
-  } catch {}
   virtualJoystick?.setVisible(joystickEnabled);
   updateJoystickUI(joystickEnabled);
 
@@ -1219,14 +1253,9 @@ if (testPortalBtn) {
   testPortalBtn.addEventListener('click', () => {
     const currentMapId = gameState.campaign?.currentMapId || 'map1';
     const targetId = currentMapId === 'map1' ? 'map2' : (currentMapId === 'map2' ? 'map3' : 'map1');
-    const targetZone = CAMPAIGN_ZONES[targetId] || { name: 'Vịnh Biển Pha Lê' };
-    if (!progressionSystem.isMapUnlocked(targetId)) {
-      progressionSystem.unlockMap(targetId);
-      saveAdapter.save(gameState);
-    }
-    mapTransitionOverlay.execute8StepWarp({
-      targetMapId: targetId,
-      targetMapName: targetZone.name || 'Vịnh Biển Pha Lê'
+    navigateToMap(targetId, {
+      bypassUnlock: true,
+      targetMapName: CAMPAIGN_ZONES[targetId]?.name || 'Vịnh Biển Pha Lê'
     });
   });
 }
@@ -1344,7 +1373,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.7.6';
+export const GAME_VERSION = '3.8.0';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {
