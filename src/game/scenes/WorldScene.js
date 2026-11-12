@@ -153,7 +153,7 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  walkHeroToTarget(targetX, targetY, { ripple = true } = {}) {
+  walkHeroToTarget(targetX, targetY, { ripple = true, feetAtTarget = true } = {}) {
     if (!this.hero) return;
     this.kitchenStationVisit = null;
     this.activeFishingStationVisit = null;
@@ -177,15 +177,32 @@ export class WorldScene extends Phaser.Scene {
     if (ripple) {
       this.showTouchRipple(safeX, safeY);
     }
-    this.hero.moveTo(safeX, safeY);
+
+    let moveY = safeY;
+    if (feetAtTarget) {
+      const footOffset = this.hero.shadowOffsetY ?? (this.hero.skin === 'knight' ? 33 : 38);
+      moveY = Math.max(65, Math.min(665, safeY - footOffset + 4));
+    }
+    this.hero.moveTo(safeX, moveY);
+  }
+
+  hasActiveBlockingModal() {
+    if (typeof document === 'undefined') return false;
+    const candidates = document.querySelectorAll(
+      '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden]), #warp-overlay-container.active, .modal-overlay.active'
+    );
+    for (const el of candidates) {
+      const st = typeof window !== 'undefined' && window.getComputedStyle ? window.getComputedStyle(el) : null;
+      if (!st || (st.display !== 'none' && st.visibility !== 'hidden')) {
+        return true;
+      }
+    }
+    return false;
   }
 
   isWorldPointer(pointer) {
-    // Không cho tương tác di chuyển ngoài map nếu đang mở modal hoặc đang chuyển cảnh
-    const activeModal = document.querySelector(
-      '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden]), #map-loading-overlay.active, #warp-overlay-container.active'
-    );
-    if (activeModal) return false;
+    // Không cho tương tác di chuyển ngoài map nếu đang mở modal thật sự hoặc đang chuyển cảnh
+    if (this.hasActiveBlockingModal()) return false;
 
     // Không di chuyển nhân vật khi đang bị khóa đứng yên câu cá
     if (this.isFishingSpotLocked) return false;
@@ -207,17 +224,30 @@ export class WorldScene extends Phaser.Scene {
   showTouchRipple(x, y) {
     try {
       if (!this.add || !this.sys?.isActive?.()) return;
-      const fx = this.playPixelFx('vfx_tap_ripple', x, y, { scale: 0.56, depth: 2000, alpha: 0.92 });
-      if (fx) return;
+      const fx = this.playPixelFx('vfx_tap_ripple', x, y, { scale: 0.36, depth: 2000, alpha: 0.92 });
+      if (fx) {
+        if (fx.anims) fx.anims.timeScale = 2.6;
+        this.tweens?.add({
+          targets: fx,
+          alpha: 0,
+          delay: 130,
+          duration: 280,
+          ease: 'Cubic.easeOut',
+          onComplete: () => {
+            if (fx.scene) fx.destroy();
+          }
+        });
+        return;
+      }
 
-      const ripple = this.add.circle(x, y, 6, 0xffffff, 0.9);
-      ripple.setStrokeStyle(3.5, 0x38bdf8, 0.95);
+      const ripple = this.add.circle(x, y, 5, 0xffffff, 0.9);
+      ripple.setStrokeStyle(3, 0x38bdf8, 0.95);
       ripple.setDepth(2000);
       this.tweens.add({
         targets: ripple,
-        radius: 28,
+        radius: 18,
         alpha: 0,
-        duration: 320,
+        duration: 210,
         ease: 'Cubic.easeOut',
         onComplete: () => ripple.destroy()
       });
@@ -231,6 +261,15 @@ export class WorldScene extends Phaser.Scene {
     this.isFishingSpotLocked = false;
     this.onMapFishingState = null;
     this.activeProximityInteractStation = null;
+    this._stuckFrozenMs = 0;
+    this._lastDragFollowAt = 0;
+    this._lastDragRippleAt = 0;
+    if (this.input) {
+      this.input.enabled = true;
+      this.input.setTopOnly(false);
+    }
+    const appRoot = typeof document !== 'undefined' ? document.getElementById('game-app') : null;
+    if (appRoot) appRoot.inert = false;
     const mapConfig = getMapConfig(this.currentMapId);
     this.mapConfig = mapConfig;
     const saveState = saveAdapter.load();
@@ -322,14 +361,7 @@ export class WorldScene extends Phaser.Scene {
       this.createDecorations();
       this.initPixelFXAnimations();
 
-      // Chuyển cảnh thống nhất đã xử lý bởi MapTransitionOverlay + MapLoadingOverlay (bỏ glitch-wipe nặng 4x)
-
-      // Kích hoạt hồi sinh respawn-beam nếu bé vừa hết tim hồi sinh (v3.7.1)
-      if (this.currentMapId === 'map_pet_farm' && typeof window !== 'undefined' && window.__triggerRespawnBeam) {
-        window.__triggerRespawnBeam = false;
-        this.time.delayedCall(120, () => this.playRespawnBeamSequence());
-      }
-
+      // Chuyển cảnh thống nhất bởi MapTransitionOverlay (PixelFX Star Iris)
       // Khởi tạo chú ếch cạnh hồ câu nếu ở map Hồ Câu (v3.7.1)
       if (this.currentMapId === 'map_fishing_pond') {
         this.createFishingPondFrog();
@@ -361,6 +393,28 @@ export class WorldScene extends Phaser.Scene {
     const initialBadge = badgeSys?.getEquippedBadge() || (saveState?.player?.equippedBadge ? badgeSys?.getBadge(saveState.player.equippedBadge) : null);
     if (initialBadge && this.hero) {
       this.hero.setHeadBadge(initialBadge);
+    }
+
+    // Nếu vừa bấm Hồi Sinh về Nông Trại: ẩn ngay nhân vật để chuẩn bị xuất hiện từ từ cùng khói lớn
+    this._pendingRespawnSequence = false;
+    this._isRespawnFading = false;
+    if (this.currentMapId === 'map_pet_farm' && typeof window !== 'undefined' && window.__triggerRespawnBeam && this.hero) {
+      window.__triggerRespawnBeam = false;
+      this._pendingRespawnSequence = true;
+      [
+        this.hero.sprite,
+        this.hero.shadow,
+        this.hero.accessorySprite,
+        this.hero.headBadgeContainer
+      ].filter(Boolean).forEach((obj) => obj.setAlpha?.(0));
+
+      const fallbackTimer = this.scheduleSceneTimer(() => {
+        if (this._pendingRespawnSequence) {
+          this._pendingRespawnSequence = false;
+          this.playRespawnBeamSequence();
+        }
+      }, 950);
+      this._respawnFallbackTimer = fallbackTimer;
     }
 
     this.onBadgeEquipped = (e) => {
@@ -1334,8 +1388,19 @@ export class WorldScene extends Phaser.Scene {
       this.playFoodConsumptionVFX(dishId, ingredientId);
     });
 
-        this.addManagedListener('game:portal-warp-complete', () => {
+    this.addManagedListener('game:portal-warp-complete', () => {
       this.isExploring = true;
+      if (this._pendingRespawnSequence) {
+        this._pendingRespawnSequence = false;
+        if (this._respawnFallbackTimer) {
+          clearTimeout(this._respawnFallbackTimer);
+          this._sceneTimers?.delete(this._respawnFallbackTimer);
+          this._respawnFallbackTimer = null;
+        }
+        this.playRespawnBeamSequence();
+        return;
+      }
+      if (this._isRespawnFading) return;
       if (this.hero) {
         if (typeof this.hero.onPortalWarpComplete === 'function') {
           this.hero.onPortalWarpComplete();
@@ -1528,35 +1593,64 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * 1. Hiệu ứng Hồi Sinh với Beam (spawn/respawn-beam) và xuất hiện từ từ (v3.7.1)
+   * 1. Hiệu ứng Hồi Sinh với Beam + Khói lớn & nhân vật xuất hiện từ từ
    */
   playRespawnBeamSequence() {
     if (!this.hero?.sprite?.active) return;
-    this.hero.sprite.setAlpha(0);
-    if (this.hero.shadow) this.hero.shadow.setAlpha(0);
+    this._isRespawnFading = true;
+    const heroTargets = [
+      this.hero.sprite,
+      this.hero.shadow,
+      this.hero.accessorySprite,
+      this.hero.headBadgeContainer
+    ].filter(Boolean);
+    heroTargets.forEach((obj) => obj.setAlpha?.(0));
 
     const hx = this.hero.sprite.x;
     const hy = this.hero.sprite.y;
 
     this.initPixelFXAnimations();
 
+    const spawnBigSmoke = (sx, sy, scale = 2.45, depth = 26) => {
+      const smoke = this.playPixelFx('vfx_poof', sx, sy, { scale, depth, alpha: 0.92 });
+      if (smoke?.anims) {
+        smoke.anims.timeScale = 0.52;
+      }
+      return smoke;
+    };
+
+    // Lớp khói lớn lan tỏa chậm khi mở cổng hồi sinh
+    spawnBigSmoke(hx, hy + 16, 2.6, 26);
+    this.scheduleSceneTimer(() => {
+      spawnBigSmoke(hx - 28, hy + 10, 2.35, 27);
+      spawnBigSmoke(hx + 28, hy + 10, 2.35, 27);
+    }, 780);
+    this.scheduleSceneTimer(() => {
+      spawnBigSmoke(hx, hy + 20, 2.75, 24);
+    }, 1650);
+
+    const finishReveal = () => {
+      this._isRespawnFading = false;
+      this.spawnFloatingPopup(hx, hy - 50, '✨ HỒI SINH THÀNH CÔNG! Chào mừng bé về lại Nông Trại! ✨', '#4ade80');
+    };
+
     if (this.anims.exists('anim_respawn_beam') && this.textures.exists('vfx_respawn_beam')) {
-      const beam = this.add.sprite(hx, hy - 25, 'vfx_respawn_beam')
-        .setDisplaySize(160, 190)
+      const beam = this.add.sprite(hx, hy - 28, 'vfx_respawn_beam')
+        .setDisplaySize(210, 250)
         .setDepth(25);
 
+      beam.anims.timeScale = 0.44;
       beam.play('anim_respawn_beam');
       window.__audioService?.playChime?.(880, 0.4);
 
-      // Nhân vật xuất hiện từ từ kết hợp với beam
+      // Nhân vật xuất hiện từ từ giữa làn khói và ánh sáng
       this.tweens.add({
-        targets: [this.hero.sprite, this.hero.shadow].filter(Boolean),
+        targets: heroTargets,
         alpha: 1,
-        duration: 2000,
-        ease: 'Cubic.easeIn',
-        onComplete: () => {
-          this.spawnFloatingPopup(hx, hy - 50, '✨ HỒI SINH THÀNH CÔNG! Chào mừng bé về lại Nông Trại! ✨', '#4ade80');
-        }
+        delay: 750,
+        duration: 3400,
+        ease: 'Sine.easeInOut',
+        onComplete: finishReveal
       });
 
       beam.on('animationcomplete', () => {
@@ -1564,10 +1658,12 @@ export class WorldScene extends Phaser.Scene {
       });
     } else {
       this.tweens.add({
-        targets: [this.hero.sprite, this.hero.shadow].filter(Boolean),
+        targets: heroTargets,
         alpha: 1,
-        duration: 1200,
-        ease: 'Linear'
+        delay: 600,
+        duration: 2800,
+        ease: 'Sine.easeInOut',
+        onComplete: finishReveal
       });
     }
   }
@@ -2160,12 +2256,9 @@ export class WorldScene extends Phaser.Scene {
     }
     if (!this.isExploring) {
       const hasBlockingOverlay = Boolean(
-        document.querySelector(
-          '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden]), #map-loading-overlay.active, #warp-overlay-container.active, .modal-overlay.active'
-        ) ||
+        this.hasActiveBlockingModal() ||
         this.isFishingSpotLocked ||
-        window.__mapTransitionOverlay?.isTransitioning ||
-        window.__mapLoadingOverlay?.isLoading
+        window.__mapTransitionOverlay?.isTransitioning
       );
       if (hasBlockingOverlay) {
         this._stuckFrozenMs = 0;
@@ -3959,11 +4052,13 @@ export class WorldScene extends Phaser.Scene {
 
     // 1. Bản đồ Bếp Cầu Vồng (map_kitchen)
     if (this.currentMapId === 'map_kitchen' && Array.isArray(this.mapConfig?.kitchenStations)) {
+      const hasReturnPortal = (this.portals || []).some(p => p.targetMapId === 'map_pet_farm');
       for (const st of this.mapConfig.kitchenStations) {
+        if (st.type === 'door' && hasReturnPortal) continue;
         let sx = st.x;
         let sy = st.y;
         let label = 'Mở trạm bếp';
-        let radius = 135;
+        let radius = st.type === 'door' ? 62 : 135;
 
         if (st.type === 'pantry') {
           sx = 398; sy = 291; label = 'Mở Tủ Lạnh';
@@ -4067,13 +4162,13 @@ export class WorldScene extends Phaser.Scene {
       );
     }
 
-    // 7. Cổng dịch chuyển (Portals)
+    // 7. Cổng dịch chuyển (Portals): chỉ hiện E khi nhân vật đứng rất gần cổng
     const portals = this.portals || (this.teleportPortal ? [this.teleportPortal] : []);
     for (const portal of portals) {
       if (!portal || typeof portal.x !== 'number' || !portal.isUnlocked) continue;
       consider(
         Math.hypot(heroX - portal.x, heroY - portal.y),
-        145,
+        62,
         portal.targetMapName ? `Vào ${portal.targetMapName}` : 'Vào Cổng',
         () => portal.handleInteract?.()
       );
@@ -4096,10 +4191,7 @@ export class WorldScene extends Phaser.Scene {
   triggerActiveProximityInteraction() {
     if (!this.sys?.isActive?.() || !this.isExploring || !this.activeProximityInteractStation) return;
     if (this.isFishingSpotLocked || this.onMapFishingState) return;
-    const blockingModal = document.querySelector(
-      '.game-modal:not([hidden]), .battle-arena-modal:not([hidden]), #question-manager-modal:not([hidden]), #map-loading-overlay.active, #warp-overlay-container.active'
-    );
-    if (blockingModal) return;
+    if (this.hasActiveBlockingModal()) return;
 
     const now = Date.now();
     if (this._lastInteractEAt && now - this._lastInteractEAt < 220) return;

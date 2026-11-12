@@ -3319,12 +3319,17 @@ export class BattleArenaModal {
     defeatOverlay.style.display = 'flex';
     defeatOverlay.removeAttribute('hidden');
 
-    const handleReturn = () => {
+    let returned = false;
+    const handleReturn = (e) => {
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
+      if (returned) return;
+      returned = true;
       defeatOverlay.style.display = 'none';
       defeatOverlay.setAttribute('hidden', 'true');
       this.closeArena();
 
-      // Đặt cờ kích hoạt hiệu ứng Hồi Sinh Beam (spawn/respawn-beam) khi vào map Nuôi thú
+      // Đặt cờ kích hoạt hiệu ứng Hồi Sinh Beam + Khói lớn khi vào map Nuôi thú
       if (typeof window !== 'undefined') {
         window.__triggerRespawnBeam = true;
       }
@@ -3341,6 +3346,7 @@ export class BattleArenaModal {
 
     const returnBtn = document.getElementById('btn-defeat-return-farm');
     if (returnBtn) {
+      returnBtn.addEventListener('pointerup', handleReturn, { once: true });
       returnBtn.onclick = handleReturn;
     }
   }

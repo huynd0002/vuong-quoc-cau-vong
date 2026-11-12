@@ -36,7 +36,6 @@ import { QuestionManagerModal } from '../game/ui/QuestionManagerModal.js';
 import { CharacterSelectModal } from '../game/ui/CharacterSelectModal.js';
 import { GameLoadingScreen } from '../game/ui/GameLoadingScreen.js';
 import { MapTransitionOverlay } from '../game/ui/MapTransitionOverlay.js';
-import { MapLoadingOverlay } from '../game/ui/MapLoadingOverlay.js';
 import { MazeMinigameModal } from '../game/ui/MazeMinigameModal.js';
 import { AuditionMinigameModal } from '../game/ui/AuditionMinigameModal.js';
 import { VirtualJoystick } from '../game/ui/VirtualJoystick.js';
@@ -574,13 +573,6 @@ let grandFinaleModal;
 let parentalGateModal;
 let mapSelectModal;
 
-// Khởi tạo Màn Hình Loading Chuyển Maps Thần Kỳ Cho Bé
-const mapLoadingOverlay = new MapLoadingOverlay({
-  audioService,
-  hudController
-});
-window.__mapLoadingOverlay = mapLoadingOverlay;
-
 let isMapSwitching = false;
 let mapSwitchSafetyTimer = null;
 
@@ -644,17 +636,28 @@ function navigateToMap(zoneId, { bypassUnlock = false, targetMapName = null, onC
     if (typeof onComplete === 'function') onComplete();
   };
 
-  if (mapTransitionOverlay && mapLoadingOverlay) {
+  if (mapTransitionOverlay) {
     mapTransitionOverlay.executeUnifiedTransition({
       targetMapId: zoneId,
       targetMapName: resolvedName,
       onExecuteSwitch: (finishTransition) => {
-        mapLoadingOverlay.show({
-          targetMapId: zoneId,
-          targetMapName: resolvedName,
-          onSwitch: () => commitSceneMapSwitch(zoneId, { toastMessage }),
-          onComplete: finishTransition
-        });
+        let readyHandled = false;
+        const onReady = (e) => {
+          const readyId = e?.detail?.mapConfig?.id;
+          if (readyId && readyId !== zoneId) return;
+          if (readyHandled) return;
+          readyHandled = true;
+          window.removeEventListener('game:map-ready', onReady);
+          setTimeout(finishTransition, 40);
+        };
+        window.addEventListener('game:map-ready', onReady);
+        commitSceneMapSwitch(zoneId, { toastMessage });
+        setTimeout(() => {
+          if (readyHandled) return;
+          readyHandled = true;
+          window.removeEventListener('game:map-ready', onReady);
+          finishTransition();
+        }, 1200);
       },
       onComplete: doneAll
     });
@@ -664,22 +667,16 @@ function navigateToMap(zoneId, { bypassUnlock = false, targetMapName = null, onC
   }
 }
 
-// Hàm chuyển map mượt mà có chuyển cảnh + màn hình loading thống nhất
+// Hàm chuyển map mượt mà chỉ dùng PixelFX transition (không pop-up loading)
 function travelToZone(zoneId, onComplete) {
   navigateToMap(zoneId, { onComplete });
 }
 
-// Khởi tạo Bộ Hiệu Ứng Chuyển Cảnh & Dịch Chuyển Bản Đồ Thống Nhất
+// Khởi tạo Bộ Hiệu Ứng Chuyển Cảnh PixelFX Thuần Túy
 const mapTransitionOverlay = new MapTransitionOverlay({
   audioService,
   hudController,
-  onExecuteMapSwitch: (targetMapId) => {
-    mapLoadingOverlay.show({
-      targetMapId,
-      targetMapName: resolveMapDisplayName(targetMapId),
-      onSwitch: () => commitSceneMapSwitch(targetMapId)
-    });
-  }
+  onExecuteMapSwitch: (targetMapId) => commitSceneMapSwitch(targetMapId)
 });
 window.__travelToZone = travelToZone;
 window.__getMapConfig = getMapConfig;
@@ -1373,7 +1370,7 @@ window.addEventListener('pagehide', () => {
   audioService.stopAll();
 });
 
-export const GAME_VERSION = '3.8.0';
+export const GAME_VERSION = '3.8.1';
 
 // Tự động kiểm tra phiên bản và dọn sạch bộ nhớ đệm (CacheStorage) cũ khi cập nhật game
 if (typeof window !== 'undefined' && 'caches' in window) {
