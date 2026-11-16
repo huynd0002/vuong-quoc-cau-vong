@@ -532,6 +532,7 @@ export class Hero {
   }
 
   stop() {
+    this.targetPos = null;
     if (this.moveTween) {
       this.moveTween.stop();
       this.moveTween = null;
@@ -641,6 +642,7 @@ export class Hero {
       this.moveTween.stop();
       this.moveTween = null;
     }
+    this.targetPos = null;
     this.scene.tweens.killTweensOf(this.sprite);
     const deltaX = clampedX - this.getX();
     const deltaY = clampedY - this.getY();
@@ -665,38 +667,48 @@ export class Hero {
       this.sprite.play(animKey, true);
     }
 
-    // Tốc độ di chuyển nhịp nhàng, êm dịu: duration = (dist / speed) * 1000
-    const moveSpeed = this.speed || 165;
-    const duration = Math.max(60, Math.round((dist / moveSpeed) * 1000));
-
-    this.moveTween = this.scene.tweens.add({
-      targets: this.sprite,
+    // Di chuyển mượt theo từng frame (updateStep) thay vì tạo/hủy tween liên tục khi chạm/kéo
+    this.targetPos = {
       x: clampedX,
       y: clampedY,
-      duration,
-      ease: 'Linear',
-      onUpdate: () => {
-        if (isPondMap && pondZone && this.isPointInPondWater(this.sprite.x, this.sprite.y + footOffset, pondZone)) {
-          const safeStep = this.clampOutOfPondWater(this.sprite.x, this.sprite.y + footOffset, pondZone, 12);
-          this.sprite.x = safeStep.x;
-          this.sprite.y = safeStep.y - footOffset;
-        }
-        this.sprite.setDepth(Math.floor(this.sprite.y + 35));
-        this.updateShadow();
-        if (this.coordGuide) this.coordGuide.update();
-        if (this.label) {
-          this.label.setPosition(this.sprite.x, this.sprite.y);
-          this.label.setDepth(Math.floor(this.sprite.y + 36));
-        }
-        this.updateHeadBadge();
-    this.updateAccessory();
-      },
-      onComplete: () => {
-        this.moveTween = null;
-        this.stop();
-        if (onComplete) onComplete();
-      }
-    });
+      onComplete,
+      isPondMap,
+      pondZone,
+      footOffset
+    };
+  }
+
+  updateStep(delta) {
+    if (!this.targetPos || !this.sprite?.active) return;
+    if (this.scene?.isFishingSpotLocked) {
+      this.stop();
+      return;
+    }
+    const { x: tx, y: ty, onComplete, isPondMap, pondZone, footOffset } = this.targetPos;
+    const cx = this.getX();
+    const cy = this.getY();
+    const dx = tx - cx;
+    const dy = ty - cy;
+    const dist = Math.hypot(dx, dy);
+    const dt = Math.min(Number(delta) || 16, 50) / 1000;
+    const step = (this.speed || 175) * dt;
+
+    if (dist <= step || dist < 2) {
+      this.setPosition(tx, ty);
+      this.targetPos = null;
+      this.stop();
+      if (onComplete) onComplete();
+      return;
+    }
+
+    let nextX = cx + (dx / dist) * step;
+    let nextY = cy + (dy / dist) * step;
+    if (isPondMap && pondZone && this.isPointInPondWater(nextX, nextY + footOffset, pondZone)) {
+      const safeStep = this.clampOutOfPondWater(nextX, nextY + footOffset, pondZone, 12);
+      nextX = safeStep.x;
+      nextY = safeStep.y - footOffset;
+    }
+    this.setPosition(nextX, nextY);
   }
 
   updateShadow() {

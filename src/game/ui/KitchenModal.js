@@ -2,6 +2,7 @@ import { RECIPES, INGREDIENTS, getIngredient, getRecipe, effectLabel, KITCHEN_LI
 import { RODS, BAITS, getRod, getBait, getFishSpecies, calculateFishPortions, calculateFishSellPrice } from '../../content/fishing/fishingData.js';
 import { BACKPACKS, BACKPACK_SLOTS_COUNT, getBackpack } from '../../content/backpacks/backpackData.js';
 import { ACCESSORIES_CATALOG } from '../systems/fashionSystem.js';
+import { PIXELFX_SHEETS, preloadSheetImage, drawPixelFxFrame } from '../effects/pixelfxRegistry.js';
 
 const HEAT = { off: '⭕ Tắt bếp', low: '🔥 Lửa nhỏ', medium: '🔥🔥 Lửa vừa', high: '🔥🔥🔥 Lửa lớn' };
 
@@ -871,24 +872,24 @@ export class KitchenModal {
                   ` : `
                     <div class="inspector-main-buttons">
                       ${selectedType === 'dish' ? `
-                        <button type="button" class="btn-inspector-action btn-inspector-use" data-eat="${selectedItem.id}" aria-label="Dùng Món" title="Dùng Món" style="font-size: 32px; min-height: 54px;">
-                          <span>😋</span>
+                        <button type="button" class="btn-inspector-action btn-inspector-use" data-eat="${selectedItem.id}" aria-label="Dùng Món" title="Dùng Món" style="min-height: 76px;">
+                          <span style="font-size: 50px; line-height: 1;">😋</span>
                         </button>
                         <div class="inspector-sub-btn-row">
-                          <button type="button" class="btn-inspector-action btn-inspector-feed" data-feed-pet="${selectedItem.id}" aria-label="Cho Cún Ăn" title="Cho Cún Ăn" style="font-size: 28px; min-height: 48px;">
-                            <span>🐶</span>
+                          <button type="button" class="btn-inspector-action btn-inspector-feed" data-feed-pet="${selectedItem.id}" aria-label="Cho Cún Ăn" title="Cho Cún Ăn" style="min-height: 68px;">
+                            <span style="font-size: 42px; line-height: 1;">🐶</span>
                           </button>
-                          <button type="button" class="btn-inspector-action btn-inspector-discard" data-action="ask-discard" aria-label="Huỷ" title="Huỷ" style="font-size: 26px; min-height: 48px;">
-                            <span>🗑️</span>
+                          <button type="button" class="btn-inspector-action btn-inspector-discard" data-action="ask-discard" aria-label="Huỷ" title="Huỷ" style="min-height: 68px;">
+                            <span style="font-size: 38px; line-height: 1;">🗑️</span>
                           </button>
                         </div>
                       ` : `
                         <div class="inspector-sub-btn-row" style="display:flex;gap:8px;width:100%;box-sizing:border-box;align-items:center;">
-                          <button type="button" class="btn-inspector-action btn-inspector-use" data-use-ingredient="${selectedItem.id}" aria-label="Dùng Ăn (+1 Tim)" title="Dùng Ăn (+1 Tim)" style="flex:1.7;min-width:0;width:auto;padding:0 8px;font-size:30px;min-height:48px;">
-                            <span>😋</span>
+                          <button type="button" class="btn-inspector-action btn-inspector-use" data-use-ingredient="${selectedItem.id}" aria-label="Dùng Ăn (+1 Tim)" title="Dùng Ăn (+1 Tim)" style="flex:1.7;min-width:0;width:auto;padding:0 8px;min-height:74px;">
+                            <span style="font-size: 50px; line-height: 1;">😋</span>
                           </button>
-                          <button type="button" class="btn-inspector-action btn-inspector-discard" data-action="ask-discard" style="flex:1;min-width:0;width:auto;padding:0 6px;">
-                            <span>🗑️ Huỷ</span>
+                          <button type="button" class="btn-inspector-action btn-inspector-discard" data-action="ask-discard" aria-label="Huỷ" title="Huỷ" style="flex:1;min-width:0;width:auto;padding:0 6px;min-height:74px;">
+                            <span style="font-size: 38px; line-height: 1;">🗑️</span>
                           </button>
                         </div>
                       `}
@@ -1180,6 +1181,34 @@ export class KitchenModal {
     });
   }
 
+  playDomPixelFx(sheetKey, x, y, size = 150) {
+    const spec = PIXELFX_SHEETS[sheetKey];
+    if (!spec || typeof document === 'undefined') return;
+    preloadSheetImage(sheetKey).then((img) => {
+      if (!img) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = spec.frameWidth;
+      canvas.height = spec.frameHeight;
+      canvas.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:${size}px;height:${size}px;transform:translate(-50%,-50%);pointer-events:none;z-index:10070;image-rendering:pixelated;`;
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      const total = spec.frames || 20;
+      const fps = spec.fps || 20;
+      const start = performance.now();
+      const step = (now) => {
+        const frame = Math.floor(((now - start) / 1000) * fps);
+        if (frame >= total) {
+          canvas.remove();
+          return;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPixelFxFrame(ctx, sheetKey, img, frame, 0, 0, canvas.width, canvas.height);
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
   triggerAuditionHitFX(isHit) {
     const consoleEl = this.content.querySelector('.audition-console');
     if (!consoleEl) return;
@@ -1199,6 +1228,10 @@ export class KitchenModal {
       triggerBtn.classList.remove('is-hit-blast', 'is-miss-blast');
       void triggerBtn.offsetWidth;
       triggerBtn.classList.add(isHit ? 'is-hit-blast' : 'is-miss-blast');
+      if (isHit) {
+        const rect = triggerBtn.getBoundingClientRect();
+        this.playDomPixelFx('vfx_crit_hit', rect.left + rect.width / 2, rect.top + rect.height / 2, 160);
+      }
     }
 
     // 3. Hiệu ứng viên bi phát sáng
@@ -2199,6 +2232,8 @@ evaluateAuditionHit() {
       result=this.system.buy(ingId);
       if (result.ok) {
         this.audioService?.playCoinBuy?.();
+        const rect = button.getBoundingClientRect();
+        this.playDomPixelFx('vfx_collect_burst', rect.left + rect.width / 2, rect.top + rect.height / 2, 150);
         const item = getIngredient(ingId);
         const burst = document.createElement('div');
         burst.className = 'fridge-buy-big-fx';

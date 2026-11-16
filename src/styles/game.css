@@ -10017,11 +10017,12 @@ html, body {
   transform: rotate(180deg);
 }
 
-/* 2. Nút bấm tương tác [E] to rõ, tối giản 1 chữ E nổi bật giữa màn hình */
+/* 2. Nút bấm tương tác [E] to rõ, đặt ở phía trên màn hình để không che túi đồ */
 .interactive-e-action-btn {
   position: absolute;
   left: 50%;
-  bottom: 72px;
+  top: 20px;
+  bottom: auto;
   transform: translateX(-50%);
   z-index: 25;
   width: 108px;

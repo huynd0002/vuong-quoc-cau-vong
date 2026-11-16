@@ -1051,7 +1051,7 @@ export class WorldScene extends Phaser.Scene {
 
       if (isDrag) {
         const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-        if (now - (this._lastDragFollowAt || 0) < 55) return;
+        if (now - (this._lastDragFollowAt || 0) < 32) return;
         const curX = this.hero.getX();
         const curY = this.hero.getY();
         if (Math.hypot(point.x - curX, point.y - curY) < 10) return;
@@ -2245,6 +2245,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   update(time, delta) {
+    this.hero?.updateStep?.(delta);
     this.updatePowerStarPickup(time, delta);
     if (Array.isArray(this.butterflies) && this.butterflies.length > 0) {
       for (let i = 0; i < this.butterflies.length; i++) {
@@ -2427,6 +2428,11 @@ export class WorldScene extends Phaser.Scene {
       const container = this.add.container(st.x, st.y).setDepth(4);
 
       // Effect blink blink màu sắc tại 3 vị trí chính: Rửa tay (xanh), Tủ lạnh (tím hồng), Bếp nấu (cam vàng)
+      this.kitchenBlinkRings = this.kitchenBlinkRings || {};
+      const isHandsWashedNow = Boolean(
+        window.__cookingSystem?.getState()?.handsWashed ??
+        this.saveAdapter?.load()?.cooking?.handsWashed
+      );
       const blinkColors = {
         prep: { outer: 0x38bdf8, inner: 0x7dd3fc, x: 605, y: 131 },
         pantry: { outer: 0xc084fc, inner: 0xf472b6, x: 398, y: 291 },
@@ -2434,11 +2440,15 @@ export class WorldScene extends Phaser.Scene {
       };
       const blinkSpec = blinkColors[st.type];
       if (blinkSpec) {
-        const ringOuter = this.add.circle(blinkSpec.x, blinkSpec.y, 34, blinkSpec.outer, 0.24)
-          .setStrokeStyle(3.5, blinkSpec.inner, 0.92)
+        const ringOuter = this.add.circle(blinkSpec.x, blinkSpec.y, 34, blinkSpec.outer, 0.28)
+          .setStrokeStyle(3.5, blinkSpec.inner, 0.95)
           .setDepth(5);
-        const ringInner = this.add.circle(blinkSpec.x, blinkSpec.y, 16, blinkSpec.inner, 0.45)
+        const ringInner = this.add.circle(blinkSpec.x, blinkSpec.y, 16, blinkSpec.inner, 0.48)
           .setDepth(5);
+        const showRing = st.type === 'prep' || isHandsWashedNow;
+        ringOuter.setVisible(showRing);
+        ringInner.setVisible(showRing);
+        this.kitchenBlinkRings[st.type] = [ringOuter, ringInner];
         this.tweens.add({
           targets: [ringOuter, ringInner],
           scaleX: 1.24,
@@ -2448,6 +2458,14 @@ export class WorldScene extends Phaser.Scene {
           yoyo: true,
           repeat: -1,
           ease: 'Sine.easeInOut'
+        });
+      }
+      if (!this._boundHandsWashedBlink) {
+        this._boundHandsWashedBlink = true;
+        this.addManagedListener('game:hands-washed', () => {
+          ['pantry', 'cook'].forEach((k) => {
+            (this.kitchenBlinkRings?.[k] || []).forEach((r) => r?.setVisible?.(true));
+          });
         });
       }
 

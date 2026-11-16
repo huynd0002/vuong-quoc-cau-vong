@@ -1922,10 +1922,10 @@ body.is-handwash-dragging * {
   display: flex !important;
   align-items: center;
   justify-content: center;
-  width: 68px;
-  height: 68px;
+  width: 88px;
+  height: 88px;
   padding: 0;
-  border: 3px solid #f472b6;
+  border: 3.5px solid #f472b6;
   border-radius: 50%;
   background: linear-gradient(135deg, #fff0f6 0%, #ffe4e6 100%);
   box-shadow: 0 6px 18px rgba(244, 114, 182, 0.38), 0 2px 6px rgba(0,0,0,0.12);
@@ -1937,8 +1937,8 @@ body.is-handwash-dragging * {
 }
 #btn-floating-bag .floating-bag-img,
 .floating-bag-btn .floating-bag-img {
-  width: 46px;
-  height: 46px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
 }
 #btn-floating-bag:hover,

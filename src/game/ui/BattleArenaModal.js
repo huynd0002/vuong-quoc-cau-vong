@@ -1292,6 +1292,10 @@ export class BattleArenaModal {
     this.heroHearts = meal.hearts;
     this.heroMaxHearts = meal.maxHearts;
     this.bonusHeartsRemaining = meal.bonus || 0;
+    if (this.heroHearts <= 0) {
+      this.showDefeatModal();
+      return;
+    }
     this.energyUsed = false;
     this.mealShield = false;
     this.updateEnergyButton();
@@ -3293,26 +3297,12 @@ export class BattleArenaModal {
       defeatOverlay.className = 'arena-defeat-overlay';
       document.body.appendChild(defeatOverlay);
     }
-    // Cập nhật giao diện Pop-up Hồi Sinh Kỳ Diệu (v3.7.1)
+    // Cập nhật giao diện Pop-up Hồi Sinh tối giản: chỉ hiện mỗi nút Hồi Sinh, không hiện chữ
     defeatOverlay.innerHTML = `
-      <div class="arena-defeat-card">
-        <div class="defeat-badge">✨ HỒI SINH KỲ DIỆU ✨</div>
-        <div class="defeat-avatar-wrap">
-          <span class="defeat-icon">🌟</span>
-        </div>
-        <h2 class="defeat-title">HỒI SINH NHÂN VẬT</h2>
-        <p class="defeat-desc">
-          Bé đã hết trái tim rồi! Chạm vào nút Hồi Sinh bên dưới để dịch chuyển về Nông Trại Thú Cưng nghỉ ngơi và hồi phục năng lượng nhé!
-        </p>
-        <div class="defeat-heal-notice">
-          <span class="heal-pill">❤️ Hồi Sinh với 1 Tim</span>
-          <span class="heal-hint">🍳 Bé nhớ vào Bếp ăn thêm món ngon để lên lại đủ 3 Tim nhé!</span>
-        </div>
-        <div class="defeat-buttons">
-          <button class="modal-cta-button defeat-return-cta" id="btn-defeat-return-farm" type="button">
-            🌟 HỒI SINH & VỀ NÔNG TRẠI 🐾
-          </button>
-        </div>
+      <div class="arena-defeat-card" style="background:transparent;border:none;box-shadow:none;padding:0;display:flex;align-items:center;justify-content:center;">
+        <button class="modal-cta-button defeat-return-cta" id="btn-defeat-return-farm" type="button" aria-label="Hồi sinh về Nông Trại" style="min-width:220px;min-height:84px;font-size:28px;font-weight:900;border-radius:999px;box-shadow:0 12px 36px rgba(0,0,0,0.55);">
+          🌟 HỒI SINH
+        </button>
       </div>
     `;
 
