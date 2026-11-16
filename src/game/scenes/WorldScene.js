@@ -1167,7 +1167,7 @@ export class WorldScene extends Phaser.Scene {
       if (monster) {
         const mx = monster.sprite?.x ?? monster.data.x;
         const my = monster.sprite?.y ?? monster.data.y;
-        this.playPixelFx('vfx_poof', mx, my - 10, { scale: 1.05, depth: 25 });
+        this.playPixelFx('vfx_poof', mx, my - 10, { scale: 1.65, depth: 25 });
         this.playPixelFx('vfx_collect_burst', mx, my - 26, { scale: 0.9, depth: 26 });
         monster.isRescued = true;
         monster.playRescueAnimation();
@@ -4238,7 +4238,7 @@ export class WorldScene extends Phaser.Scene {
     this._lastInteractEAt = now;
 
     if (this.hero?.sprite?.active) {
-      this.playPixelFx('vfx_collect_burst', this.hero.sprite.x, this.hero.sprite.y - 18, { scale: 0.72, depth: 28 });
+      this.playPixelFx('vfx_collect_burst', this.hero.sprite.x, this.hero.sprite.y - 18, { scale: 1.25, depth: 28 });
     }
     window.__audioService?.playChime?.(680, 0.15);
     const act = this.activeProximityInteractStation.action;

@@ -1181,7 +1181,7 @@ export class KitchenModal {
     });
   }
 
-  playDomPixelFx(sheetKey, x, y, size = 150) {
+  playDomPixelFx(sheetKey, x, y, size = 240) {
     const spec = PIXELFX_SHEETS[sheetKey];
     if (!spec || typeof document === 'undefined') return;
     preloadSheetImage(sheetKey).then((img) => {
@@ -1230,7 +1230,7 @@ export class KitchenModal {
       triggerBtn.classList.add(isHit ? 'is-hit-blast' : 'is-miss-blast');
       if (isHit) {
         const rect = triggerBtn.getBoundingClientRect();
-        this.playDomPixelFx('vfx_crit_hit', rect.left + rect.width / 2, rect.top + rect.height / 2, 160);
+        this.playDomPixelFx('vfx_crit_hit', rect.left + rect.width / 2, rect.top + rect.height / 2, 260);
       }
     }
 
@@ -2233,7 +2233,7 @@ evaluateAuditionHit() {
       if (result.ok) {
         this.audioService?.playCoinBuy?.();
         const rect = button.getBoundingClientRect();
-        this.playDomPixelFx('vfx_collect_burst', rect.left + rect.width / 2, rect.top + rect.height / 2, 150);
+        this.playDomPixelFx('vfx_collect_burst', rect.left + rect.width / 2, rect.top + rect.height / 2, 240);
         const item = getIngredient(ingId);
         const burst = document.createElement('div');
         burst.className = 'fridge-buy-big-fx';

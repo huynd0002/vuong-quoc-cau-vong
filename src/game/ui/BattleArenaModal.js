@@ -1269,9 +1269,23 @@ export class BattleArenaModal {
       }
     }
 
+    // Bổ sung ngẫu nhiên câu hỏi nâng cao từ các vùng cao hơn để tăng độ khó & đa dạng
+    const hardZones = ['map4', 'map5', 'map6'];
     while (questions.length < targetCount) {
-      const extraQ = getRandomZoneQuestion(mapId, Array.from(usedIds));
-      if (!pushQuestion(extraQ)) break;
+      const hardMap = hardZones[Math.floor(Math.random() * hardZones.length)];
+      const extraQ = Math.random() < 0.55
+        ? getRandomZoneQuestion(hardMap, Array.from(usedIds))
+        : getRandomZoneQuestion(mapId, Array.from(usedIds));
+      if (!pushQuestion(extraQ)) {
+        const fallbackQ = getRandomZoneQuestion(mapId, Array.from(usedIds));
+        if (!pushQuestion(fallbackQ)) break;
+      }
+    }
+
+    // Xáo trộn ngẫu nhiên hoàn toàn thứ tự câu hỏi (không cố định)
+    for (let i = questions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
     }
 
     return questions.slice(0, targetCount).map(q => shuffleQuestion(q));
@@ -2923,8 +2937,8 @@ export class BattleArenaModal {
       if (this.arenaMonsterBox) this.arenaMonsterBox.classList.add('monster-hit');
       this.triggerScreenShake('hit');
 
-      // PixelFX Tia Lửa Va Chạm (vfx_crit_hit cho Boss / vfx_hit_spark cho Quái)
-      this.playArenaPixelFx(this.isBoss ? 'vfx_crit_hit' : 'vfx_hit_spark', targetX, targetY, this.isBoss ? 190 : 145);
+      // PixelFX Tia Lửa Va Chạm kích thước lớn (vfx_crit_hit cho Boss / vfx_hit_spark cho Quái)
+      this.playArenaPixelFx(this.isBoss ? 'vfx_crit_hit' : 'vfx_hit_spark', targetX, targetY, this.isBoss ? 280 : 220);
 
       // Vụ nổ Skill Nhân Vật
       if (this.impactFx) {
@@ -3270,15 +3284,8 @@ export class BattleArenaModal {
    */
   showDefeatModal() {
     this.isTurnLocked = true;
-
-    // 1. Cập nhật 1 Tim theo yêu cầu: Hồi 1 Tim, phải ăn để lên tim lại
-    this.heroHearts = 1;
-    this.bonusHeartsRemaining = 0;
-    if (this.cookingSystem) {
-      this.cookingSystem.recordBattleHearts(1);
-    }
-    if (typeof window !== 'undefined' && typeof window.__updateHeroVitalsHud === 'function') {
-      window.__updateHeroVitalsHud();
+    if (this.arenaAnswers) {
+      this.arenaAnswers.style.pointerEvents = 'none';
     }
 
     // 2. Phát âm thanh và giọng đọc thông báo thua
@@ -3315,6 +3322,18 @@ export class BattleArenaModal {
       e?.stopPropagation?.();
       if (returned) return;
       returned = true;
+      // Chỉ hồi 1 Tim khi bé thực sự bấm nút Hồi Sinh để về Nông Trại
+      this.heroHearts = 1;
+      this.bonusHeartsRemaining = 0;
+      if (this.cookingSystem) {
+        this.cookingSystem.recordBattleHearts(1);
+      }
+      if (typeof window !== 'undefined' && typeof window.__updateHeroVitalsHud === 'function') {
+        window.__updateHeroVitalsHud();
+      }
+      if (this.arenaAnswers) {
+        this.arenaAnswers.style.pointerEvents = '';
+      }
       defeatOverlay.style.display = 'none';
       defeatOverlay.setAttribute('hidden', 'true');
       this.closeArena();
