@@ -42,6 +42,8 @@ export const BGM_TRACKS = {
 export class AudioService {
   constructor() {
     this.soundEnabled = false;
+    this.bgmEnabled = true;
+    this.sfxEnabled = true;
     this.volume = 0.8;
     this.bgmVolume = 0.45; // Âm lượng nhạc nền du dương êm dịu, không lấn át tiếng nói/hiệu ứng
     this.sfxVolume = 0.85;
@@ -138,6 +140,25 @@ export class AudioService {
     this.sfxVolume = Math.max(0, Math.min(1, vol));
   }
 
+  setBgmEnabled(enabled) {
+    this.bgmEnabled = Boolean(enabled);
+    if (!this.bgmEnabled) {
+      if (this.currentBgmAudio) {
+        try {
+          this.currentBgmAudio.pause();
+        } catch {}
+      }
+    } else if (this.soundEnabled && this.currentBgmKey) {
+      this.playMusic(this.currentBgmKey);
+    }
+    return this.bgmEnabled;
+  }
+
+  setSfxEnabled(enabled) {
+    this.sfxEnabled = Boolean(enabled);
+    return this.sfxEnabled;
+  }
+
   updateSoundToggleUI() {
     if (typeof document === 'undefined') return;
     const btn = document.getElementById('sound-toggle');
@@ -203,7 +224,7 @@ export class AudioService {
     }
 
     this.currentBgmKey = key;
-    if (!this.soundEnabled) return;
+    if (!this.soundEnabled || !this.bgmEnabled) return;
 
     if (this.bgmFadeInterval) {
       clearInterval(this.bgmFadeInterval);
@@ -315,7 +336,7 @@ export class AudioService {
    * Phát file âm thanh đã nạp sẵn với fallback sang hàm synthesizer
    */
   playSound(soundUrl, fallbackFn, customVolume = null) {
-    if (!this.soundEnabled || typeof window === 'undefined') return;
+    if (!this.soundEnabled || !this.sfxEnabled || typeof window === 'undefined') return;
     try {
       if (typeof Audio !== 'undefined' && soundUrl) {
         let sound = this.audioCache.get(soundUrl);

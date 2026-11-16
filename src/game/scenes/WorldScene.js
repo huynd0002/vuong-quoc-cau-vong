@@ -2426,8 +2426,30 @@ export class WorldScene extends Phaser.Scene {
     stations.forEach((st) => {
       const container = this.add.container(st.x, st.y).setDepth(4);
 
-      // Vòng hào quang sàn bếp: Đã xóa để sàn gỗ tự nhiên luôn sạch bóng theo yêu cầu người dùng
-      const aura = null;
+      // Effect blink blink màu sắc tại 3 vị trí chính: Rửa tay (xanh), Tủ lạnh (tím hồng), Bếp nấu (cam vàng)
+      const blinkColors = {
+        prep: { outer: 0x38bdf8, inner: 0x7dd3fc, x: 605, y: 131 },
+        pantry: { outer: 0xc084fc, inner: 0xf472b6, x: 398, y: 291 },
+        cook: { outer: 0xf97316, inner: 0xfacc15, x: 940, y: 290 }
+      };
+      const blinkSpec = blinkColors[st.type];
+      if (blinkSpec) {
+        const ringOuter = this.add.circle(blinkSpec.x, blinkSpec.y, 34, blinkSpec.outer, 0.24)
+          .setStrokeStyle(3.5, blinkSpec.inner, 0.92)
+          .setDepth(5);
+        const ringInner = this.add.circle(blinkSpec.x, blinkSpec.y, 16, blinkSpec.inner, 0.45)
+          .setDepth(5);
+        this.tweens.add({
+          targets: [ringOuter, ringInner],
+          scaleX: 1.24,
+          scaleY: 1.24,
+          alpha: 0.16,
+          duration: 520,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut'
+        });
+      }
 
       // Vùng chạm cảm ứng: chỉ đưa bé lại gần trạm bếp — bắt buộc ấn E để mở (không chặn kéo-di chuyển trên iPad)
       const touchZone = this.add.zone(st.x, st.y, 110, 90).setInteractive({ useHandCursor: true }).setDepth(15);
@@ -4058,14 +4080,14 @@ export class WorldScene extends Phaser.Scene {
         let sx = st.x;
         let sy = st.y;
         let label = 'Mở trạm bếp';
-        let radius = st.type === 'door' ? 62 : 135;
+        let radius = st.type === 'door' ? 48 : 78;
 
         if (st.type === 'pantry') {
           sx = 398; sy = 291; label = 'Mở Tủ Lạnh';
         } else if (st.type === 'prep') {
           sx = 605; sy = 131; label = 'Rửa Tay';
         } else if (st.type === 'cook') {
-          sx = 940; sy = 290; label = 'Vào Bếp Nấu'; radius = 145;
+          sx = 940; sy = 290; label = 'Vào Bếp Nấu'; radius = 82;
         } else if (st.type === 'dining') {
           sx = 905; sy = 570; label = 'Bàn Ăn';
         }
@@ -4094,7 +4116,7 @@ export class WorldScene extends Phaser.Scene {
         else if (st.type === 'rainbow_market') label = 'Đi Chợ Cầu Vồng';
         else if (st.type === 'fashion_street') label = 'Đi Phố Thời Trang';
 
-        consider(Math.hypot(heroX - st.x, heroY - st.y), 135, label, () => this.handlePetStationInteraction(st));
+        consider(Math.hypot(heroX - st.x, heroY - st.y), 78, label, () => this.handlePetStationInteraction(st));
       }
     }
 
@@ -4107,13 +4129,13 @@ export class WorldScene extends Phaser.Scene {
         y: 360,
         castTarget: { x: 485, y: 445 }
       };
-      consider(Math.hypot(heroX - 688, heroY - 360), 145, 'Bắt đầu câu cá', () => this.startDockFishingManually(dockSt));
+      consider(Math.hypot(heroX - 688, heroY - 360), 80, 'Bắt đầu câu cá', () => this.startDockFishingManually(dockSt));
 
       const bookSt = this.mapConfig.fishingStations.find(s => s.type === 'fish_book');
       if (bookSt) {
         consider(
           Math.hypot(heroX - bookSt.x, heroY - bookSt.y),
-          135,
+          78,
           'Sổ Huy Hiệu',
           () => window.dispatchEvent(new CustomEvent('game:open-fishing-station', { detail: { station: bookSt } }))
         );
@@ -4125,7 +4147,7 @@ export class WorldScene extends Phaser.Scene {
       for (const st of this.mapConfig.marketStations) {
         consider(
           Math.hypot(heroX - st.x, heroY - st.y),
-          140,
+          80,
           st.name || 'Gian Hàng',
           () => window.dispatchEvent(new CustomEvent('game:open-market-station', { detail: { station: st } }))
         );
@@ -4137,7 +4159,7 @@ export class WorldScene extends Phaser.Scene {
       for (const st of this.mapConfig.fashionStations) {
         consider(
           Math.hypot(heroX - st.x, heroY - st.y),
-          140,
+          80,
           st.name || 'Thời Trang',
           () => {
             if (st.type === 'backpack_stall') {
@@ -4156,7 +4178,7 @@ export class WorldScene extends Phaser.Scene {
     if (this.propsPuzzle && typeof this.propsPuzzle.x === 'number') {
       consider(
         Math.hypot(heroX - this.propsPuzzle.x, heroY - this.propsPuzzle.y),
-        135,
+        78,
         'Kiểm tra Cổng Hoa',
         () => this.propsPuzzle.handleTouch?.()
       );
@@ -4168,7 +4190,7 @@ export class WorldScene extends Phaser.Scene {
       if (!portal || typeof portal.x !== 'number' || !portal.isUnlocked) continue;
       consider(
         Math.hypot(heroX - portal.x, heroY - portal.y),
-        62,
+        48,
         portal.targetMapName ? `Vào ${portal.targetMapName}` : 'Vào Cổng',
         () => portal.handleInteract?.()
       );

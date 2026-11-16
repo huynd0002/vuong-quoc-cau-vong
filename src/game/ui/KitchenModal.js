@@ -246,7 +246,7 @@ export class KitchenModal {
                     const hasStars = stars >= item.price;
                     return `
                       <article data-card="${item.id}" class="fridge-item-card kitchen-stock ${owned > 0 ? 'is-stocked' : ''}" title="${item.name} (⭐ ${item.price})">
-                        ${owned > 0 ? `<div class="fridge-owned-chip" title="Số lượng trong túi">Đang có: <b>${owned}</b></div>` : ''}
+                        ${owned > 0 ? `<div class="fridge-owned-chip" title="Số lượng trong túi" style="font-size:20px;font-weight:900;padding:4px 12px;background:#fef08a;color:#9a3412;border:2px solid #f59e0b;box-shadow:0 4px 12px rgba(245,158,11,0.4);">x${owned}</div>` : ''}
                         <div class="fridge-item-avatar-wrap">
                           <img class="fridge-food-3d-asset" src="${item.image}" alt="${item.name}" draggable="false" />
                         </div>
@@ -295,23 +295,6 @@ export class KitchenModal {
               <strong class="ing-pill-qty">${owned}/${i.count}</strong>
             </span>`;
           }).join('')}
-        </div>
-        <div class="dish-hover-flyout" role="tooltip">
-          <div class="dish-flyout-title-bar"><span class="flyout-dish-title">${r.name}</span><span class="flyout-tier-badge">Cấp ${r.tier}</span></div>
-          <div class="dish-flyout-content">
-            <div class="dish-flyout-section"><span class="dish-flyout-label">⭐ Chi phí nguyên liệu:</span> <span style="font-weight:900;color:#ea580c;font-size:0.95rem;">Cần khoảng ~${totalStars} ⭐ để mua đủ nguyên liệu</span></div>
-            <div class="dish-flyout-section"><span class="dish-flyout-label">🥕 Thành phần cần có:</span>
-              <div class="dish-flyout-ingredients">${r.ingredients.map(i => {
-                const owned = state.ingredients[i.id] || 0;
-                const isEnough = owned >= i.count;
-                return `<div class="dish-flyout-ing ${isEnough ? 'has-enough' : 'is-missing'}"><div class="flyout-ing-avatar-wrap"><img src="${(getIngredient(i.id) || i).image || i.image}" class="flyout-ing-3d-img" alt="${i.name}" /></div><span class="ing-name">${i.name}</span><span class="ing-qty">${owned}/${i.count}</span><span class="ing-state">${isEnough ? '✓ Đủ' : 'Thiếu'}</span></div>`;
-              }).join('')}</div>
-            </div>
-            <div class="dish-flyout-section"><span class="dish-flyout-label">✨ Dinh dưỡng & Tiếp sức:</span>
-              <div class="dish-flyout-effects"><span class="buff-chip buff-heal">❤️ +${r.effect.heal} Tim</span>${r.effect.bonus ? `<span class="buff-chip buff-bonus">💛 +${r.effect.bonus} Tim tạm</span>` : ''}${r.effect.energy ? `<span class="buff-chip buff-energy">⚡ +${r.effect.energy} Năng lượng</span>` : ''}</div>
-            </div>
-            <div class="dish-flyout-footer ${unlocked ? 'ready' : 'locked'}">${unlocked ? '👉 Chạm để vào bếp nấu ngay!' : `🔒 Hãy làm ${r.unlock} món khác nhau để mở khóa`}</div>
-          </div>
         </div>
       </button>`;
     }).join('')}</div>
@@ -888,21 +871,21 @@ export class KitchenModal {
                   ` : `
                     <div class="inspector-main-buttons">
                       ${selectedType === 'dish' ? `
-                        <button type="button" class="btn-inspector-action btn-inspector-use" data-eat="${selectedItem.id}">
-                          <span>😋 Dùng Món</span>
+                        <button type="button" class="btn-inspector-action btn-inspector-use" data-eat="${selectedItem.id}" aria-label="Dùng Món" title="Dùng Món" style="font-size: 32px; min-height: 54px;">
+                          <span>😋</span>
                         </button>
                         <div class="inspector-sub-btn-row">
-                          <button type="button" class="btn-inspector-action btn-inspector-feed" data-feed-pet="${selectedItem.id}">
-                            <span>🐶 Cho Cún Ăn</span>
+                          <button type="button" class="btn-inspector-action btn-inspector-feed" data-feed-pet="${selectedItem.id}" aria-label="Cho Cún Ăn" title="Cho Cún Ăn" style="font-size: 28px; min-height: 48px;">
+                            <span>🐶</span>
                           </button>
-                          <button type="button" class="btn-inspector-action btn-inspector-discard" data-action="ask-discard">
-                            <span>🗑️ Huỷ</span>
+                          <button type="button" class="btn-inspector-action btn-inspector-discard" data-action="ask-discard" aria-label="Huỷ" title="Huỷ" style="font-size: 26px; min-height: 48px;">
+                            <span>🗑️</span>
                           </button>
                         </div>
                       ` : `
                         <div class="inspector-sub-btn-row" style="display:flex;gap:8px;width:100%;box-sizing:border-box;align-items:center;">
-                          <button type="button" class="btn-inspector-action btn-inspector-use" data-use-ingredient="${selectedItem.id}" style="flex:1.7;min-width:0;width:auto;padding:0 8px;">
-                            <span>😋 Dùng Ăn (+1 ❤️)</span>
+                          <button type="button" class="btn-inspector-action btn-inspector-use" data-use-ingredient="${selectedItem.id}" aria-label="Dùng Ăn (+1 Tim)" title="Dùng Ăn (+1 Tim)" style="flex:1.7;min-width:0;width:auto;padding:0 8px;font-size:30px;min-height:48px;">
+                            <span>😋</span>
                           </button>
                           <button type="button" class="btn-inspector-action btn-inspector-discard" data-action="ask-discard" style="flex:1;min-width:0;width:auto;padding:0 6px;">
                             <span>🗑️ Huỷ</span>
@@ -1007,9 +990,8 @@ export class KitchenModal {
             <!-- CHƯA ĐỦ NGUYÊN LIỆU: HIỂN THỊ NỒI VÀ YÊU CẦU NGUYÊN LIỆU -->
             <div class="cook-pot-workbench">
               <div class="cook-pot-visual">
-                <span class="cook-pot-emoji">${r.heat === 'off' ? '🥣' : '🥘'}</span>
-                <strong class="cook-pot-title">Thả vào đây</strong>
-                <span class="cook-pot-guide">Hoặc chạm nguyên liệu ở trên để thêm vào nồi</span>
+                <span class="cook-pot-emoji" style="font-size: 56px;">${r.heat === 'off' ? '🥣' : '🥘'}</span>
+                <span class="cook-pot-guide" style="font-size: 26px;">👇</span>
               </div>
               <div class="cook-requirements-rack">
                 ${r.ingredients.map(i => {
@@ -1018,8 +1000,7 @@ export class KitchenModal {
                   return `
                     <div class="cook-req-card ${done ? 'is-done' : 'is-pending'}">
                       <div class="cook-req-avatar-wrap"><img class="cook-req-3d-img" src="${(getIngredient(i.id) || i).image || i.image}" alt="${i.name}" /></div>
-                      <span class="req-name">${i.name}</span>
-                      <span class="req-count">${current}/${i.count}</span>
+                      <span class="req-count" style="font-size:18px;font-weight:900;">${current}/${i.count}</span>
                       ${done ? '<span class="req-check">✓</span>' : ''}
                     </div>
                   `;
@@ -1029,7 +1010,7 @@ export class KitchenModal {
                 <div class="cook-staged-chips">
                   ${r.ingredients.filter(i => s.staged[i.id]).map(i => `
                     <button type="button" class="staged-chip" data-remove="${i.id}" title="Chạm để bớt 1 phần">
-                      <img class="staged-chip-3d-img" src="${(getIngredient(i.id) || i).image || i.image}" alt="${i.name}" /> <span class="staged-chip-text">${i.name} x${s.staged[i.id]} ↩</span>
+                      <img class="staged-chip-3d-img" src="${(getIngredient(i.id) || i).image || i.image}" alt="${i.name}" /> <span class="staged-chip-text">x${s.staged[i.id]} ↩</span>
                     </button>
                   `).join('')}
                 </div>
@@ -1038,35 +1019,32 @@ export class KitchenModal {
           `}
         </div>
 
-        <!-- 4. THAY ĐỔI PHẦN MÀU ĐEN: NÚT BẮT ĐẦU NẤU & CANH NHỊP AUDITION (Theo yêu cầu người dùng) -->
+        <!-- 4. NÚT GO BẮT ĐẦU NẤU & CANH NHỊP AUDITION THUẦN ICON -->
         <div class="cook-bottom-console">
           ${!isRecipeReady ? `
             <div class="cook-waiting-bar">
-              <span class="waiting-text">Bé hãy thả đủ nguyên liệu vào nồi để sẵn sàng nấu nhé!</span>
+              <span class="waiting-text" style="font-size:28px;">🥕 ➜ 🍲</span>
             </div>
           ` : (
             !this.rhythmActive ? `
               <div class="cook-start-action-row">
-                <button type="button" class="btn-start-cook-audition animate-btn-pulse" data-action="start-rhythm">
-                  <span class="btn-text">BẮT ĐẦU NẤU (CANH NHỊP AUDITION)</span>
+                <button type="button" class="btn-start-cook-audition animate-btn-pulse" data-action="start-rhythm" aria-label="Bắt đầu nấu" style="min-width:150px;min-height:68px;border-radius:999px;font-size:32px;font-weight:900;">
+                  <span class="btn-text">🚀 GO!</span>
                 </button>
               </div>
             ` : `
               <div class="audition-console">
                 <div class="audition-header-row">
-                  <div class="audition-title-box">
-                    <strong class="audition-title">Canh viên bi vào VÙNG ĐỎ rồi bấm phím CÁCH (hoặc chạm nút)!</strong>
-                  </div>
                   <div class="audition-counters-group">
                     <div class="audition-score-pill">
-                      <span class="pill-label">🎯 Nhịp trúng:</span>
+                      <span class="pill-label">🎯</span>
                       <strong class="audition-score-text">${this.rhythmScore}/${this.rhythmTarget}</strong>
                       <div class="audition-stars-meter">
                         ${Array.from({ length: this.rhythmTarget }).map((_, i) => `<span class="audition-star ${i < this.rhythmScore ? 'is-lit' : ''}"><i class="star-bead"></i></span>`).join('')}
                       </div>
                     </div>
                     <div class="audition-miss-pill">
-                      <span class="pill-label">💔 Lỡ nhịp:</span>
+                      <span class="pill-label">💔</span>
                       <strong class="audition-miss-text ${this.rhythmMisses > 0 ? 'is-danger' : ''}">${this.rhythmMisses}/${this.maxAllowedMisses}</strong>
                       <div class="audition-miss-hearts">
                         ${Array.from({ length: this.maxAllowedMisses }).map((_, i) => `<span class="miss-heart-icon ${i < this.rhythmMisses ? 'is-missed' : ''}">${i < this.rhythmMisses ? '💔' : '🤍'}</span>`).join('')}
@@ -1077,16 +1055,14 @@ export class KitchenModal {
 
                 <!-- THANH RAY & VIÊN BI & VÙNG ĐỎ AUDITION -->
                 <div class="audition-rail-track" aria-label="Thanh canh nhịp Audition">
-                  <div class="audition-red-target-zone">
-                    <span class="target-zone-label">VÙNG ĐỎ</span>
-                  </div>
+                  <div class="audition-red-target-zone"></div>
                   <div class="audition-beat-marble" style="left: ${this.ballPos}%"></div>
                 </div>
 
-                <!-- NÚT BẤM CÁCH VÀ PHẢN HỒI -->
+                <!-- NÚT GO BẤM NHỊP -->
                 <div class="audition-trigger-row">
-                  <button type="button" class="btn-audition-trigger" data-action="rhythm-hit">
-                    <span>BẤM CÁCH HOẶC CHẠM ĐÂY! (SPACE)</span>
+                  <button type="button" class="btn-audition-trigger" data-action="rhythm-hit" aria-label="Bấm nhịp GO" style="min-width:150px;min-height:62px;font-size:28px;font-weight:900;border-radius:999px;">
+                    <span>🎯 GO!</span>
                   </button>
                   <span class="audition-feedback-badge ${this.rhythmFeedbackType}">
                     ${this.rhythmFeedback}
@@ -2152,11 +2128,34 @@ evaluateAuditionHit() {
 
     if (button.dataset.action === 'start-rhythm') {
       const s = this.system.getState().session;
-      if (s) {
+      if (s && !this._countdownRunning) {
+        this._countdownRunning = true;
         const recipe = getRecipe(s.recipeId);
         const target = recipe.tier === 1 ? 4 : (recipe.tier === 2 ? 5 : 6);
-        this.startAuditionLoop(target);
-        return this.render();
+        const steps = ['3', '2', '1', 'GO!'];
+        let overlay = this.root.querySelector('#kitchen-countdown-fx');
+        if (!overlay) {
+          overlay = document.createElement('div');
+          overlay.id = 'kitchen-countdown-fx';
+          overlay.style.cssText = 'position:fixed;inset:0;z-index:10050;display:flex;align-items:center;justify-content:center;pointer-events:none;background:rgba(15,23,42,0.35);';
+          this.root.appendChild(overlay);
+        }
+        let idx = 0;
+        const nextStep = () => {
+          if (idx >= steps.length) {
+            overlay.remove();
+            this._countdownRunning = false;
+            this.startAuditionLoop(target);
+            this.render();
+            return;
+          }
+          const label = steps[idx++];
+          this.audioService?.playChime?.(label === 'GO!' ? 920 : 620, 0.14);
+          overlay.innerHTML = `<div style="font-size:88px;font-weight:900;color:${label === 'GO!' ? '#4ade80' : '#facc15'};text-shadow:0 6px 24px rgba(0,0,0,0.65),0 0 32px rgba(250,204,21,0.85);transform:scale(1.15);transition:transform 0.25s ease;">${label}</div>`;
+          setTimeout(nextStep, 550);
+        };
+        nextStep();
+        return;
       }
     }
     if (button.dataset.action === 'rhythm-hit') {
@@ -2198,7 +2197,21 @@ evaluateAuditionHit() {
         return;
       }
       result=this.system.buy(ingId);
-      if (result.ok) this.audioService?.playCoinBuy?.();
+      if (result.ok) {
+        this.audioService?.playCoinBuy?.();
+        const item = getIngredient(ingId);
+        const burst = document.createElement('div');
+        burst.className = 'fridge-buy-big-fx';
+        burst.style.cssText = 'position:fixed;left:50%;top:45%;transform:translate(-50%,-50%) scale(0.7);z-index:10060;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.35s ease;opacity:1;';
+        burst.innerHTML = `
+          ${item?.image ? `<img src="${item.image}" alt="" style="width:116px;height:116px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(250,204,21,0.9));" />` : '<span style="font-size:72px;">✨</span>'}
+          <span style="font-size:44px;font-weight:900;color:#fde047;text-shadow:0 4px 14px rgba(0,0,0,0.8);">+1 🎉</span>
+        `;
+        document.body.appendChild(burst);
+        requestAnimationFrame(() => { burst.style.transform = 'translate(-50%,-62%) scale(1.25)'; });
+        setTimeout(() => { burst.style.opacity = '0'; }, 420);
+        setTimeout(() => { burst.remove(); }, 780);
+      }
     }
     else if(button.dataset.recipe) { result=this.system.start(button.dataset.recipe); if(result.ok)this.tab='cook'; }
     else if(button.dataset.remove && s) result=this.system.stage(s.id,button.dataset.remove,true);
